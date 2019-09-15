@@ -1,1 +1,3 @@
-# py-baseball-dat-ana
+# pybbda
+
+Python Baseball Data and Analysis
