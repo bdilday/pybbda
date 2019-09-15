@@ -103,7 +103,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 .vscode/
-<<<<<<< HEAD
 .idea/
-=======
->>>>>>> d5892ba... intial scaffold
