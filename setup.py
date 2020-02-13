@@ -1,4 +1,3 @@
-
 from setuptools import setup, find_packages
 
 setup(
@@ -8,4 +7,6 @@ setup(
     author="Ben Dilday",
     author_email="ben.dilday.phd@gmail.com",
     packages=find_packages(),
+    package_data={"pybaseballdatana": ["*.csv"]},
+    include_package_data=True
 )
