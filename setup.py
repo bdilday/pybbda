@@ -1,4 +1,5 @@
-from distutils.core import setup
+
+from setuptools import setup, find_packages
 
 setup(
     name="pybaseballdatana",
@@ -6,5 +7,5 @@ setup(
     description="Baseball data and analysis in Python",
     author="Ben Dilday",
     author_email="ben.dilday.phd@gmail.com",
-    packages=["pybaseballdatana"],
+    packages=find_packages(),
 )
