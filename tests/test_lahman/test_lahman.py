@@ -1,5 +1,5 @@
 
-from pybaseballdatana.lahman.data import LahmanData
+from pybaseballdatana.data.tools import LahmanData
 
 def test_lahman_datadum():
     lahman_data = LahmanData()
