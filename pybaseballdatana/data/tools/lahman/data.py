@@ -3,7 +3,7 @@ import pathlib
 from ..lahman import _LAHMAN_TABLES
 import re
 
-DATA_PATH = pathlib.Path(__file__).parent.parent / "assets" / "Lahman"
+DATA_PATH = pathlib.Path(__file__).absolute().parent.parent.parent / "assets" / "Lahman"
 
 
 class LahmanData:
