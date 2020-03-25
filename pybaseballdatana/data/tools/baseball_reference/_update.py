@@ -10,6 +10,7 @@ import pathlib
 import shutil
 import logging
 import csv
+import gzip
 
 
 WAR_BATTING_URL = "https://www.baseball-reference.com/data/war_daily_bat.txt"
@@ -26,20 +27,20 @@ def _download_csv(url):
     return list(it)
 
 
-def _extract(lines, file_name):
+def _save(lines, file_name):
     output_path = (
         pathlib.Path(__file__).absolute().parent.parent.parent
         / "assets"
         / "BaseballReference"
         / file_name
     )
+    output_payload = "\n".join(str(line, "utf-8") for line in lines)
     logging.info("saving file to {}".format(output_path))
-    with open(output_path, "w") as fh:
-        csvw = csv.writer(fh)
-        csvw.writerows(lines)
+    with gzip.open(output_path, "wb") as fh:
+        fh.write(bytes(output_payload, encoding="utf-8"))
 
 
 def _update():
     for url in [WAR_BATTING_URL, WAR_PITCHING_URL]:
         lines = _download_csv(url)
-        _extract(lines, os.path.basename(url))
+        _save(lines, os.path.basename(url) + ".gz")
