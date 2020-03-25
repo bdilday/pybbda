@@ -2,12 +2,12 @@ import pandas as pd
 import pathlib
 from ..lahman import _LAHMAN_TABLES
 import re
+import os
 
 DATA_PATH = pathlib.Path(__file__).absolute().parent.parent.parent / "assets" / "Lahman"
 
 
 class LahmanData:
-
     def __init__(self, data_path=DATA_PATH):
         self.data_path = data_path
         for file_name in _LAHMAN_TABLES:
@@ -24,9 +24,14 @@ class LahmanData:
     def _load(self, name):
         updated_name = self._munge_attr_name(name)
         data_file = updated_name + ".csv"
-        full_path = self.data_path / data_file
+        full_path = str(self.data_path / data_file)
         print("searching for file ", full_path)
-        return pd.read_csv(str(full_path))
+        if os.path.exists(full_path):
+            return pd.read_csv(full_path)
+        elif os.path.exists(full_path + ".gz"):
+            return pd.read_csv(full_path + ".gz")
+        else:
+            raise FileNotFoundError(f"Cannot find file {full_path}")
 
     def __getattr__(self, name):
         if self._munge_attr_name(name) not in _LAHMAN_TABLES:
