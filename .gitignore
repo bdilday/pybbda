@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 .vscode/
 .idea/
+pybaseballdatana/data/assets/BaseballReference/war_daily*txt.gz

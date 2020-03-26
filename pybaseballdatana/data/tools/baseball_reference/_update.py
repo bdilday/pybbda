@@ -12,10 +12,7 @@ import logging
 import csv
 import gzip
 
-
-WAR_BATTING_URL = "https://www.baseball-reference.com/data/war_daily_bat.txt"
-WAR_PITCHING_URL = "https://www.baseball-reference.com/data/war_daily_pitch.txt"
-
+from . import WAR_BATTING_URL, WAR_PITCHING_URL
 
 def _download_csv(url):
     logging.info("downloading file from {}".format(url))
@@ -39,8 +36,10 @@ def _save(lines, file_name):
     with gzip.open(output_path, "wb") as fh:
         fh.write(bytes(output_payload, encoding="utf-8"))
 
+def _update_file(url):
+    lines = _download_csv(url)
+    _save(lines, os.path.basename(url) + ".gz")
 
 def _update():
     for url in [WAR_BATTING_URL, WAR_PITCHING_URL]:
-        lines = _download_csv(url)
-        _save(lines, os.path.basename(url) + ".gz")
+        _update_file(url)
