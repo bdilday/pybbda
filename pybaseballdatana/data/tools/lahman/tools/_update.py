@@ -3,8 +3,6 @@ import os
 import requests
 import tempfile
 import zipfile
-import pandas as pd
-import joblib
 import glob
 import pathlib
 import shutil

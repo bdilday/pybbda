@@ -13,10 +13,8 @@ BASEBALL_REFERENCE_TABLES = {
     "war_bat": "war_daily_bat.txt",
     "war_pitch": "war_daily_pitch.txt",
 }
-BASEBALL_REFERENCE_URLS = {
-    "war_bat": WAR_BATTING_URL,
-    "war_pitch": WAR_PITCHING_URL
-}
+BASEBALL_REFERENCE_URLS = {"war_bat": WAR_BATTING_URL, "war_pitch": WAR_PITCHING_URL}
+
 
 class BaseballReferenceData:
     def __init__(self, data_path=DATA_PATH, update=False):
@@ -39,7 +37,6 @@ class BaseballReferenceData:
             return self._locate_file(name, False)
         else:
             raise FileNotFoundError(f"Cannot find file {full_path}")
-
 
     def _load(self, name):
         file_full_path = self._locate_file(name, self.update)
