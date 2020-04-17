@@ -1,3 +1,4 @@
+LAHMAN_URL = "https://github.com/chadwickbureau/baseballdatabank/archive/master.zip"
 _LAHMAN_TABLES = (
     "AllstarFull",
     "Appearances",

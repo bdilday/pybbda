@@ -8,7 +8,7 @@ import pathlib
 import shutil
 import logging
 
-LAHMAN_URL = "https://github.com/chadwickbureau/baseballdatabank/archive/master.zip"
+from ..lahman import LAHMAN_URL
 
 
 def _download():
@@ -19,13 +19,16 @@ def _download():
     return target
 
 
-def _extract(target):
-    output_path = pathlib.Path(__file__).parent / "Lahman"
+def _extract(target, output_path=None):
+    output_path = output_path or pathlib.Path(__file__).parent / "Lahman"
+
+    if not os.path.isdir(output_path):
+        raise ValueError(f"Path {output_path} must be a directory")
     extracted_files = glob.glob(os.path.join(target, "**", "*csv"), recursive=True)
     for extracted_file in extracted_files:
         shutil.copy(extracted_file, output_path)
 
 
-def _update():
+def _update(output_path=None):
     target = _download()
-    _extract(target)
+    _extract(target, output_path)
