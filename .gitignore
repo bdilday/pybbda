@@ -105,3 +105,4 @@ venv.bak/
 .vscode/
 .idea/
 pybaseballdatana/data/assets/BaseballReference/war_daily*txt.gz
+**/*csv
