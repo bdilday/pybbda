@@ -11,9 +11,10 @@ from .lahman._update import _update as update_lahman
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--data-root", required=False,
+        "--data-root",
+        required=False,
         default=PYBBDA_DATA_ROOT,
-        help="Root directory for data storage"
+        help="Root directory for data storage",
     )
     parser.add_argument(
         "--update-source",
