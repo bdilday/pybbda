@@ -14,7 +14,8 @@ jobs:
           command: pip install --user -r requirements-dev.txt
       - python/save-cache
       - run:
-          command: python -m pybaseballdatana.data.tools.update --update-source lahman --make-dirs
+          command: python -m pybaseballdatana.data.tools.update --data-source Lahman --make-dirs
+          command: python -m pybaseballdatana.data.tools.update --data-source BaseballReference --make-dirs
       - run:
           command: python -m pytest tests/
           name: Test
