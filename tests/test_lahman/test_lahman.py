@@ -8,7 +8,7 @@ def lahman_data():
 
 
 def test_lahman_datadum(lahman_data):
-    assert len(lahman_data.batting) == 105861
+    assert len(lahman_data.batting) == 107429
 
 
 def test_missing_path(lahman_data):

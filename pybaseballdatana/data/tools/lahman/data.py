@@ -1,14 +1,17 @@
-import pandas as pd
 import pathlib
-from ..lahman import _LAHMAN_TABLES
 import re
 import os
 
-DATA_PATH = pathlib.Path(__file__).absolute().parent.parent.parent / "assets" / "Lahman"
+import pandas as pd
+
+from ..lahman import _LAHMAN_TABLES
+from pybaseballdatana import PYBBDA_DATA_ROOT
+
+LAHMAN_DATA_PATH = PYBBDA_DATA_ROOT / "Lahman"
 
 
 class LahmanData:
-    def __init__(self, data_path=DATA_PATH):
+    def __init__(self, data_path=LAHMAN_DATA_PATH):
         self.data_path = data_path
         for file_name in _LAHMAN_TABLES:
             self.__setattr__(self._munge_attr_name(file_name), None)
