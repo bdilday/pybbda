@@ -3,12 +3,10 @@ import pathlib
 import os
 from ._update import _update_file
 from . import WAR_PITCHING_URL, WAR_BATTING_URL
+from pybaseballdatana import PYBBDA_DATA_ROOT
 
-DATA_PATH = (
-    pathlib.Path(__file__).absolute().parent.parent.parent
-    / "assets"
-    / "BaseballReference"
-)
+BBREF_DATA_PATH = PYBBDA_DATA_ROOT / "BaseballReference"
+
 BASEBALL_REFERENCE_TABLES = {
     "war_bat": "war_daily_bat.txt",
     "war_pitch": "war_daily_pitch.txt",
@@ -17,7 +15,7 @@ BASEBALL_REFERENCE_URLS = {"war_bat": WAR_BATTING_URL, "war_pitch": WAR_PITCHING
 
 
 class BaseballReferenceData:
-    def __init__(self, data_path=DATA_PATH, update=False):
+    def __init__(self, data_path=BBREF_DATA_PATH, update=False):
         self.tables = BASEBALL_REFERENCE_TABLES
         self.update = update
         self.data_path = data_path

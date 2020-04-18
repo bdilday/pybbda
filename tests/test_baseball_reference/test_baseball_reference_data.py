@@ -4,7 +4,7 @@ from pybaseballdatana.data import BaseballReferenceData
 
 @pytest.fixture
 def baseball_ref_data():
-    return BaseballReferenceData(update=True)
+    return BaseballReferenceData(update=False)
 
 def test_war_bat(baseball_ref_data):
     war_bat = baseball_ref_data.war_bat
