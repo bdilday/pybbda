@@ -6,7 +6,7 @@ from pybaseballdatana import PYBBDA_DATA_ROOT
 
 
 from .lahman._update import _update as update_lahman
-
+from .baseball_reference._update import _update as update_bbref
 
 def _parse_args():
     parser = argparse.ArgumentParser()
@@ -17,9 +17,9 @@ def _parse_args():
         help="Root directory for data storage",
     )
     parser.add_argument(
-        "--update-source",
+        "--data-source",
         required=True,
-        choices=("lahman", "baseball-reference"),
+        choices=("Lahman", "BaseballReference"),
         help="Update source",
     )
     parser.add_argument(
@@ -30,13 +30,21 @@ def _parse_args():
     )
     return parser.parse_args(sys.argv[1:])
 
+def update_source(data_root, data_source):
+    if data_source == "Lahman":
+        update_lahman(os.path.join(data_root, data_source))
+    elif data_source == "BaseballReference":
+        update_bbref(os.path.join(data_root, data_source))
+
+
+def create_dir_if_not_exist(data_root, data_source):
+    os.makedirs(os.path.join(data_root, data_source), exist_ok=True)
 
 def main():
     args = _parse_args()
     if args.make_dirs:
-        os.makedirs(os.path.join(args.data_root, "Lahman"), exist_ok=True)
-    update_lahman(os.path.join(args.data_root, "Lahman"))
-
+        create_dir_if_not_exist(args.data_root, args.data_source)
+    update_source(args.data_root, args.data_source)
 
 if __name__ == "__main__":
     main()

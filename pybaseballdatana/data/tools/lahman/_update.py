@@ -20,7 +20,7 @@ def _download():
 
 
 def _extract(target, output_path=None):
-    output_path = output_path or pathlib.Path(__file__).parent / "Lahman"
+    output_path = output_path or pathlib.Path(__file__).parent.parent / "assets" / "Lahman"
 
     if not os.path.isdir(output_path):
         raise ValueError(f"Path {output_path} must be a directory")
