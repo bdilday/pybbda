@@ -18,8 +18,9 @@ def _download_csv(url):
 
 
 def _save(lines, file_name, output_path=None):
-    output_path = (output_path or
-        pathlib.Path(__file__).absolute().parent.parent
+    output_path = (
+        output_path
+        or pathlib.Path(__file__).absolute().parent.parent
         / "assets"
         / "BaseballReference"
     )
