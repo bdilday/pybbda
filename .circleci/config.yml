@@ -15,7 +15,10 @@ jobs:
       - python/save-cache
       - run:
           command: python -m pybaseballdatana.data.tools.update --data-source Lahman --make-dirs
+          name: Update Lahman
+      - run:
           command: python -m pybaseballdatana.data.tools.update --data-source BaseballReference --make-dirs
+          name: Update Baseball Reference
       - run:
           command: python -m pytest tests/
           name: Test
