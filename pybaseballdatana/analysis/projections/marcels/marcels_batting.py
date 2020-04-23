@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from pybaseballdatana.data.tools.processing.aggregate import aggregate_batters_by_season
+from pybaseballdatana.data.tools.processing.aggregate import aggregate_by_season
 from pybaseballdatana.data.tools.processing.transform import get_age
 from pybaseballdatana.data.tools.lahman.data import (
     get_primary_position,
@@ -9,36 +9,41 @@ from pybaseballdatana.data.tools.lahman.data import (
 from pybaseballdatana.data import LahmanData
 import sys
 from pybaseballdatana.analysis.projections.marcels.age_adjustment import age_adjustment
-
-import numpy as np
+from pybaseballdatana.analysis.projections.marcels.marcels_base import (
+    MarcelsProjectionsBase,
+)
 
 # http://www.tangotiger.net/archives/stud0346.shtml
 
 
-class MarcelProjectionsBatting:
-    COMPUTED_METRICS = ["1B", "2B", "3B", "HR", "SB", "CS", "SO"]
+class MarcelProjectionsBatting(MarcelsProjectionsBase):
+    COMPUTED_METRICS = [
+        "1B",
+        "2B",
+        "3B",
+        "HR",
+        "BB",
+        "HBP",
+        "SB",
+        "CS",
+        "SO",
+        "SH",
+        "SF",
+    ]
     RECIPROCAL_AGE_METRICS = ["SO", "CS"]
+    LEAGUE_AVG_PT = 100
+    METRIC_WEIGHTS = (5, 4, 3)
+    PT_WEIGHTS = (0.5, 0.1, 0)
+    REQUIRED_COLUMNS = ["AB", "BB"]
 
-    def __init__(self, bat_df=None, primary_pos_df=None):
-        self.ld = LahmanData()
+    def __init__(self, stats_df=None, primary_pos_df=None):
+        super().__init__(stats_df, primary_pos_df)
 
-        self.bat_df = bat_df if bat_df is not None else self.ld.batting
-        self.bat_df = self.preprocess_data(self.bat_df)
-        self.primary_pos_df = (
-            get_primary_position(self.ld.fielding)
-            if primary_pos_df is None
-            else primary_pos_df
-        )
-        self.metric_weights = np.array((5, 4, 3))
-        self.pa_weights = np.array((0.5, 0.1, 0))
-        self.league_avg_pa = 100
-        self.people = self.ld.people
+    def _load_data(self):
+        return self.ld.batting
 
     def preprocess_data(self, stats_df):
-        return aggregate_batters_by_season(augment_lahman_batting(stats_df))
-
-    def validate_data(self):
-        return True
+        return aggregate_by_season(augment_lahman_batting(stats_df))
 
     def remove_pitchers(self, stats_df, primary_pos_df):
         return (
@@ -47,45 +52,32 @@ class MarcelProjectionsBatting:
             .drop("primaryPos", axis=1)
         )
 
-    def seasonal_average(self, stats_df, metric_name):
-        return (
-            stats_df.groupby("yearID")
-            .agg({metric_name: sum, "PA": sum})
-            .assign(seasonal_avg=lambda row: row[metric_name] / row.PA)
-        )
-
-    def projections(self, projected_season, computed_metrics=None):
-        computed_metrics = computed_metrics or self.COMPUTED_METRICS
-
-        projections = [
-            self.metric_projection(metric_name, projected_season)
-            for metric_name in computed_metrics
-        ]
-        return pd.concat(projections, axis=1)
-
     def metric_projection(self, metric_name, projected_season):
         x_df = self.metric_projection_detail(metric_name, projected_season)
-        return x_df.assign(
-            x=lambda row: row.rate_projection
-            * row.pa_projection
-            * row.age_adjustment_value
-        ).rename({"x": metric_name}, axis=1).loc[:, [metric_name]]
+        return (
+            x_df.assign(
+                x=lambda row: row.rate_projection
+                * row.pt_projection
+                * row.age_adjustment_value
+            )
+            .rename({"x": metric_name}, axis=1)
+            .loc[:, [metric_name]]
+        )
 
     def metric_projection_detail(self, metric_name, projected_season):
         season = projected_season - 1
 
-        # metric_values = get_metric_values(metric_name, season)
-        # seasonal_avgs = get_seasonal_avgs(metric_name, season)
-
         seasonal_avg_df = (
             self.seasonal_average(
-                self.remove_pitchers(self.bat_df, self.primary_pos_df), metric_name
+                self.remove_pitchers(self.stats_df, self.primary_pos_df),
+                metric_name,
+                playing_time_column="PA",
             )
             .reset_index()
             .loc[:, ["yearID", "seasonal_avg"]]
         )
 
-        stats_df = self.bat_df.loc[:, ["playerID", "yearID", "PA", metric_name]]
+        stats_df = self.stats_df.loc[:, ["playerID", "yearID", "PA", metric_name]]
         stats_df_season = stats_df.query(f"yearID == {season}").loc[
             :, ["playerID", "yearID"]
         ]
@@ -136,15 +128,15 @@ class MarcelProjectionsBatting:
             metric_df.values,
             pa_df.values,
             self.metric_weights,
-            self.pa_weights,
+            self.pt_weights,
             sa_df.values,
         )
 
-        pa_projection = self.compute_pa_projection(
+        pt_projection = self.compute_playing_time_projection(
             metric_df.values,
             pa_df.values,
             self.metric_weights,
-            self.pa_weights,
+            self.pt_weights,
             sa_df.values,
         )
 
@@ -156,55 +148,54 @@ class MarcelProjectionsBatting:
             age_adjustment_value = 1 / age_adjustment_value
 
         return stats_df_season.assign(
-            yearID = projected_season,
+            yearID=projected_season,
             rate_projection=rate_projection,
-            pa_projection=pa_projection,
+            pt_projection=pt_projection,
             age_adjustment_value=age_adjustment_value,
         ).set_index(["playerID", "yearID"])
 
     def compute_rate_projection(
         self,
         metric_values,
-        pa_values,
+        pt_values,
         metric_weights,
-        pa_weights,
+        pt_weights,
         seasonal_averages,
-        num_regression_pa=100,
+        num_regression_pt=100,
     ):
-        pa_values[pa_values == 0] = sys.float_info.min
+        pt_values[pt_values == 0] = sys.float_info.min
         normalized_metric_weights = np.array(metric_weights) / sum(metric_weights)
         unregressed_player_projection = np.sum(
             metric_values * normalized_metric_weights, 1
         )
 
         mean_rate_projection = np.sum(
-            seasonal_averages * pa_values * normalized_metric_weights, 1
-        ) / np.sum(pa_values * normalized_metric_weights, 1)
+            seasonal_averages * pt_values * normalized_metric_weights, 1
+        ) / np.sum(pt_values * normalized_metric_weights, 1)
 
         projection_numerator = (
-            unregressed_player_projection + num_regression_pa * mean_rate_projection
+            unregressed_player_projection + num_regression_pt * mean_rate_projection
         )
         projection_denominator = (
-            np.sum(pa_values * normalized_metric_weights, 1) + num_regression_pa
+            np.sum(pt_values * normalized_metric_weights, 1) + num_regression_pt
         )
 
         return projection_numerator / projection_denominator
 
-    def compute_pa_projection(
+    def compute_playing_time_projection(
         self,
         metric_values,
-        pa_values,
+        pt_values,
         metric_weights,
-        pa_weights,
+        pt_weights,
         seasonal_averages,
-        num_regression_pa=200,
+        num_regression_pt=200,
     ):
 
-        return np.sum(pa_values * pa_weights, 1) + num_regression_pa
+        return np.sum(pt_values * pt_weights, 1) + num_regression_pt
 
 
 if __name__ == "__main__":
-    from pybaseballdatana.data import LahmanData
 
     ld = LahmanData()
 
@@ -214,12 +205,12 @@ if __name__ == "__main__":
 
     start = time.time()
     cnt = 0
-    for m in md.COMPUTED_METRICS:
-        for season in range(1981, 2019):
-            cnt += 1
-            res = md.metric_projection(m, season)
+    for season in range(2019, 2020+1):
+        cnt += 1
+        res = md.projections(season)
             # print(res)
             # print(res[res.playerID.str.contains("^bel")])
     end = time.time()
     dt = end - start
+    print(res.sort_values("HR", ascending=False))
     print(dt, dt / cnt)
