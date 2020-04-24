@@ -39,17 +39,6 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
             .drop("primaryPos", axis=1)
         )
 
-    def metric_projection(self, metric_name, projected_season):
-        x_df = self.metric_projection_detail(metric_name, projected_season)
-        return (
-            x_df.assign(
-                x=lambda row: row.rate_projection
-                * row.pt_projection
-                * row.age_adjustment_value
-            )
-            .rename({"x": metric_name}, axis=1)
-            .loc[:, [metric_name]]
-        )
 
     def get_num_regression_pt(self, stats_df):
         fraction_games_started = (

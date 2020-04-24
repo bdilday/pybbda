@@ -45,8 +45,6 @@ class MarcelsProjectionsBase(ABC):
     def preprocess_data(self, stats_df):
         NotImplemented
 
-    def metric_projection(self, metric_name, projected_season):
-        NotImplemented
 
     def validate_data(self, stats_df):
         missing_columns = []
@@ -65,6 +63,7 @@ class MarcelsProjectionsBase(ABC):
                 x=lambda row: row.rate_projection
                 * row.pt_projection
                 * row.age_adjustment_value
+                * row.rebaseline_value
             )
             .rename({"x": metric_name}, axis=1)
             .loc[:, [metric_name]]
