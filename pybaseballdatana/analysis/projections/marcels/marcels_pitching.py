@@ -31,7 +31,8 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
     def preprocess_data(self, stats_df):
         return aggregate_by_season(augment_lahman_pitching(stats_df))
 
-    def remove_non_pitchers(self, stats_df, primary_pos_df):
+
+    def filter_non_representative_data(self, stats_df, primary_pos_df):
         return (
             stats_df.merge(primary_pos_df, on=["playerID", "yearID"], how="left")
             .query(r'primaryPos == "P"')
@@ -50,29 +51,40 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
             .loc[:, [metric_name]]
         )
 
+    def get_num_regression_pt(self, stats_df):
+        fraction_games_started = (
+            stats_df
+            .apply(lambda row: row["GS"] / row["G"], axis=1)
+            .values
+        )
+        return 75 + 105 * fraction_games_started
+
+
     def metric_projection_detail(self, metric_name, projected_season):
         season = projected_season - 1
+        playing_time_column = "IPouts"
+
+        stats_df = self.filter_non_representative_data(self.stats_df, self.primary_pos_df)
+        num_regression_pt = self.get_num_regression_pt(stats_df.query(f"yearID == {season}"))
 
         seasonal_avg_df = (
             self.seasonal_average(
-                self.remove_non_pitchers(self.stats_df, self.primary_pos_df),
+                stats_df,
                 metric_name,
-                playing_time_column="IPouts",
+                playing_time_column=playing_time_column,
             )
             .reset_index()
             .loc[:, ["yearID", "seasonal_avg"]]
         )
 
-        stats_df = self.stats_df.loc[:, ["playerID", "yearID", "IPouts", metric_name]]
+
+
+        stats_df = stats_df.loc[:, ["playerID", "yearID", playing_time_column, metric_name]]
         stats_df_season = stats_df.query(f"yearID == {season}").loc[
             :, ["playerID", "yearID"]
         ]
 
-        fraction_games_started = (
-            self.stats_df.query(f"yearID == {season}")
-            .apply(lambda row: row["GS"] / row["G"], axis=1)
-            .values
-        )
+
 
         metric_df = pd.concat(
             [
@@ -114,7 +126,7 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
 
         sa_df = seasonal_avg_df.query(
             f"yearID >= {season - len(self.metric_weights)+1} and yearID <= {season}"
-        ).loc[:, "seasonal_avg"]
+        ).sort_values("yearID", ascending=False).loc[:, "seasonal_avg"]
 
         rate_projection = self.compute_rate_projection(
             metric_df.values,
@@ -130,7 +142,7 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
             self.metric_weights,
             self.pt_weights,
             sa_df.values,
-            num_regression_pt=75 + 105 * fraction_games_started,
+            num_regression_pt=num_regression_pt,
         )
 
         age_df = get_age(stats_df_season, self.people)
@@ -140,11 +152,20 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
         if metric_name in self.RECIPROCAL_AGE_METRICS:
             age_adjustment_value = 1 / age_adjustment_value
 
+        weighted_average = np.sum(self.metric_weights * sa_df.values) / np.sum(self.metric_weights)
+        weighted_value = np.sum(rate_projection * age_adjustment_value * pt_projection) / np.sum(pt_projection)
+
+        rebaseline_value = weighted_average / weighted_value
+
         return stats_df_season.assign(
             yearID=projected_season,
+            age=age_values.values,
             rate_projection=rate_projection,
             pt_projection=pt_projection,
             age_adjustment_value=age_adjustment_value,
+            rebaseline_value=rebaseline_value,
+            weighted_average=weighted_average,
+            weighted_value=weighted_value
         ).set_index(["playerID", "yearID"])
 
     def compute_rate_projection(

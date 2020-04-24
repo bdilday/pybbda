@@ -18,6 +18,7 @@ class MarcelsProjectionsBase(ABC):
     COMPUTED_METRICS = []
     RECIPROCAL_AGE_METRICS = []
     LEAGUE_AVG_PT = None
+    NUM_REGRESSION_PLAYING_TIME = None
     METRIC_WEIGHTS = (5, 4, 3)
     PT_WEIGHTS = (0.5, 0.1, 0)
 
@@ -57,6 +58,18 @@ class MarcelsProjectionsBase(ABC):
                 "the following required columns are missing {}".format(missing_columns)
             )
 
+    def metric_projection(self, metric_name, projected_season):
+        x_df = self.metric_projection_detail(metric_name, projected_season)
+        return (
+            x_df.assign(
+                x=lambda row: row.rate_projection
+                * row.pt_projection
+                * row.age_adjustment_value
+            )
+            .rename({"x": metric_name}, axis=1)
+            .loc[:, [metric_name]]
+        )
+
     def projections(self, projected_season, computed_metrics=None):
         computed_metrics = computed_metrics or self.COMPUTED_METRICS
 
@@ -74,3 +87,7 @@ class MarcelsProjectionsBase(ABC):
                 seasonal_avg=lambda row: row[metric_name] / row[playing_time_column]
             )
         )
+
+    def get_num_regression_pt(self, stats_df):
+        return self.NUM_REGRESSION_PLAYING_TIME
+
