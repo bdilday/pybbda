@@ -52,7 +52,7 @@ def get_primary_position(fielding_df):
     )
     gm_rank_df = (
         fld_combined_stints.groupby(["playerID", "yearID"])
-        .G.rank(method="first")
+        .G.rank(method="first", ascending=False)
         .to_frame()
         .rename({"G": "gm_rank"}, axis=1)
     )
