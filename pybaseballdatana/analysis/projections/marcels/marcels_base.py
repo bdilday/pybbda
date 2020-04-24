@@ -13,6 +13,8 @@ from pybaseballdatana.data import LahmanData
 import sys
 from pybaseballdatana.analysis.projections.marcels.age_adjustment import age_adjustment
 
+# http://www.tangotiger.net/archives/stud0346.shtml
+
 
 class MarcelsProjectionsBase(ABC):
     COMPUTED_METRICS = []

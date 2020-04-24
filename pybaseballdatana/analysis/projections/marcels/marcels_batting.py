@@ -1,19 +1,12 @@
-import pandas as pd
-import numpy as np
 from pybaseballdatana.data.tools.processing.aggregate import aggregate_by_season
-from pybaseballdatana.data.tools.processing.transform import get_age
 from pybaseballdatana.data.tools.lahman.data import (
-    get_primary_position,
     augment_lahman_batting,
 )
 from pybaseballdatana.data import LahmanData
-import sys
-from pybaseballdatana.analysis.projections.marcels.age_adjustment import age_adjustment
 from pybaseballdatana.analysis.projections.marcels.marcels_base import (
     MarcelsProjectionsBase,
 )
 
-# http://www.tangotiger.net/archives/stud0346.shtml
 
 
 class MarcelProjectionsBatting(MarcelsProjectionsBase):
