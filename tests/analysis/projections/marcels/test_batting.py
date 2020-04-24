@@ -1,13 +1,15 @@
 
-from pybaseballdatana.analysis.projections.marcels.marcels_batting import MarcelProjectionsBatting
+from pybaseballdatana.analysis.projections.marcels import MarcelProjectionsBatting
 from pandas import DataFrame
 import pytest
 
-def test_batting_projections():
+@pytest.mark.parametrize("season, expected",
+                         [(2004, 42)])
+def test_batting_projections(season, expected):
 
     md = MarcelProjectionsBatting()
-    proj = md.projections(2004)
-    assert int(proj.HR.max()) == 41
+    proj = md.projections(season)
+    assert int(proj.HR.max()) == expected
 
 def test_batting_bad_data():
     stats_df = DataFrame({"x": [1,2,3]})
