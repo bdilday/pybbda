@@ -32,11 +32,9 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
         )
 
     def get_num_regression_pt(self, stats_df):
-        fraction_games_started = (
-            stats_df
-            .apply(lambda row: row["GS"] / row["G"], axis=1)
-            .values
-        )
+        fraction_games_started = stats_df.apply(
+            lambda row: row["GS"] / row["G"], axis=1
+        ).values
         return 75 + 105 * fraction_games_started
 
 
