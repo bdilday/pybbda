@@ -4,6 +4,7 @@ import os
 from ._update import _update_file
 from . import WAR_PITCHING_URL, WAR_BATTING_URL
 from pybaseballdatana import PYBBDA_DATA_ROOT
+import logging
 
 BBREF_DATA_PATH = PYBBDA_DATA_ROOT / "BaseballReference"
 
@@ -13,6 +14,7 @@ BASEBALL_REFERENCE_TABLES = {
 }
 BASEBALL_REFERENCE_URLS = {"war_bat": WAR_BATTING_URL, "war_pitch": WAR_PITCHING_URL}
 
+logger = logging.getLogger(__name__)
 
 class BaseballReferenceData:
     def __init__(self, data_path=BBREF_DATA_PATH, update=False):
@@ -23,14 +25,14 @@ class BaseballReferenceData:
     def _locate_file(self, name, update=False):
         data_file = self.tables[name]
         full_path = str(self.data_path / data_file)
-        print("searching for file ", full_path)
+        logger.info("searching for file %s", full_path)
 
         if os.path.exists(full_path):
             return full_path
         elif os.path.exists(full_path + ".gz"):
             return full_path + ".gz"
         elif update:
-            print("updating file ", full_path)
+            logger.info("updating file %s", full_path)
             _update_file(BASEBALL_REFERENCE_URLS[name])
             return self._locate_file(name, False)
         else:

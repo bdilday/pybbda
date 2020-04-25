@@ -6,13 +6,16 @@ import zipfile
 import glob
 import pathlib
 import shutil
-import logging
+
+from pybaseballdatana import logger
 
 from ..lahman import LAHMAN_URL
-
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def _download():
-    logging.info("downloading file from %s", LAHMAN_URL)
+    logger.info("downloading file from %s", LAHMAN_URL)
     archive = zipfile.ZipFile(BytesIO(requests.get(LAHMAN_URL, stream=True).content))
     target = tempfile.gettempdir()
     archive.extractall(path=target)
