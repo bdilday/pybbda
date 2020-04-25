@@ -3,7 +3,6 @@ from pybaseballdatana.data import nullable_int, LahmanData
 
 def get_age(stats_df, people_df=None):
     if people_df is None:
-        print("oh no, people_df is none")
         people_df = LahmanData().people
     return (
         stats_df.merge(
