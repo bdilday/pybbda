@@ -92,5 +92,6 @@ def augment_lahman_batting(bat_df):
         PA=PA.astype(int), X1B=X1B.astype(int), TB=TB.astype(int)
     ).rename({"X1B": "1B"}, axis=1)
 
+
 def augment_lahman_pitching(stats_df):
     return stats_df

@@ -3,7 +3,6 @@ import os
 import logging
 
 
-
 def get_pybbda_data_root():
     if os.environ.get("PYBBDA_DATA_ROOT") is not None:
         root_path = pathlib.Path(os.environ.get("PYBBDA_DATA_ROOT"))
