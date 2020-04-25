@@ -1,6 +1,7 @@
-import pathlib
+
 import re
 import os
+import logging
 
 import pandas as pd
 
@@ -10,6 +11,7 @@ from pybaseballdatana.utils.singleton import Singleton
 
 LAHMAN_DATA_PATH = PYBBDA_DATA_ROOT / "Lahman"
 
+logger = logging.getLogger(__name__)
 
 class LahmanData(Singleton):
     def __init__(self, data_path=LAHMAN_DATA_PATH):
@@ -29,7 +31,7 @@ class LahmanData(Singleton):
         updated_name = self._munge_attr_name(name)
         data_file = updated_name + ".csv"
         full_path = str(self.data_path / data_file)
-        print("searching for file ", full_path)
+        logger.info("searching for file %s", full_path)
         if os.path.exists(full_path):
             return pd.read_csv(full_path)
         elif os.path.exists(full_path + ".gz"):

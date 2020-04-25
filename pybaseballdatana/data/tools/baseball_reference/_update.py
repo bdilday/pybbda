@@ -6,12 +6,13 @@ import gzip
 
 from . import WAR_BATTING_URL, WAR_PITCHING_URL
 
+logger = logging.getLogger(__name__)
 
 def _download_csv(url):
-    logging.info("downloading file from {}".format(url))
+    logger.info("downloading file from {}".format(url))
     response = requests.get(url, stream=True)
     if response.status_code != 200:
-        logging.info("there was a download error code={}", response.status_code)
+        logger.info("there was a download error code={}", response.status_code)
         raise FileNotFoundError
     it = response.iter_lines()
     return list(it)
@@ -26,7 +27,7 @@ def _save(lines, file_name, output_path=None):
     )
     output_file_path = os.path.join(output_path, file_name)
     output_payload = "\n".join(str(line, "utf-8") for line in lines)
-    logging.info("saving file to {}".format(output_file_path))
+    logger.info("saving file to {}".format(output_file_path))
     with gzip.open(output_file_path, "wb") as fh:
         fh.write(bytes(output_payload, encoding="utf-8"))
 
