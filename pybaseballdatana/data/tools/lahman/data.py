@@ -6,11 +6,12 @@ import pandas as pd
 
 from ..lahman import _LAHMAN_TABLES
 from pybaseballdatana import PYBBDA_DATA_ROOT
+from pybaseballdatana.utils.singleton import Singleton
 
 LAHMAN_DATA_PATH = PYBBDA_DATA_ROOT / "Lahman"
 
 
-class LahmanData:
+class LahmanData(Singleton):
     def __init__(self, data_path=LAHMAN_DATA_PATH):
         self.data_path = data_path
         for file_name in _LAHMAN_TABLES:
