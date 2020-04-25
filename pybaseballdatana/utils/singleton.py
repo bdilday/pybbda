@@ -1,5 +1,5 @@
-
 # https://www.python.org/download/releases/2.2.3/descrintro/#__new__
+
 
 class Singleton(object):
     def __new__(cls, *args, **kwargs):
@@ -9,5 +9,6 @@ class Singleton(object):
         cls.__it__ = it = object.__new__(cls)
         it.init(*args, **kwargs)
         return it
+
     def init(self, *args, **kwargs):
         pass
