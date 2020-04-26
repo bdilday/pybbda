@@ -1,25 +1,21 @@
-import pandas as pd
-import pathlib
+
 import os
-from ._update import _update_file
-from . import WAR_PITCHING_URL, WAR_BATTING_URL
-from pybaseballdatana import PYBBDA_DATA_ROOT
+
 import logging
 
-BBREF_DATA_PATH = PYBBDA_DATA_ROOT / "BaseballReference"
-
-BASEBALL_REFERENCE_TABLES = {
-    "war_bat": "war_daily_bat.txt",
-    "war_pitch": "war_daily_pitch.txt",
-}
-BASEBALL_REFERENCE_URLS = {"war_bat": WAR_BATTING_URL, "war_pitch": WAR_PITCHING_URL}
+import pandas as pd
+from pybaseballdatana.utils import Singleton
 
 logger = logging.getLogger(__name__)
 
-class BaseballReferenceData:
-    def __init__(self, data_path=BBREF_DATA_PATH):
-        self.tables = BASEBALL_REFERENCE_TABLES
-        self.data_path = data_path
+class DataSource(Singleton):
+    SOURCE_DATA_PATH = None
+    SOURCE_TABLES = None
+    SOURCE_URLS = None
+
+    def __init__(self, data_path=None):
+        self.tables = self.SOURCE_TABLES
+        self.data_path = data_path or self.SOURCE_DATA_PATH
 
     def _locate_file(self, name):
         data_file = self.tables[name]
