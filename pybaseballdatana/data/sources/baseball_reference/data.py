@@ -17,12 +17,11 @@ BASEBALL_REFERENCE_URLS = {"war_bat": WAR_BATTING_URL, "war_pitch": WAR_PITCHING
 logger = logging.getLogger(__name__)
 
 class BaseballReferenceData:
-    def __init__(self, data_path=BBREF_DATA_PATH, update=False):
+    def __init__(self, data_path=BBREF_DATA_PATH):
         self.tables = BASEBALL_REFERENCE_TABLES
-        self.update = update
         self.data_path = data_path
 
-    def _locate_file(self, name, update=False):
+    def _locate_file(self, name):
         data_file = self.tables[name]
         full_path = str(self.data_path / data_file)
         logger.info("searching for file %s", full_path)
@@ -31,15 +30,11 @@ class BaseballReferenceData:
             return full_path
         elif os.path.exists(full_path + ".gz"):
             return full_path + ".gz"
-        elif update:
-            logger.info("updating file %s", full_path)
-            _update_file(BASEBALL_REFERENCE_URLS[name])
-            return self._locate_file(name, False)
         else:
             raise FileNotFoundError(f"Cannot find file {full_path}")
 
     def _load(self, name):
-        file_full_path = self._locate_file(name, self.update)
+        file_full_path = self._locate_file(name)
         return pd.read_csv(file_full_path)
 
     def __getattr__(self, name):

@@ -20,6 +20,9 @@ jobs:
           command: python -m pybaseballdatana.data.tools.update --data-source BaseballReference --make-dirs
           name: Update Baseball Reference
       - run:
+          command: python -m pybaseballdatana.data.tools.update --data-source Fangraphs --make-dirs
+          name: Update Fangraphs
+      - run:
           command: python -m pytest tests/
           name: Test
 

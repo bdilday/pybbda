@@ -1,9 +1,6 @@
 
 import logging
 
-
-from pybaseballdatana.utils.singleton import Singleton
-
 from . import FANGRAPHS_GUTS_CONSTANTS_URL
 from pybaseballdatana import PYBBDA_DATA_ROOT
 from pybaseballdatana.data.sources.data_source.base import DataSource

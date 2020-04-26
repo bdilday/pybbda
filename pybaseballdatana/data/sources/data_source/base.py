@@ -1,17 +1,23 @@
 
-import pandas as pd
+import os
 
-class DataSource:
+import logging
+
+import pandas as pd
+from pybaseballdatana.utils import Singleton
+
+logger = logging.getLogger(__name__)
+
+class DataSource(Singleton):
     SOURCE_DATA_PATH = None
     SOURCE_TABLES = None
     SOURCE_URLS = None
 
-    def __init__(self, data_path=SOURCE_DATA_PATH, update=False):
+    def __init__(self, data_path=None):
         self.tables = self.SOURCE_TABLES
-        self.update = update
-        self.data_path = data_path
+        self.data_path = data_path or self.SOURCE_DATA_PATH
 
-    def _locate_file(self, name, update=False):
+    def _locate_file(self, name):
         data_file = self.tables[name]
         full_path = str(self.data_path / data_file)
         logger.info("searching for file %s", full_path)
@@ -20,15 +26,11 @@ class DataSource:
             return full_path
         elif os.path.exists(full_path + ".gz"):
             return full_path + ".gz"
-        elif update:
-            logger.info("updating file %s", full_path)
-            _update_file(SOURCE_URLS[name])
-            return self._locate_file(name, False)
         else:
             raise FileNotFoundError(f"Cannot find file {full_path}")
 
     def _load(self, name):
-        file_full_path = self._locate_file(name, self.update)
+        file_full_path = self._locate_file(name)
         return pd.read_csv(file_full_path)
 
     def __getattr__(self, name):
