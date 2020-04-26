@@ -1,12 +1,15 @@
 import argparse
 import os
 import sys
+import logging
 import pathlib
-from pybaseballdatana import PYBBDA_DATA_ROOT
+from pybaseballdatana import PYBBDA_DATA_ROOT, PYBBDA_LOG_LEVEL
 
+from ..sources.lahman._update import _update as update_lahman
+from ..sources.baseball_reference._update import _update as update_bbref
 
-from .lahman._update import _update as update_lahman
-from .baseball_reference._update import _update as update_bbref
+logger = logging.getLogger(__name__)
+logger.setLevel(PYBBDA_LOG_LEVEL)
 
 
 def _parse_args():
@@ -34,19 +37,25 @@ def _parse_args():
 
 def update_source(data_root, data_source):
     if data_source == "Lahman":
-        update_lahman(os.path.join(data_root, data_source))
+        update_lahman(data_root)
     elif data_source == "BaseballReference":
-        update_bbref(os.path.join(data_root, data_source))
+        update_bbref(data_root)
 
 
-def create_dir_if_not_exist(data_root, data_source):
-    os.makedirs(os.path.join(data_root, data_source), exist_ok=True)
+def create_dir_if_not_exist(data_root):
+    os.makedirs(data_root, exist_ok=True)
 
 
 def main():
     args = _parse_args()
+
     if args.make_dirs:
-        create_dir_if_not_exist(args.data_root, args.data_source)
+        create_dir_if_not_exist(args.data_root)
+
+    if not os.path.exists(args.data_root):
+        logging.critical("The target path %s does not exist. You can create it or pass option --make-dirs to update to create it automatically", args.data_root)
+        raise ValueError(f"missing target path {args.data_root}. You can create it or pass option --make-dirs to update to create it automatically")
+
     update_source(args.data_root, args.data_source)
 
 

@@ -1,5 +1,4 @@
 from abc import ABC
-from pybaseballdatana.data import LahmanData
 
 import pandas as pd
 import numpy as np

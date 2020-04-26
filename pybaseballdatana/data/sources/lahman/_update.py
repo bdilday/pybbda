@@ -12,7 +12,7 @@ from pybaseballdatana import logger
 from ..lahman import LAHMAN_URL
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+
 
 def _download():
     logger.info("downloading file from %s", LAHMAN_URL)
@@ -22,18 +22,26 @@ def _download():
     return target
 
 
-def _extract(target, output_path=None):
-    output_path = (
-        output_path or pathlib.Path(__file__).parent.parent / "assets" / "Lahman"
-    )
-
-    if not os.path.isdir(output_path):
-        raise ValueError(f"Path {output_path} must be a directory")
+def _extract(target, output_root):
+    output_path = os.path.join(output_root, "Lahman")
+    os.makedirs(output_path, exist_ok=True)
     extracted_files = glob.glob(os.path.join(target, "**", "*csv"), recursive=True)
     for extracted_file in extracted_files:
         shutil.copy(extracted_file, output_path)
 
+def _validate_path(output_root):
+    output_root = (
+        output_root or pathlib.Path(__file__).parent.parent / "assets"
+    )
+    if not os.path.exists(output_root):
+        raise ValueError(f"Path {output_root} does not exist")
+    if not os.path.isdir(output_root):
+        raise ValueError(f"Path {output_root} must be a directory")
 
-def _update(output_path=None):
+def _update(output_root=None):
+    output_root = (
+        output_root or pathlib.Path(__file__).parent.parent / "assets"
+    )
+    _validate_path(output_root)
     target = _download()
-    _extract(target, output_path)
+    _extract(target, output_root)
