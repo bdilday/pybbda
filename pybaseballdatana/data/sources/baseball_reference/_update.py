@@ -18,13 +18,8 @@ def _download_csv(url):
     return list(it)
 
 
-def _save(lines, file_name, output_path=None):
-    output_path = (
-        output_path
-        or pathlib.Path(__file__).absolute().parent.parent
-        / "assets"
-        / "BaseballReference"
-    )
+def _save(lines, file_name, output_path):
+
     output_file_path = os.path.join(output_path, file_name)
     output_payload = "\n".join(str(line, "utf-8") for line in lines)
     logger.info("saving file to {}".format(output_file_path))
@@ -32,11 +27,28 @@ def _save(lines, file_name, output_path=None):
         fh.write(bytes(output_payload, encoding="utf-8"))
 
 
-def _update_file(url, output_path=None):
+def _update_file(url, output_root):
+    output_path = os.path.join(output_root, "BaseballReference")
+    os.makedirs(output_path, exist_ok=True)
     lines = _download_csv(url)
     _save(lines, os.path.basename(url) + ".gz", output_path)
 
+def _validate_path(output_root):
+    output_root = (
+        output_root or pathlib.Path(__file__).parent.parent.parent / "assets"
+    )
+    if not os.path.exists(output_root):
+        raise ValueError(f"Path {output_root} does not exist")
+    if not os.path.isdir(output_root):
+        raise ValueError(f"Path {output_root} must be a directory")
 
-def _update(output_path=None):
+def _update(output_root=None):
+    output_root = (
+            output_root
+            or pathlib.Path(__file__).absolute().parent.parent
+            / "assets"
+    )
+    logger.debug("output root is %s", output_root)
+    _validate_path(output_root)
     for url in [WAR_BATTING_URL, WAR_PITCHING_URL]:
-        _update_file(url, output_path)
+        _update_file(url, output_root)
