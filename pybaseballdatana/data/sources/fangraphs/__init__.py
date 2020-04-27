@@ -12,8 +12,8 @@ config = {
 }
 
 # https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=y&type=8&season=2016&month=0&season1=2016&ind=0
+#https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=y&type=c,-1,3,4,5,6,7,8,9,10&season=2015&month=0&season1=2015&ind=0&team=&rost=&age=&filter=&players=&page=1_100000
 
-https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=y&type=c,-1,3,4,5,6,7,8,9,10&season=2015&month=0&season1=2015&ind=0&team=&rost=&age=&filter=&players=&page=1_100000
 FANGRAPHS_LEADERBOARD_BATTING_URL = (
     r"http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg={league}"
     r"&qual={qual}"
