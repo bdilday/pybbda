@@ -11,6 +11,7 @@ from pybaseballdatana import logger
 
 from ..lahman import LAHMAN_URL
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,19 +30,17 @@ def _extract(target, output_root):
     for extracted_file in extracted_files:
         shutil.copy(extracted_file, output_path)
 
+
 def _validate_path(output_root):
-    output_root = (
-        output_root or pathlib.Path(__file__).parent.parent / "assets"
-    )
+    output_root = output_root or pathlib.Path(__file__).parent.parent / "assets"
     if not os.path.exists(output_root):
         raise ValueError(f"Path {output_root} does not exist")
     if not os.path.isdir(output_root):
         raise ValueError(f"Path {output_root} must be a directory")
 
+
 def _update(output_root=None):
-    output_root = (
-        output_root or pathlib.Path(__file__).parent.parent / "assets"
-    )
+    output_root = output_root or pathlib.Path(__file__).parent.parent / "assets"
     _validate_path(output_root)
     target = _download()
     _extract(target, output_root)

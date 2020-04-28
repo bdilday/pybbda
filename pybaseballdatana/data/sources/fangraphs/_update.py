@@ -4,7 +4,11 @@ import pathlib
 import logging
 import gzip
 
-from . import FANGRAPHS_GUTS_CONSTANTS_URL
+from . import (
+    FANGRAPHS_GUTS_CONSTANTS_URL,
+    FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
+    FANGRAPHS_LEADERBOARD_BATTING_URL_FORMAT,
+)
 from pybaseballdatana.utils.html_table import url_to_table_rows
 
 logger = logging.getLogger(__name__)
@@ -28,11 +32,16 @@ def _save(lines, file_name, output_path):
         fh.write(bytes(output_payload, encoding="utf-8"))
 
 
-def _update_file(url, output_root, output_filename=None):
+def _update_file(
+    url, output_root, output_filename=None, table_id=None, rows_filter=None
+):
     output_filename = output_filename or ".".join(os.path.basename(url), "gz")
     output_path = os.path.join(output_root, "Fangraphs")
     os.makedirs(output_path, exist_ok=True)
-    lines = url_to_table_rows(url, "GutsBoard1_dg1_ctl00")
+    lines = url_to_table_rows(url, table_id)
+    if rows_filter is not None:
+        lines = rows_filter(lines)
+
     _save(lines, output_filename, output_path)
 
 
@@ -50,4 +59,24 @@ def _update(output_root=None):
     )
     logger.debug("output root is %s", output_root)
     _validate_path(output_root)
-    _update_file(FANGRAPHS_GUTS_CONSTANTS_URL, output_root, "fg_guts_constants.csv.gz")
+    _update_file(
+        FANGRAPHS_GUTS_CONSTANTS_URL,
+        output_root,
+        "fg_guts_constants.csv.gz",
+        "GutsBoard1_dg1_ctl00",
+    )
+    for season in range(2018, 2019 + 1):
+        config = {
+            **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
+            "season_start": season,
+            "season_end": season,
+        }
+        logger.debug("config %s", config)
+        url = FANGRAPHS_LEADERBOARD_BATTING_URL_FORMAT.format(**config)
+        _update_file(
+            url,
+            output_root,
+            f"fg_batting_{season}.csv.gz",
+            "LeaderBoard1_dg1_ctl00",
+            rows_filter=lambda r: r[1:2] + r[3:],
+        )

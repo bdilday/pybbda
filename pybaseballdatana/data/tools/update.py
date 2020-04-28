@@ -14,6 +14,7 @@ logger.setLevel(PYBBDA_LOG_LEVEL)
 
 DATA_SOURCE_OPTIONS = ["Lahman", "BaseballReference", "Fangraphs"]
 
+
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -42,7 +43,7 @@ def update_source(data_root, data_source):
         update_lahman(data_root)
     elif data_source == "BaseballReference":
         update_bbref(data_root)
-    elif data_source=="Fangraphs":
+    elif data_source == "Fangraphs":
         update_fangraphs(data_root)
     else:
         raise ValueError(data_source)
@@ -59,10 +60,17 @@ def main():
         create_dir_if_not_exist(args.data_root)
 
     if not os.path.exists(args.data_root):
-        logging.critical("The target path %s does not exist. You can create it or pass option --make-dirs to update to create it automatically", args.data_root)
-        raise ValueError(f"missing target path {args.data_root}. You can create it or pass option --make-dirs to update to create it automatically")
+        logging.critical(
+            "The target path %s does not exist. You can create it or pass option --make-dirs to update to create it automatically",
+            args.data_root,
+        )
+        raise ValueError(
+            f"missing target path {args.data_root}. You can create it or pass option --make-dirs to update to create it automatically"
+        )
 
-    data_sources = DATA_SOURCE_OPTIONS if args.data_source == "all" else [args.data_source]
+    data_sources = (
+        DATA_SOURCE_OPTIONS if args.data_source == "all" else [args.data_source]
+    )
     for data_source in data_sources:
         update_source(args.data_root, data_source)
 
