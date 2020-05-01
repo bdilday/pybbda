@@ -30,4 +30,3 @@ FANGRAPHS_LEADERBOARD_URL_FORMAT = (
     r"&team=&rost=&age=&filter=&players="
     r"&page=1_{row_limit}"
 )
-

@@ -66,14 +66,14 @@ def _update(output_root=None):
         "GutsBoard1_dg1_ctl00",
     )
 
-    for max_col, stats in zip([304+1, 321+1], ["bat", "pit"]):
+    for max_col, stats in zip([304 + 1, 321 + 1], ["bat", "pit"]):
         for season in range(2018, 2019 + 1):
             config = {
                 **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
                 "season_start": season,
                 "season_end": season,
                 "stats": stats,
-                "columns": ",".join([str(i) for i in range(2, max_col)])
+                "columns": ",".join([str(i) for i in range(2, max_col)]),
             }
             logger.debug("config %s", config)
             url = FANGRAPHS_LEADERBOARD_URL_FORMAT.format(**config)
