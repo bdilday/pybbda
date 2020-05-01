@@ -7,7 +7,7 @@ import gzip
 from . import (
     FANGRAPHS_GUTS_CONSTANTS_URL,
     FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
-    FANGRAPHS_LEADERBOARD_BATTING_URL_FORMAT,
+    FANGRAPHS_LEADERBOARD_URL_FORMAT,
 )
 from pybaseballdatana.utils.html_table import url_to_table_rows
 
@@ -65,18 +65,22 @@ def _update(output_root=None):
         "fg_guts_constants.csv.gz",
         "GutsBoard1_dg1_ctl00",
     )
-    for season in range(2018, 2019 + 1):
-        config = {
-            **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
-            "season_start": season,
-            "season_end": season,
-        }
-        logger.debug("config %s", config)
-        url = FANGRAPHS_LEADERBOARD_BATTING_URL_FORMAT.format(**config)
-        _update_file(
-            url,
-            output_root,
-            f"fg_batting_{season}.csv.gz",
-            "LeaderBoard1_dg1_ctl00",
-            rows_filter=lambda r: r[1:2] + r[3:],
-        )
+
+    for max_col, stats in zip([304+1, 321+1], ["bat", "pit"]):
+        for season in range(2018, 2019 + 1):
+            config = {
+                **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
+                "season_start": season,
+                "season_end": season,
+                "stats": stats,
+                "columns": ",".join([str(i) for i in range(2, max_col)])
+            }
+            logger.debug("config %s", config)
+            url = FANGRAPHS_LEADERBOARD_URL_FORMAT.format(**config)
+            _update_file(
+                url,
+                output_root,
+                f"fg_{stats}_{season}.csv.gz",
+                "LeaderBoard1_dg1_ctl00",
+                rows_filter=lambda r: r[1:2] + r[3:],
+            )

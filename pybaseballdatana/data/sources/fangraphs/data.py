@@ -8,8 +8,10 @@ FANGRAPHS_DATA_PATH = PYBBDA_DATA_ROOT / "Fangraphs"
 
 FANGRAPHS_TABLES = {
     "fg_guts_constants": "fg_guts_constants.csv",
-    "fg_batting_2018": "fg_batting_2018.csv",
-    "fg_batting_2019": "fg_batting_2019.csv",
+    "fg_batting_2018": "fg_bat_2018.csv",
+    "fg_batting_2019": "fg_bat_2019.csv",
+    "fg_pitching_2018": "fg_pit_2018.csv",
+    "fg_pitching_2019": "fg_pit_2019.csv",
 }
 FANGRAPHS_URLS = {"fg_guts_constants": FANGRAPHS_GUTS_CONSTANTS_URL}
 
