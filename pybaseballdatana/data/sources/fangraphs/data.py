@@ -6,13 +6,15 @@ from pybaseballdatana.data.sources.data_source.base import DataSource
 
 FANGRAPHS_DATA_PATH = PYBBDA_DATA_ROOT / "Fangraphs"
 
-FANGRAPHS_TABLES = {
-    "fg_guts_constants": "fg_guts_constants.csv",
-    "fg_batting_2018": "fg_bat_2018.csv",
-    "fg_batting_2019": "fg_bat_2019.csv",
-    "fg_pitching_2018": "fg_pit_2018.csv",
-    "fg_pitching_2019": "fg_pit_2019.csv",
-}
+FANGRAPHS_TABLES = {"fg_guts_constants": "fg_guts_constants.csv"}
+FANGRAPHS_TABLES.update(
+    {f"fg_batting_{season}": f"fg_batt_{season}.csv" for season in range(1871, 2020)}
+)
+
+FANGRAPHS_TABLES.update(
+    {f"fg_pitching_{season}": f"fg_pit_{season}.csv" for season in range(1871, 2020)}
+)
+
 FANGRAPHS_URLS = {"fg_guts_constants": FANGRAPHS_GUTS_CONSTANTS_URL}
 
 logger = logging.getLogger(__name__)

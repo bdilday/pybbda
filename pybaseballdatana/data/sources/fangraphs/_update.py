@@ -3,6 +3,10 @@ import requests
 import pathlib
 import logging
 import gzip
+import multiprocessing
+import itertools
+import concurrent.futures
+
 
 from . import (
     FANGRAPHS_GUTS_CONSTANTS_URL,
@@ -33,11 +37,24 @@ def _save(lines, file_name, output_path):
 
 
 def _update_file(
-    url, output_root, output_filename=None, table_id=None, rows_filter=None
+    url,
+    output_root,
+    output_filename=None,
+    table_id=None,
+    rows_filter=None,
+    overwrite=False,
 ):
     output_filename = output_filename or ".".join(os.path.basename(url), "gz")
     output_path = os.path.join(output_root, "Fangraphs")
     os.makedirs(output_path, exist_ok=True)
+
+    output_file_path = os.path.join(output_path, output_filename)
+    if os.path.exists(output_file_path):
+        if not overwrite:
+            logger.info("file %s exists, not overwriting", output_file_path)
+            return
+            logger.warning("file %s exists, but overwriting", output_file_path)
+
     lines = url_to_table_rows(url, table_id)
     if rows_filter is not None:
         lines = rows_filter(lines)
@@ -53,7 +70,39 @@ def _validate_path(output_root):
         raise ValueError(f"Path {output_root} must be a directory")
 
 
-def _update(output_root=None):
+stat_columns = {
+    "bat": ",".join([str(i) for i in range(2, 305)]),
+    "pit": ",".join([str(i) for i in range(2, 322)]),
+}
+
+
+def _pool_do_update(overwrite=False, season_stats=None):
+    season, stats, output_root = season_stats
+    config = {
+        **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
+        "season_start": season,
+        "season_end": season,
+        "stats": stats,
+        "columns": stat_columns[stats],
+    }
+    logger.debug("config %s", config)
+    url = FANGRAPHS_LEADERBOARD_URL_FORMAT.format(**config)
+    _update_file(
+        url,
+        output_root,
+        f"fg_{stats}_{season}.csv.gz",
+        "LeaderBoard1_dg1_ctl00",
+        rows_filter=lambda r: r[1:2] + r[3:],
+        overwrite=overwrite,
+    )
+
+
+from functools import partial
+
+
+def _update(
+    output_root=None, min_year=1871, max_year=2019, num_threads=2, overwrite=False
+):
     output_root = (
         output_root or pathlib.Path(__file__).absolute().parent.parent / "assets"
     )
@@ -66,21 +115,12 @@ def _update(output_root=None):
         "GutsBoard1_dg1_ctl00",
     )
 
-    for max_col, stats in zip([304 + 1, 321 + 1], ["bat", "pit"]):
-        for season in range(2018, 2019 + 1):
-            config = {
-                **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
-                "season_start": season,
-                "season_end": season,
-                "stats": stats,
-                "columns": ",".join([str(i) for i in range(2, max_col)]),
-            }
-            logger.debug("config %s", config)
-            url = FANGRAPHS_LEADERBOARD_URL_FORMAT.format(**config)
-            _update_file(
-                url,
-                output_root,
-                f"fg_{stats}_{season}.csv.gz",
-                "LeaderBoard1_dg1_ctl00",
-                rows_filter=lambda r: r[1:2] + r[3:],
-            )
+    seasons = range(min_year, max_year + 1)
+    stat_names = ["bat", "pit"]
+
+    season_stats_it = itertools.product(seasons, stat_names, [output_root])
+    func = partial(_pool_do_update, overwrite)
+    logger.debug("Starting downloads with %d threads", num_threads)
+    #with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as mp:
+    with multiprocessing.Pool(num_threads) as mp:
+        mp.map(func, season_stats_it)

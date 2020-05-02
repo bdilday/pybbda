@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(PYBBDA_LOG_LEVEL)
 
 DATA_SOURCE_OPTIONS = ["Lahman", "BaseballReference", "Fangraphs"]
-
+NUM_THREADS = 1
 
 def _parse_args():
     parser = argparse.ArgumentParser()
@@ -35,16 +35,46 @@ def _parse_args():
         action="store_true",
         help="Make root dir if does not exist",
     )
+    parser.add_argument(
+        "--overwrite",
+        required=False,
+        action="store_true",
+        help="Overwrite files if they exist",
+    )
+    parser.add_argument(
+        "--min-year",
+        required=False,
+        type=int,
+        default=2018,
+        help="Min year to download",
+    )
+    parser.add_argument(
+        "--max-year",
+        required=False,
+        type=int,
+        default=2019,
+        help="Mix year to download",
+    )
+    parser.add_argument(
+        "--num-threads",
+        required=False,
+        type=int,
+        default=NUM_THREADS,
+        help="Mix year to download",
+    )
+
+
     return parser.parse_args(sys.argv[1:])
 
 
-def update_source(data_root, data_source):
+def update_source(data_root, data_source, min_year, max_year, num_threads, overwrite):
     if data_source == "Lahman":
         update_lahman(data_root)
     elif data_source == "BaseballReference":
         update_bbref(data_root)
     elif data_source == "Fangraphs":
-        update_fangraphs(data_root)
+        update_fangraphs(data_root, min_year=min_year, max_year=max_year,
+                         num_threads=num_threads, overwrite=overwrite)
     else:
         raise ValueError(data_source)
 
@@ -71,8 +101,9 @@ def main():
     data_sources = (
         DATA_SOURCE_OPTIONS if args.data_source == "all" else [args.data_source]
     )
+
     for data_source in data_sources:
-        update_source(args.data_root, data_source)
+        update_source(args.data_root, data_source, args.min_year, args.max_year, args.num_threads, args.overwrite)
 
 
 if __name__ == "__main__":
