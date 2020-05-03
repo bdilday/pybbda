@@ -8,7 +8,7 @@ FANGRAPHS_DATA_PATH = PYBBDA_DATA_ROOT / "Fangraphs"
 
 FANGRAPHS_TABLES = {"fg_guts_constants": "fg_guts_constants.csv"}
 FANGRAPHS_TABLES.update(
-    {f"fg_batting_{season}": f"fg_batt_{season}.csv" for season in range(1871, 2020)}
+    {f"fg_batting_{season}": f"fg_bat_{season}.csv" for season in range(1871, 2020)}
 )
 
 FANGRAPHS_TABLES.update(

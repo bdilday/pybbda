@@ -3,10 +3,10 @@ import requests
 import pathlib
 import logging
 import gzip
-import multiprocessing
 import itertools
 import concurrent.futures
-
+from functools import partial
+import multiprocessing
 
 from . import (
     FANGRAPHS_GUTS_CONSTANTS_URL,
@@ -97,7 +97,6 @@ def _pool_do_update(overwrite=False, season_stats=None):
     )
 
 
-from functools import partial
 
 
 def _update(
@@ -121,6 +120,6 @@ def _update(
     season_stats_it = itertools.product(seasons, stat_names, [output_root])
     func = partial(_pool_do_update, overwrite)
     logger.debug("Starting downloads with %d threads", num_threads)
-    #with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as mp:
     with multiprocessing.Pool(num_threads) as mp:
+    #with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as mp:
         mp.map(func, season_stats_it)
