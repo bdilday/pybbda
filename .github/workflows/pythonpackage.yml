@@ -26,7 +26,7 @@ jobs:
       run: |
         python -m pybaseballdatana.data.tools.update --data-source Lahman --make-dirs
         python -m pybaseballdatana.data.tools.update --data-source BaseballReference --make-dirs
-        python -m pybaseballdatana.data.tools.update --data-source Fangraphs --make-dirs
+        python -m pybaseballdatana.data.tools.update --data-source Fangraphs --make-dirs --min-year 2019 --max-year 2019 --num-threads 2
     - name: Lint with flake8
       run: |
         pip install flake8

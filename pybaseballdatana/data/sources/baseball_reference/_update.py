@@ -8,6 +8,7 @@ from . import WAR_BATTING_URL, WAR_PITCHING_URL
 
 logger = logging.getLogger(__name__)
 
+
 def _download_csv(url):
     logger.info("downloading file from {}".format(url))
     response = requests.get(url, stream=True)
@@ -33,20 +34,18 @@ def _update_file(url, output_root):
     lines = _download_csv(url)
     _save(lines, os.path.basename(url) + ".gz", output_path)
 
+
 def _validate_path(output_root):
-    output_root = (
-        output_root or pathlib.Path(__file__).parent.parent.parent / "assets"
-    )
+    output_root = output_root or pathlib.Path(__file__).parent.parent.parent / "assets"
     if not os.path.exists(output_root):
         raise ValueError(f"Path {output_root} does not exist")
     if not os.path.isdir(output_root):
         raise ValueError(f"Path {output_root} must be a directory")
 
+
 def _update(output_root=None):
     output_root = (
-            output_root
-            or pathlib.Path(__file__).absolute().parent.parent
-            / "assets"
+        output_root or pathlib.Path(__file__).absolute().parent.parent / "assets"
     )
     logger.debug("output root is %s", output_root)
     _validate_path(output_root)

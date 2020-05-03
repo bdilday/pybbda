@@ -16,6 +16,7 @@ BASEBALL_REFERENCE_URLS = {"war_bat": WAR_BATTING_URL, "war_pitch": WAR_PITCHING
 
 logger = logging.getLogger(__name__)
 
+
 class BaseballReferenceData:
     def __init__(self, data_path=BBREF_DATA_PATH):
         self.tables = BASEBALL_REFERENCE_TABLES

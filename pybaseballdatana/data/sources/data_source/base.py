@@ -1,4 +1,3 @@
-
 import os
 
 import logging
@@ -7,6 +6,7 @@ import pandas as pd
 from pybaseballdatana.utils import Singleton
 
 logger = logging.getLogger(__name__)
+
 
 class DataSource(Singleton):
     SOURCE_DATA_PATH = None

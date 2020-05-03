@@ -1,4 +1,3 @@
-
 import re
 import os
 import logging
@@ -12,6 +11,7 @@ from pybaseballdatana.utils.singleton import Singleton
 LAHMAN_DATA_PATH = PYBBDA_DATA_ROOT / "Lahman"
 
 logger = logging.getLogger(__name__)
+
 
 class LahmanData(Singleton):
     def __init__(self, data_path=LAHMAN_DATA_PATH):
@@ -47,4 +47,3 @@ class LahmanData(Singleton):
             return self.__dict__[name]
         except FileNotFoundError:
             raise AttributeError
-
