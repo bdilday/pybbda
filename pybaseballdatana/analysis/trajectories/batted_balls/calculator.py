@@ -1,16 +1,15 @@
 import attr
+from functools import partial
 from scipy.integrate import RK45
 import numpy as np
 import pandas as pd
-from .utils import check_greater_zero, check_between_zero_one
+from .utils import check_between_zero_one, cos_in_degrees, sin_in_degrees
 
-from .utils import compute_pars, s_fun, cd_fun, cl_fun
 from .parameters import (
     BattedBallConstants,
     DragForceCoefficients,
     LiftForceCoefficients,
     EnvironmentalParameters,
-    UnitConversions,
 )
 
 
@@ -24,53 +23,88 @@ class BattedBallTrajectory:
     drag_strength = attr.ib(default=1, validator=check_between_zero_one)
     magnus_strength = attr.ib(default=1, validator=check_between_zero_one)
     batted_ball_constants = attr.ib(default=BattedBallConstants())
+    drag_force_coefs = attr.ib(default=DragForceCoefficients())
+    lift_force_coefs = attr.ib(default=LiftForceCoefficients())
+    env_parameters = attr.ib(default=EnvironmentalParameters())
 
     def __attrs_post_init__(self):
         self.initial_position = np.array((self.x0, self.y0, self.z0))
         self.pi_30 = np.pi / 30
+        self.c0 = (
+            0.07182
+            * self.env_parameters.air_density
+            * self.env_parameters.unit_conversions.kgm3_to_lbft3
+            * (5.125 / self.batted_ball_constants.mass)
+            * (self.batted_ball_constants.circumference / 9.125) ** 2
+        )
 
     #  self.initial_position
+
+    def omega_fun(self, t, spin):
+        return spin * np.pi / 30
+
+    def s_fun(self, t, vw, spin):
+        omega = self.omega_fun(t, spin)
+        romega = self.batted_ball_constants.circumference * omega / (24 * np.pi)
+        return (romega / vw) * np.exp(-t * vw / (self.lift_force_coefs.tau * 146.7))
+
+    def cl_fun(self, t, vw, spin):
+        s = self.s_fun(t, vw, spin)
+        return (
+            self.lift_force_coefs.cl2
+            * s
+            / (self.lift_force_coefs.cl0 + self.lift_force_coefs.cl1 * s)
+        )
+
+    def cd_fun(self, t, vw, spin):
+        return self.drag_force_coefs.cd0 + self.drag_force_coefs.cdspin * (
+            spin * 1e-3
+        ) * np.exp(-t * vw / (self.lift_force_coefs.tau * 146.7))
 
     def get_trajectory(
         self,
         initial_speed,
-        initial_spin,
         launch_angle,
         launch_direction_angle,
+        initial_spin,
+        spin_angle,
         delta_time=0.01,
     ):
-        self.pars["launch_angle"] = launch_angle
-        self.pars["launch_phi"] = launch_direction_angle
-        self.pars = compute_pars(self.pars)
-
-        phi = self.pars["launch_phi"]
-        theta = self.pars["launch_angle"]
-
-        self.pars["phi_rad"] = self.pars["launch_phi"] * np.pi / 180
-        self.pars["theta_rad"] = self.pars["launch_angle"] * np.pi / 180
 
         initial_velocity = (
             initial_speed
-            * self.pars["mph_to_fts"]
+            * self.env_parameters.unit_conversions.mph_to_fts
             * np.array(
                 [
-                    np.cos(self.pars["theta_rad"]) * np.sin(self.pars["phi_rad"]),
-                    np.cos(self.pars["theta_rad"]) * np.cos(self.pars["phi_rad"]),
-                    np.sin(self.pars["theta_rad"]),
+                    cos_in_degrees(launch_angle)
+                    * sin_in_degrees(launch_direction_angle),
+                    cos_in_degrees(launch_angle)
+                    * cos_in_degrees(launch_direction_angle),
+                    sin_in_degrees(launch_angle),
                 ]
             )
         )
 
+        initial_conditions = np.concatenate(
+            (self.initial_position, initial_velocity), axis=0
+        )
+
         rk_solution = RK45(
-            self.trajectory_fun,
+            partial(
+                self.trajectory_fun,
+                launch_angle=launch_angle,
+                launch_direction_angle=launch_direction_angle,
+                spin=initial_spin,
+                spin_angle=spin_angle,
+            ),
             0,
-            np.concatenate((self.initial_position, initial_velocity), axis=0),
+            initial_conditions,
             t_bound=1000,
             max_step=delta_time,
         )
         ans = []
-        z = xc[2]
-        while z > 0:
+        z = self.initial_position[2]
+        while z >= 0:
             rk_solution.step()
             res = rk_solution.y
             z = res[2]
@@ -79,41 +113,55 @@ class BattedBallTrajectory:
         result_df.columns = ["t", "x", "y", "z", "vx", "vy", "vz"]
         return result_df
 
-    def trajectory_fun(self, t, trajectory_vars):
+    def trajectory_fun(
+        self,
+        t,
+        trajectory_vars,
+        spin=2500,
+        spin_angle=0,
+        launch_angle=0,
+        launch_direction_angle=0,
+    ):
         # trajectory_vars = x, y, z, vx, vy, vz
         _, _, _, vx, vy, vz = trajectory_vars
         v = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)
 
-        wb = self.pars["backspin"]
-        ws = self.pars["sidespin"]
+        sidespin = spin * sin_in_degrees(spin_angle)
+        backspin = spin * cos_in_degrees(spin_angle)
+
+        wb = backspin
+        ws = sidespin
 
         wx = (
             (
-                wb * np.cos(self.pars["phi_rad"])
-                - ws * np.sin(self.pars["theta_rad"]) * np.sin(self.pars["phi_rad"])
+                wb * cos_in_degrees(launch_direction_angle)
+                - ws
+                * sin_in_degrees(launch_angle)
+                * sin_in_degrees(launch_direction_angle)
             )
             * np.pi
             / 30
         )
         wy = (
             (
-                -wb * np.sin(self.pars["phi_rad"])
-                - ws * np.sin(self.pars["theta_rad"]) * np.cos(self.pars["phi_rad"])
+                -wb * sin_in_degrees(launch_direction_angle)
+                - ws
+                * sin_in_degrees(launch_angle)
+                * cos_in_degrees(launch_direction_angle)
             )
             * np.pi
             / 30
         )
-        wz = (ws * np.cos(self.pars["theta_rad"])) * np.pi / 30
+        wz = ws * cos_in_degrees(launch_angle) * np.pi / 30
 
-        cd = cd_fun(t, v, self.pars)
-        cl = cl_fun(t, v, self.pars)
-        s = s_fun(t, v, self.pars)
+        cd = self.cd_fun(t, v, spin)
+        cl = self.cl_fun(t, v, spin)
 
-        magnus_const = self.pars["c0"] * cl / self.pars["omega"] * v
-        magnus_const = magnus_const * self.pars["magnus_strength"]
+        magnus_const = self.c0 * cl / self.omega_fun(t, spin) * v
+        magnus_const *= self.magnus_strength
 
-        drag_const = self.pars["c0"] * cd * v
-        drag_const = self.pars["drag_strength"] * drag_const
+        drag_const = self.c0 * cd * v
+        drag_const *= self.drag_strength
         fx = -drag_const * vx + magnus_const * (wy * vz - wz * vy)
 
         fy = -drag_const * vy + magnus_const * (-wx * vz + wz * vx)
@@ -121,7 +169,7 @@ class BattedBallTrajectory:
         fz = (
             -drag_const * vz
             + magnus_const * (wx * vy - wy * vx)
-            - self.pars["g_gravity"]
+            - self.env_parameters.g_gravity
         )
 
         gx = vx
