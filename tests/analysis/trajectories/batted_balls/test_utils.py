@@ -5,6 +5,7 @@ from pybaseballdatana.analysis.trajectories.batted_balls.utils import (
 from math import sqrt
 import pytest
 
+
 def test_trig_utils():
     deg = 1
     assert cos_in_degrees(deg) ** 2 + sin_in_degrees(deg) ** 2 == 1

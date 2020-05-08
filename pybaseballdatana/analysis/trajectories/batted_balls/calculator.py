@@ -38,8 +38,6 @@ class BattedBallTrajectory:
             * (self.batted_ball_constants.circumference / 9.125) ** 2
         )
 
-    #  self.initial_position
-
     def omega_fun(self, t, spin):
         return spin * np.pi / 30
 

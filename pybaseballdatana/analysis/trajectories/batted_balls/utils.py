@@ -22,4 +22,3 @@ def check_between_zero_one(instance, attribute, value):
         raise ValueError(
             "{} must be between zero and one, not {}".format(attribute, value)
         )
-
