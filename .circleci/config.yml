@@ -10,9 +10,8 @@ jobs:
       - checkout
       - python/load-cache
       - run:
-          command: apk add --update-cache --no-cache libgcc libquadmath musl \
-          && apk add --update-cache --no-cache libgfortran \
-          && apk add --update-cache --no-cache lapack-dev
+          command: sudo apt-get install libopenblas-dev libblas-dev liblapack-dev gfortran
+          name: Install Lapack
       - python/install-deps
       - run:
           command: pip install --user -r requirements-dev.txt
