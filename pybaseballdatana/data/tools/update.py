@@ -15,6 +15,7 @@ logger.setLevel(PYBBDA_LOG_LEVEL)
 DATA_SOURCE_OPTIONS = ["Lahman", "BaseballReference", "Fangraphs"]
 NUM_THREADS = 1
 
+
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -63,7 +64,6 @@ def _parse_args():
         help="Mix year to download",
     )
 
-
     return parser.parse_args(sys.argv[1:])
 
 
@@ -73,8 +73,13 @@ def update_source(data_root, data_source, min_year, max_year, num_threads, overw
     elif data_source == "BaseballReference":
         update_bbref(data_root)
     elif data_source == "Fangraphs":
-        update_fangraphs(data_root, min_year=min_year, max_year=max_year,
-                         num_threads=num_threads, overwrite=overwrite)
+        update_fangraphs(
+            data_root,
+            min_year=min_year,
+            max_year=max_year,
+            num_threads=num_threads,
+            overwrite=overwrite,
+        )
     else:
         raise ValueError(data_source)
 
@@ -103,7 +108,14 @@ def main():
     )
 
     for data_source in data_sources:
-        update_source(args.data_root, data_source, args.min_year, args.max_year, args.num_threads, args.overwrite)
+        update_source(
+            args.data_root,
+            data_source,
+            args.min_year,
+            args.max_year,
+            args.num_threads,
+            args.overwrite,
+        )
 
 
 if __name__ == "__main__":

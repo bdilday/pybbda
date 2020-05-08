@@ -97,8 +97,6 @@ def _pool_do_update(overwrite=False, season_stats=None):
     )
 
 
-
-
 def _update(
     output_root=None, min_year=1871, max_year=2019, num_threads=2, overwrite=False
 ):
@@ -121,5 +119,5 @@ def _update(
     func = partial(_pool_do_update, overwrite)
     logger.debug("Starting downloads with %d threads", num_threads)
     with multiprocessing.Pool(num_threads) as mp:
-    #with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as mp:
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as mp:
         mp.map(func, season_stats_it)
