@@ -23,10 +23,3 @@ def check_between_zero_one(instance, attribute, value):
             "{} must be between zero and one, not {}".format(attribute, value)
         )
 
-
-def compute_pars(pars):
-
-    pars["sidespin"] = pars["spin"] * np.sin(pars["spin_phi"] * np.pi / 180)
-    pars["backspin"] = pars["spin"] * np.cos(pars["spin_phi"] * np.pi / 180)
-
-    return pars
