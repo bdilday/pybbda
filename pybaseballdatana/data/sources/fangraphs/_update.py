@@ -8,7 +8,7 @@ import concurrent.futures
 from functools import partial
 import multiprocessing
 
-from . import (
+from .constants import (
     FANGRAPHS_GUTS_CONSTANTS_URL,
     FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
     FANGRAPHS_LEADERBOARD_URL_FORMAT,
