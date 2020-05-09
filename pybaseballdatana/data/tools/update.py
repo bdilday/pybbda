@@ -54,14 +54,14 @@ def _parse_args():
         required=False,
         type=int,
         default=2019,
-        help="Mix year to download",
+        help="Max year to download",
     )
     parser.add_argument(
         "--num-threads",
         required=False,
         type=int,
         default=NUM_THREADS,
-        help="Mix year to download",
+        help="Number of threads to use for downloads",
     )
 
     return parser.parse_args(sys.argv[1:])
