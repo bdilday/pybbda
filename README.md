@@ -54,7 +54,7 @@ You can install directly from the repo using
 
 or download the source,
 
-```python
+```bash
 $ git clone git@github.com:bdilday/pybbda.git
 $ cd pybbda
 $ pip install -e .
@@ -66,13 +66,13 @@ This package explicitly
 supports `Python 3.6` and`Python 3.7`. It aims
 to support `Python 3.8` but this is not guaranteed.
 It explicitly *does not* support any versions 
-prior to `Python3.6`, including`Python 2.7`.
+prior to `Python 3.6`, including`Python 2.7`.
 
 
 ### Package vs module name
 
-In the tradition of `scikit-learn`, the `pybbda`package
-provides a module `pybaseballdatana`. This means imports work in
+In the tradition of `scikit-learn`, the `pybbda` *package*
+provides a *module* `pybaseballdatana`. This means imports work in
 the following way,
 
 ```python
@@ -89,7 +89,7 @@ The package uses the following environment variables
 * `PYBBDA_DATA_ROOT` 
 
 The root directory for storing data 
-(See `Installing data`). Defaults to `${INSTALLATION_ROOT}/data/assets` 
+(See [Installing data](#Installing-data)). Defaults to `${INSTALLATION_ROOT}/data/assets` 
 where `${INSTALLATION_ROOT}` is the path the the `pybbda` installation. 
 The code location is typically a path to the `Python` installation
 plus `site-packages/pybaseballdatana`. 
@@ -120,7 +120,7 @@ sub-module.
 
 Example, 
 
-```python
+```bash
 $ python -m pybaseballdatana.data.tools.update -h
 usage: update.py [-h] [--data-root DATA_ROOT] --data-source
                  {Lahman,BaseballReference,Fangraphs,all} [--make-dirs]
