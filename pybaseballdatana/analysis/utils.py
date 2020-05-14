@@ -10,6 +10,11 @@ cos_in_degrees = partial(_trig_in_degrees, np.cos)
 sin_in_degrees = partial(_trig_in_degrees, np.sin)
 
 
+def check_is_zero_one(instance, attribute, value):
+    if value not in [0, 1]:
+        raise ValueError("{} must be either 0 or 1, not {}".format(attribute, value))
+
+
 def check_greater_zero(instance, attribute, value):
     if value <= 0:
         raise ValueError(
