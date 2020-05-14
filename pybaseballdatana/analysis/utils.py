@@ -22,3 +22,12 @@ def check_between_zero_one(instance, attribute, value):
         raise ValueError(
             "{} must be between zero and one, not {}".format(attribute, value)
         )
+
+
+def check_len(instance, attribute, value, len_constraint=-1):
+    if len(value) != len_constraint:
+        raise ValueError(
+            "length of {} must be {}, not {}".format(
+                attribute, len_constraint, len(value)
+            )
+        )

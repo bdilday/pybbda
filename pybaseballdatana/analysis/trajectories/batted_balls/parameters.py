@@ -1,6 +1,6 @@
 import attr
 import numpy as np
-from .utils import check_greater_zero
+from pybaseballdatana.analysis.utils import check_greater_zero
 from pybaseballdatana.utils import Singleton
 
 
