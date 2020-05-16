@@ -1,8 +1,7 @@
-import numpy as np
 from pybaseballdatana.analysis.trajectories.batted_balls.calculator import (
     BattedBallTrajectory,
 )
-from pybaseballdatana.analysis.trajectories.batted_balls.utils import sin_in_degrees
+from pybaseballdatana.analysis.utils import sin_in_degrees
 import pytest
 
 

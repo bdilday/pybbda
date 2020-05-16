@@ -1,7 +1,4 @@
-from pybaseballdatana.analysis.trajectories.batted_balls.utils import (
-    cos_in_degrees,
-    sin_in_degrees,
-)
+from pybaseballdatana.analysis.utils import cos_in_degrees, sin_in_degrees
 from math import sqrt
 import pytest
 

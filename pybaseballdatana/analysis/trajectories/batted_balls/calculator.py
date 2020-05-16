@@ -3,7 +3,11 @@ from functools import partial
 from scipy.integrate import RK45
 import numpy as np
 import pandas as pd
-from .utils import check_between_zero_one, cos_in_degrees, sin_in_degrees
+from pybaseballdatana.analysis.utils import (
+    check_between_zero_one,
+    cos_in_degrees,
+    sin_in_degrees,
+)
 
 from .parameters import (
     BattedBallConstants,
