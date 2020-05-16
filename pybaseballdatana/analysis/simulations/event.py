@@ -3,6 +3,7 @@ from enum import Enum
 from pybaseballdatana.analysis.utils import check_between_zero_one
 
 _DEFAULT_BATTING_EVENT_PROBS = (0, 0, 0, 0, 0)
+_DEFAULT_RUNNING_EVENT_PROBS = (0, 0, 0, 0)
 
 
 class BattingEvent(Enum):
@@ -14,8 +15,26 @@ class BattingEvent(Enum):
     OUT = 5
 
 
+class FirstBaseRunningEvent(Enum):
+    DEFAULT = 0
+    FIRST_TO_SECOND = 1
+    FIRST_TO_THIRD = 2
+    FIRST_TO_HOME = 3
+
+
+class SecondBaseRunningEvent(Enum):
+    DEFAULT = 0
+    SECOND_TO_THIRD = 1
+    SECOND_TO_HOME = 2
+
+
+class ThirdBaseRunningEvent(Enum):
+    DEFAULT = 0
+    THIRD_TO_HOME = 1
+
+
 @attr.s(frozen=True)
-class EventProbability:
+class BattingEventProbability:
     base_on_balls = attr.ib(type=float, validator=check_between_zero_one)
     single = attr.ib(type=float, validator=check_between_zero_one)
     double = attr.ib(type=float, validator=check_between_zero_one)
@@ -34,3 +53,11 @@ class EventProbability:
             )
         # https://www.attrs.org/en/stable/init.html#post-init-hook
         object.__setattr__(self, "out", 1 - partial_sum)
+
+
+@attr.s(frozen=True)
+class RunEventProbability:
+    first_to_third_on_single = attr.ib(type=float, validator=check_between_zero_one)
+    first_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
+    first_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
+    second_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
