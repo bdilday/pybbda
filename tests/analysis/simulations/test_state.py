@@ -1,4 +1,9 @@
-from pybaseballdatana.analysis.simulations.state import BaseState, BaseOutState
+from pybaseballdatana.analysis.simulations.state import (
+    BaseState,
+    BaseOutState,
+    GameState,
+)
+from pybaseballdatana.analysis.simulations.player import Batter
 import pytest
 
 
@@ -23,7 +28,9 @@ def test_bases_fail():
 
 def test_base_outs():
     base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
-    base_outs2 = BaseOutState(BaseState(0, 0, 1), 0)
+    base_outs2 = BaseOutState(
+        BaseState(first_base=0, second_base=0, third_base=1), outs=0
+    )
 
 
 @pytest.mark.parametrize(
@@ -41,3 +48,7 @@ def test_base_out_runs(initial_state, end_state, expected_runs):
     bo2 = BaseOutState(BaseState(*end_state[0:3]), end_state[3])
     runs = BaseOutState.runs_scored(bo1, bo2)
     assert runs == expected_runs
+
+
+def test_game_state():
+    GameState(BaseOutState(BaseState(1, 1, 1), 0), Batter(player_id="abc123"))

@@ -35,3 +35,9 @@ class BaseOutState:
 @attr.s
 class Lineup:
     lineup = attr.ib(List[Batter], validator=partial(check_len, len_constraint=9))
+
+
+@attr.s
+class GameState:
+    base_out_state = attr.ib(type=BaseOutState)
+    batter = attr.ib(type=Batter)
