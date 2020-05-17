@@ -1,7 +1,8 @@
 from functools import partial
 import itertools
 
-from pybaseballdatana.analysis.simulations.state import (
+from pybaseballdatana.analysis.simulations.components.event import ALL_EVENTS
+from pybaseballdatana.analysis.simulations.components.state import (
     BaseState,
     BaseOutState,
     GameState,
@@ -11,8 +12,6 @@ from pybaseballdatana.analysis.simulations.state import (
     ThirdBaseRunningEvent,
 )
 
-
-from pybaseballdatana.analysis.simulations.player import Batter
 import pytest
 
 
@@ -117,6 +116,11 @@ def test_get_running_events():
     )
 
 
+def test_all_events(all_base_out_states):
+    for state, event in itertools.product(all_base_out_states, ALL_EVENTS):
+        _ = state.evolve(*event)
+
+
 def test_base_outs_evolve_out(all_base_out_states):
     for state in all_base_out_states:
         new_state = state.evolve(BattingEvent.OUT)
@@ -134,13 +138,13 @@ def test_base_outs_evolve_base_on_balls(all_base_out_states):
     assert base_outs2.base_state == BaseState(1, 0, 1)
     assert base_outs2.outs == base_outs1.outs
 
+
 # TODO: full test coverage
 def test_base_outs_evolve_single(all_base_out_states):
     for state in all_base_out_states:
         new_state = state.evolve(BattingEvent.SINGLE)
         assert new_state.base_state.first_base == 1
         assert new_state.outs == state.outs
-
 
     base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
     base_outs2 = base_outs1.evolve(BattingEvent.SINGLE)
@@ -166,6 +170,7 @@ def test_base_outs_evolve_single(all_base_out_states):
             BattingEvent.SINGLE,
             first_base_running_event=FirstBaseRunningEvent.FIRST_TO_THIRD,
         )
+
 
 # TODO: full test coverage
 def test_base_outs_evolve_double(all_base_out_states):

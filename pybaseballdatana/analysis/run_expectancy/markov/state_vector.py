@@ -1,6 +1,6 @@
 import attr
 from typing import List
-from pybaseballdatana.analysis.simulations.state import GameState
+from pybaseballdatana.analysis.simulations.components.state import GameState
 
 
 @attr.s

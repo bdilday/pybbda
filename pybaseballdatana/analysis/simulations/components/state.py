@@ -1,13 +1,12 @@
 import attr
 from typing import List
-from pybaseballdatana.analysis.simulations.event import (
+from pybaseballdatana.analysis.simulations.components.event import (
     BattingEvent,
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
-    BattingEventProbability,
 )
-from pybaseballdatana.analysis.simulations.player import Batter
+from pybaseballdatana.analysis.simulations.components.player import Batter
 from pybaseballdatana.analysis.utils import check_len, check_is_zero_one
 from functools import partial
 
@@ -214,7 +213,30 @@ class GameState:
     base_out_state = attr.ib(
         type=BaseOutState, default=BaseOutState(BaseState(0, 0, 0), 0)
     )
+    pa_count = attr.ib(type=int, default=1)
     lineup_slot = attr.ib(type=int, default=1)
+    score = attr.ib(type=int, default=0)
 
-    def evolve(self, batting_event, running_event):
-        pass
+    def evolve(
+        self,
+        batting_event,
+        first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+        second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+        third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+    ):
+        base_out_state = self.base_out_state.evolve(
+            batting_event,
+            first_base_running_event,
+            second_base_running_event,
+            third_base_running_event,
+        )
+        runs_scored = BaseOutState.runs_scored(self.base_out_state, base_out_state)
+        game_state = attr.evolve(
+            self,
+            base_out_state=base_out_state,
+            pa_count=self.pa_count + 1,
+            lineup_slot=self.lineup_slot + 1,
+            score=self.score + runs_scored,
+        )
+
+        return game_state
