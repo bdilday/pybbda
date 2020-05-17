@@ -1,3 +1,6 @@
+from functools import partial
+import itertools
+
 from pybaseballdatana.analysis.simulations.state import (
     BaseState,
     BaseOutState,
@@ -8,8 +11,17 @@ from pybaseballdatana.analysis.simulations.state import (
     ThirdBaseRunningEvent,
 )
 
+
 from pybaseballdatana.analysis.simulations.player import Batter
 import pytest
+
+
+@pytest.fixture
+def all_base_out_states():
+    return [
+        BaseOutState(BaseState(*record[0:3]), record[3])
+        for record in itertools.product((0, 1), (0, 1), (0, 1), (0, 1, 2))
+    ]
 
 
 def test_bases():
@@ -39,17 +51,6 @@ def test_base_outs():
     assert base_outs1 == base_outs2
 
 
-def test_base_outs_evolve():
-    base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
-    base_outs2 = base_outs1.evolve(BattingEvent.OUT)
-    assert base_outs2.outs == base_outs1.outs + 1
-
-    base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
-    base_outs2 = base_outs1.evolve(BattingEvent.BASE_ON_BALLS)
-    assert base_outs2.base_state == BaseState(1, 0, 1)
-    assert base_outs2.outs == base_outs1.outs
-
-
 @pytest.mark.parametrize(
     "initial_state, end_state, expected_runs",
     [
@@ -71,9 +72,6 @@ def test_game_state():
     gs1 = GameState(BaseOutState(BaseState(0, 0, 0), 0), lineup_slot=1)
     gs2 = GameState()
     assert gs1 == gs2
-
-
-from functools import partial
 
 
 def test_base_out_running_events():
@@ -117,3 +115,81 @@ def test_get_running_events():
         SecondBaseRunningEvent.SECOND_TO_THIRD,
         ThirdBaseRunningEvent.THIRD_TO_HOME,
     )
+
+
+def test_base_outs_evolve_out(all_base_out_states):
+    for state in all_base_out_states:
+        new_state = state.evolve(BattingEvent.OUT)
+        assert new_state.outs == state.outs + 1
+
+
+def test_base_outs_evolve_base_on_balls(all_base_out_states):
+    for state in all_base_out_states:
+        new_state = state.evolve(BattingEvent.BASE_ON_BALLS)
+        assert new_state.base_state.first_base == 1
+        assert new_state.outs == state.outs
+
+    base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
+    base_outs2 = base_outs1.evolve(BattingEvent.BASE_ON_BALLS)
+    assert base_outs2.base_state == BaseState(1, 0, 1)
+    assert base_outs2.outs == base_outs1.outs
+
+# TODO: full test coverage
+def test_base_outs_evolve_single(all_base_out_states):
+    for state in all_base_out_states:
+        new_state = state.evolve(BattingEvent.SINGLE)
+        assert new_state.base_state.first_base == 1
+        assert new_state.outs == state.outs
+
+
+    base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
+    base_outs2 = base_outs1.evolve(BattingEvent.SINGLE)
+    assert base_outs2.base_state == BaseState(1, 0, 0)
+    assert base_outs2.outs == base_outs1.outs
+
+    base_outs1 = BaseOutState(BaseState(1, 0, 0), 0)
+
+    base_outs2 = base_outs1.evolve(BattingEvent.SINGLE)
+    assert base_outs2.base_state == BaseState(1, 1, 0)
+    assert base_outs2.outs == base_outs1.outs
+
+    base_outs2 = base_outs1.evolve(
+        BattingEvent.SINGLE,
+        first_base_running_event=FirstBaseRunningEvent.FIRST_TO_THIRD,
+        second_base_running_event=SecondBaseRunningEvent.SECOND_TO_HOME,
+    )
+    assert base_outs2.base_state == BaseState(1, 0, 1)
+    assert base_outs2.outs == base_outs1.outs
+
+    with pytest.raises(ValueError):
+        _ = base_outs1.evolve(
+            BattingEvent.SINGLE,
+            first_base_running_event=FirstBaseRunningEvent.FIRST_TO_THIRD,
+        )
+
+# TODO: full test coverage
+def test_base_outs_evolve_double(all_base_out_states):
+    for state in all_base_out_states:
+        new_state = state.evolve(BattingEvent.DOUBLE)
+        assert new_state.base_state.first_base == 0
+        assert new_state.base_state.second_base == 1
+        assert new_state.outs == state.outs
+
+    base_outs1 = BaseOutState(BaseState(0, 0, 1), 0)
+    base_outs2 = base_outs1.evolve(BattingEvent.DOUBLE)
+    assert base_outs2.base_state == BaseState(0, 1, 0)
+    assert base_outs2.outs == base_outs1.outs
+
+
+def test_base_outs_evolve_triple(all_base_out_states):
+    for state in all_base_out_states:
+        new_state = state.evolve(BattingEvent.TRIPLE)
+        assert new_state.base_state == BaseState(0, 0, 1)
+        assert new_state.outs == state.outs
+
+
+def test_base_outs_evolve_home_run(all_base_out_states):
+    for state in all_base_out_states:
+        new_state = state.evolve(BattingEvent.HOME_RUN)
+        assert new_state.base_state == BaseState(0, 0, 0)
+        assert new_state.outs == state.outs

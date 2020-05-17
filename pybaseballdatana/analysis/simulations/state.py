@@ -139,48 +139,33 @@ class BaseOutState:
                 first_base_running_event,
                 second_base_running_event,
                 third_base_running_event,
-            )
+            )[0:2]
 
             if running_events == (
-                FirstBaseRunningEvent.DEFAULT,
-                SecondBaseRunningEvent.DEFAULT,
+                FirstBaseRunningEvent.FIRST_TO_SECOND,
+                SecondBaseRunningEvent.SECOND_TO_THIRD,
             ):
                 base_state = BaseState(
                     1,
                     1 if self.base_state.first_base else 0,
                     1 if self.base_state.second_base else 0,
                 )
+
             elif running_events == (
-                FirstBaseRunningEvent.DEFAULT,
-                SecondBaseRunningEvent.SECOND_TO_HOME_ON_SINGLE,
+                FirstBaseRunningEvent.FIRST_TO_SECOND,
+                SecondBaseRunningEvent.SECOND_TO_HOME,
             ):
                 base_state = BaseState(1, 1 if self.base_state.first_base else 0, 0)
 
             elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_THIRD_ON_SINGLE,
-                SecondBaseRunningEvent.DEFAULT,
+                FirstBaseRunningEvent.FIRST_TO_THIRD,
+                SecondBaseRunningEvent.SECOND_TO_HOME,
             ):
-                pass
+                base_state = BaseState(1, 0, 1 if self.base_state.first_base else 0)
 
             elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_THIRD_ON_SINGLE,
-                SecondBaseRunningEvent.SECOND_TO_HOME_ON_SINGLE,
-            ):
-                base_state = BaseState(1, 0, 1)
-
-            elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_HOME_ON_SINGLE,
-                SecondBaseRunningEvent.DEFAULT,
-            ):
-                base_state = BaseState(
-                    1,
-                    1 if self.base_state.first_base else 0,
-                    1 if self.base_state.second_base else 0,
-                )
-
-            elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_HOME_ON_SINGLE,
-                SecondBaseRunningEvent.SECOND_TO_HOME_ON_SINGLE,
+                FirstBaseRunningEvent.FIRST_TO_HOME,
+                SecondBaseRunningEvent.SECOND_TO_HOME,
             ):
                 base_state = BaseState(1, 0, 0)
 
@@ -188,6 +173,33 @@ class BaseOutState:
                 raise ValueError(
                     "running_events combination %s is not valid", running_events
                 )
+        elif batting_event == BattingEvent.DOUBLE:
+            running_events = self.get_running_events(
+                batting_event,
+                first_base_running_event,
+                second_base_running_event,
+                third_base_running_event,
+            )[0]
+
+            if running_events == FirstBaseRunningEvent.FIRST_TO_THIRD:
+                base_state = BaseState(0, 1, 1 if self.base_state.first_base else 0)
+            elif running_events == FirstBaseRunningEvent.FIRST_TO_HOME:
+                base_state = BaseState(0, 1, 0)
+
+        elif batting_event == BattingEvent.TRIPLE:
+            base_state = BaseState(0, 0, 1)
+        elif batting_event == BattingEvent.HOME_RUN:
+            base_state = BaseState(0, 0, 0)
+        else:
+            raise ValueError(
+                "evolving with batting event %s and running events %s is not valid",
+                batting_event,
+                (
+                    first_base_running_event,
+                    second_base_running_event,
+                    third_base_running_event,
+                ),
+            )
 
         return attr.evolve(self, base_state=base_state, outs=outs)
 
