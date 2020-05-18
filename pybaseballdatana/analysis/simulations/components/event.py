@@ -51,21 +51,9 @@ ALL_EVENTS = (
         ThirdBaseRunningEvent.DEFAULT,
     ),
     (
-        BattingEvent.OUT,
+        BattingEvent.BASE_ON_BALLS,
         FirstBaseRunningEvent.DEFAULT,
         SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.OUT,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.OUT,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.SECOND_TO_HOME,
         ThirdBaseRunningEvent.DEFAULT,
     ),
     (
@@ -140,6 +128,17 @@ class BattingEventProbability:
         # https://www.attrs.org/en/stable/init.html#post-init-hook
         object.__setattr__(self, "out", 1 - partial_sum)
 
+    @property
+    def probs(self):
+        return (
+            self.out,
+            self.base_on_balls,
+            self.single,
+            self.double,
+            self.triple,
+            self.home_run,
+        )
+
 
 @attr.s(frozen=True)
 class RunEventProbability:
@@ -147,6 +146,15 @@ class RunEventProbability:
     first_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
     first_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
     second_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
+
+    @property
+    def probs(self):
+        return (
+            self.first_to_third_on_single,
+            self.first_to_home_on_single,
+            self.first_to_home_on_double,
+            self.second_to_home_on_double,
+        )
 
 
 @attr.s(frozen=True)

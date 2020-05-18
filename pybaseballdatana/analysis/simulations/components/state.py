@@ -8,7 +8,7 @@ from pybaseballdatana.analysis.simulations.components.event import (
 )
 from pybaseballdatana.analysis.simulations.components.player import Batter
 from pybaseballdatana.analysis.utils import check_len, check_is_zero_one
-from functools import partial
+from functools import partial, lru_cache
 
 
 @attr.s(frozen=True)
@@ -23,14 +23,17 @@ class BaseState:
         )
 
 
-@attr.s
+@attr.s(frozen=True)
 class BaseOutState:
     base_state = attr.ib(type=BaseState)
     outs = attr.ib(type=int)
 
     @staticmethod
+    @lru_cache(maxsize=128)
     def runs_scored(initial_state, end_state):
         # runs = -d(runners) - d(outs) + 1
+        if end_state.outs == 3:
+            return 0
         runners_end = sum(end_state.base_state.bases)
         runners_start = sum(initial_state.base_state.bases)
         delta_runners = runners_end - runners_start
@@ -38,6 +41,7 @@ class BaseOutState:
         return 1 - delta_runners - delta_outs
 
     @staticmethod
+    @lru_cache(maxsize=128)
     def get_running_events(
         batting_event,
         first_base_running_event,
@@ -90,6 +94,7 @@ class BaseOutState:
         return running_events
 
     @staticmethod
+    @lru_cache(maxsize=128)
     def _validate_running_events(
         first_base_running_event, second_base_running_event, third_base_running_event
     ):
@@ -106,6 +111,7 @@ class BaseOutState:
                 ),
             )
 
+    @lru_cache(maxsize=128)
     def evolve(
         self,
         batting_event,
@@ -117,7 +123,10 @@ class BaseOutState:
         outs = self.outs
         base_state = attr.evolve(self.base_state)
 
-        if batting_event == BattingEvent.OUT:
+        if outs == 3:
+            pass
+
+        elif batting_event == BattingEvent.OUT:
             outs = self.outs + 1
 
         elif batting_event == BattingEvent.BASE_ON_BALLS:
@@ -191,13 +200,14 @@ class BaseOutState:
             base_state = BaseState(0, 0, 0)
         else:
             raise ValueError(
-                "evolving with batting event %s and running events %s is not valid",
-                batting_event,
-                (
-                    first_base_running_event,
-                    second_base_running_event,
-                    third_base_running_event,
-                ),
+                "evolving with batting event {} and running events %{} is not valid".format(
+                    batting_event,
+                    (
+                        first_base_running_event,
+                        second_base_running_event,
+                        third_base_running_event,
+                    ),
+                )
             )
 
         return attr.evolve(self, base_state=base_state, outs=outs)
@@ -208,7 +218,7 @@ class Lineup:
     lineup = attr.ib(List[Batter], validator=partial(check_len, len_constraint=9))
 
 
-@attr.s
+@attr.s(hash=True)
 class GameState:
     base_out_state = attr.ib(
         type=BaseOutState, default=BaseOutState(BaseState(0, 0, 0), 0)
