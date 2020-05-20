@@ -88,12 +88,12 @@ def test_markov_events():
     markov_events = MarkovEvents.from_probs(be, re)
     assert markov_events.total_probability == 1
 
-
+import pytest
 def test_markov_simulations_results():
-    markov_simulation = MarkovSimulation()
+    markov_simulation = MarkovSimulation(termination_threshold=1e-4)
     batting_event_probs = BattingEventProbability(0.5, 0, 0, 0, 0)
     running_event_probs = RunEventProbability(0, 0, 0, 0)
     markov_events = MarkovEvents.from_probs(batting_event_probs, running_event_probs)
     initial_state_vector = StateVector()
     result = markov_simulation(batting_event_probs, running_event_probs)
-    assert result == 1
+    assert result[-1].mean_score == pytest.approx(0.9375, 0.01)
