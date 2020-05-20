@@ -5,6 +5,7 @@ from pybaseballdatana.analysis.run_expectancy.markov import MarkovState
 from collections import defaultdict
 from functools import reduce
 
+
 @attr.s
 class StateVector:
     _states = attr.ib(
@@ -23,4 +24,7 @@ class StateVector:
             acc[key] += value
             return acc
 
-        return [MarkovState(*e) for e in reduce(_update, markov_states, defaultdict(float)).items()]
+        return [
+            MarkovState(*e)
+            for e in reduce(_update, markov_states, defaultdict(float)).items()
+        ]

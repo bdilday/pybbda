@@ -145,7 +145,28 @@ class RunEventProbability:
     first_to_third_on_single = attr.ib(type=float, validator=check_between_zero_one)
     first_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
     first_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
-    second_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
+    second_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
+
+    def __attrs_post_init__(self):
+        first_base_partial_sum = (
+            self.first_to_third_on_single + self.first_to_home_on_single
+        )
+        if not 0 <= first_base_partial_sum <= 1:
+            raise ValueError(
+                "The sum of event probabilities must be between zero and one, not {}".format(
+                    first_base_partial_sum
+                )
+            )
+        # https://www.attrs.org/en/stable/init.html#post-init-hook
+        object.__setattr__(
+            self, "first_to_second_on_single", 1 - first_base_partial_sum
+        )
+        object.__setattr__(
+            self, "first_to_third_on_double", 1 - self.first_to_home_on_double
+        )
+        object.__setattr__(
+            self, "second_to_third_on_single", 1 - self.second_to_home_on_single
+        )
 
     @property
     def probs(self):
@@ -153,7 +174,7 @@ class RunEventProbability:
             self.first_to_third_on_single,
             self.first_to_home_on_single,
             self.first_to_home_on_double,
-            self.second_to_home_on_double,
+            self.second_to_home_on_single,
         )
 
 

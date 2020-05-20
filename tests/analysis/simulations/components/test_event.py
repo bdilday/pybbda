@@ -27,12 +27,15 @@ def test_event_probability():
 
 
 def test_run_event_probability():
-    _ = RunEventProbability(
+    re = RunEventProbability(
         first_to_third_on_single=0.1,
         first_to_home_on_single=0.2,
         first_to_home_on_double=0.3,
-        second_to_home_on_double=0.4,
+        second_to_home_on_single=0.4,
     )
+    assert re.first_to_second_on_single == pytest.approx(0.7)
+    assert re.second_to_third_on_single == pytest.approx(0.7)
+    assert re.second_to_first_on_single == pytest.approx(0.6)
 
     _ = RunEventProbability(0, 0, 0, 0)
 
@@ -41,6 +44,9 @@ def test_run_event_probability():
 
     with pytest.raises(ValueError):
         _ = RunEventProbability(-1.1, 0, 0, 0)
+
+    with pytest.raises(ValueError):
+        _ = RunEventProbability(0.5, 0.51, 0, 0)
 
 
 def test_event_probability_fails():

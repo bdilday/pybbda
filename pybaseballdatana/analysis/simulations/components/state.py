@@ -23,6 +23,22 @@ class BaseState:
         )
 
 
+@lru_cache(maxsize=128)
+def base_out_state_evolve_fun(
+    cls,
+    batting_event,
+    first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+    second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+    third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+):
+    return cls.evolve(
+        batting_event,
+        first_base_running_event=first_base_running_event,
+        second_base_running_event=second_base_running_event,
+        third_base_running_event=third_base_running_event,
+    )
+
+
 @attr.s(frozen=True)
 class BaseOutState:
     base_state = attr.ib(type=BaseState)
