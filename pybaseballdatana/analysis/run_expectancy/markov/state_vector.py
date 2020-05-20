@@ -13,6 +13,10 @@ class StateVector:
         default=[MarkovState(game_state=GameState(), probability=1)],
     )
 
+    def __iter__(self):
+        for state in self.states:
+            yield state
+
     @property
     def states(self):
         return self._states

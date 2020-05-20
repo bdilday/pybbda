@@ -48,6 +48,10 @@ class MarkovEvent:
 class MarkovEvents:
     events = attr.ib(type=List[MarkovEvent])
 
+    def __iter__(self):
+        for event in self.events:
+            yield event
+
     @property
     def total_probability(self):
         return sum([event.probability for event in self.events])
@@ -187,53 +191,6 @@ class MarkovEvents:
         return MarkovEvents([MarkovEvent(*e) for e in events])
 
 
-be = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.3)
-DEFAULT_PROBS = be.probs
-
-DEFAULT_EVENTS = (
-    (
-        BattingEvent.OUT,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.BASE_ON_BALLS,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.SINGLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.DOUBLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.TRIPLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.HOME_RUN,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-)
-
-DEFAULT_MARKOV_EVENTS = list(
-    [MarkovEvent(GameEvent(*e), p) for e, p in zip(DEFAULT_EVENTS, DEFAULT_PROBS)]
-)
-
-
 @attr.s
 class MarkovSimulation:
     state = attr.ib(type=GameState, default=GameState())
@@ -251,3 +208,7 @@ class MarkovSimulation:
             ),
             markov_state.probability * markov_event.probability,
         )
+
+    @staticmethod
+    def state_transition_tuple(markov_state_event):
+        return MarkovSimulation.state_transition(*markov_state_event)
