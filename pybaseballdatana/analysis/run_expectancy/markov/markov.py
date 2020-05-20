@@ -278,7 +278,11 @@ class MarkovSimulation:
             results.append(state_vector)
             ncall += 1
         if ncall >= MAX_CALL:
-            logger.warning("ncall exceed max call")
+            approx_error = results[-1].mean_score - results[-2].mean_score
+            # TODO: compute error based on second derivative
+            logger.warning(
+                "ncall exceed max call. approximate error is TODO", approx_error
+            )
 
         return results
 

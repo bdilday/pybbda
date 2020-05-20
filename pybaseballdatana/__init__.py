@@ -27,7 +27,8 @@ def get_pybbda_data_root():
     else:
         root_path = pathlib.Path(__file__).absolute().parent / "data" / "assets"
         logger.warning(
-            f"Environment variable PYBBDA_DATA_ROOT is not set, defaulting to {root_path}"
+            f"Environment variable PYBBDA_DATA_ROOT is not set, "
+            f"defaulting to {root_path}"
         )
     return root_path
 

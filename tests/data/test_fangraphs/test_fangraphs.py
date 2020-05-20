@@ -19,9 +19,9 @@ def test_fangraphs_guts_years():
 
 def test_fangraphs_batting():
     fg = FangraphsData()
-    df = fg.fg_batting_2019
+    _ = fg.fg_batting_2019
 
 
 def test_fangraphs_pitching():
     fg = FangraphsData()
-    df = fg.fg_pitching_2019
+    _ = fg.fg_pitching_2019

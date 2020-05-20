@@ -7,8 +7,6 @@ import glob
 import pathlib
 import shutil
 
-from pybaseballdatana import logger
-
 from ..lahman import LAHMAN_URL
 import logging
 

@@ -1,11 +1,11 @@
+import pytest
+
 from pybaseballdatana.analysis.simulations import (
     GameState,
     BattingEvent,
     BattingEventProbability,
     BaseOutState,
     BaseState,
-    ALL_EVENTS,
-    RunningEvent,
     RunEventProbability,
     GameEvent,
 )
@@ -15,7 +15,6 @@ from pybaseballdatana.analysis.run_expectancy.markov import (
     MarkovEvent,
     MarkovEvents,
 )
-from pybaseballdatana.analysis.run_expectancy.markov.markov import StateVector
 
 
 def test_markov_simulation_transitions():
@@ -87,9 +86,6 @@ def test_markov_events():
     re = RunEventProbability(0.1, 0.1, 0.1, 0.1)
     markov_events = MarkovEvents.from_probs(be, re)
     assert markov_events.total_probability == 1
-
-
-import pytest
 
 
 def test_markov_simulations_results():

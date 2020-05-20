@@ -95,12 +95,10 @@ def main():
         create_dir_if_not_exist(args.data_root)
 
     if not os.path.exists(args.data_root):
-        logging.critical(
-            "The target path %s does not exist. You can create it or pass option --make-dirs to update to create it automatically",
-            args.data_root,
-        )
         raise ValueError(
-            f"missing target path {args.data_root}. You can create it or pass option --make-dirs to update to create it automatically"
+            f"missing target path {args.data_root}. "
+            f"You can create it or pass option --make-dirs "
+            f"to update to create it automatically"
         )
 
     data_sources = (
