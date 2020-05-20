@@ -117,7 +117,7 @@ class MarkovEvents:
                     - running_event_probs.first_to_third_on_single
                     - running_event_probs.first_to_home_on_single
                 )
-                * (running_event_probs.second_to_home_on_single)
+                * running_event_probs.second_to_home_on_single
                 * total_prob_on_singles_inv,
             ),
             (
@@ -128,8 +128,8 @@ class MarkovEvents:
                     ThirdBaseRunningEvent.DEFAULT,
                 ),
                 batting_event_probs.single
-                * (running_event_probs.first_to_third_on_single)
-                * (running_event_probs.second_to_home_on_single)
+                * running_event_probs.first_to_third_on_single
+                * running_event_probs.second_to_home_on_single
                 * total_prob_on_singles_inv,
             ),
             (
@@ -140,8 +140,8 @@ class MarkovEvents:
                     ThirdBaseRunningEvent.DEFAULT,
                 ),
                 batting_event_probs.single
-                * (running_event_probs.first_to_home_on_single)
-                * (running_event_probs.second_to_home_on_single)
+                * running_event_probs.first_to_home_on_single
+                * running_event_probs.second_to_home_on_single
                 * total_prob_on_singles_inv,
             ),
             (
