@@ -1,3 +1,5 @@
+from functools import reduce
+
 import attr
 from collections import defaultdict
 from typing import List
@@ -191,10 +193,21 @@ class MarkovEvents:
         return MarkovEvents([MarkovEvent(*e) for e in events])
 
 
+import multiprocessing
+import itertools
+
+NUM_PROCESSES = 5
+MAX_OUTS = 3
+
+
 @attr.s
 class MarkovSimulation:
     state = attr.ib(type=GameState, default=GameState())
     termination_threshold = attr.ib(type=float, default=1e-6)
+
+    def __call__(self):
+        pass
+
 
     @staticmethod
     def state_transition(markov_state, markov_event):
@@ -212,3 +225,50 @@ class MarkovSimulation:
     @staticmethod
     def state_transition_tuple(markov_state_event):
         return MarkovSimulation.state_transition(*markov_state_event)
+
+    @staticmethod
+    def markov_step(state_vector, markov_events):
+        with multiprocessing.Pool(NUM_PROCESSES) as mp:
+            return StateVector.combine_states(
+                mp.map(
+                    MarkovSimulation.state_transition_tuple,
+                    itertools.product(state_vector, markov_events),
+                )
+            )
+
+
+@attr.s
+class StateVector:
+    _states = attr.ib(
+        type=List[MarkovState],
+        default=[MarkovState(game_state=GameState(), probability=1)],
+    )
+
+    def __iter__(self):
+        for state in self.states:
+            yield state
+
+    @property
+    def end_probability(self):
+        return sum(
+            [
+                s.probability
+                for s in self
+                if s.game_state.base_out_state.outs == MAX_OUTS
+            ]
+        )
+
+    @property
+    def states(self):
+        return self._states
+
+    @staticmethod
+    def combine_states(markov_states):
+        def _update(acc, item):
+            acc[item.game_state] += item.probability
+            return acc
+
+        return StateVector([
+            MarkovState(*e)
+            for e in reduce(_update, markov_states, defaultdict(float)).items()
+        ])
