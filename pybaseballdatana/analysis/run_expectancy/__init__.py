@@ -1,7 +1,7 @@
 from .markov.markov import (
     MarkovState,
     MarkovEvent,
-MarkovEvents,
+    MarkovEvents,
     MarkovSimulation,
     StateVector,
     GameState,

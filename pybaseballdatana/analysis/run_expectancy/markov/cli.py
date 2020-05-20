@@ -3,7 +3,7 @@ import sys
 
 from pybaseballdatana.analysis.run_expectancy import (
     MarkovEvent,
-MarkovEvents,
+    MarkovEvents,
     MarkovState,
     MarkovSimulation,
     GameState,
@@ -46,6 +46,7 @@ def main():
     running_event_probs = RunEventProbability(*args.running_probs)
     result = markov_simulation(batting_event_probs, running_event_probs)
     print(result[-1].mean_score)
+
 
 if __name__ == "__main__":
     main()

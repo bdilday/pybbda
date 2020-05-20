@@ -39,7 +39,6 @@ def test_run_event_probability():
 
     _ = RunEventProbability(0, 0, 0, 0)
 
-
     with pytest.raises(ValueError):
         _ = RunEventProbability(1.1, 0, 0, 0)
 

@@ -225,12 +225,7 @@ class StateVector:
 
     @property
     def mean_score(self):
-        return sum(
-            [
-                s.probability * s.game_state.score
-                for s in self
-            ]
-        )
+        return sum([s.probability * s.game_state.score for s in self])
 
     @property
     def end_probability(self):
@@ -289,7 +284,9 @@ class MarkovSimulation:
 
     @staticmethod
     def state_vectors_to_df(state_vectors):
-        return pd.concat([state_vector.to_df() for state_vector in state_vectors], axis=0)
+        return pd.concat(
+            [state_vector.to_df() for state_vector in state_vectors], axis=0
+        )
 
     @staticmethod
     def state_transition(markov_state, markov_event):

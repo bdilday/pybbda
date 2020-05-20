@@ -88,7 +88,10 @@ def test_markov_events():
     markov_events = MarkovEvents.from_probs(be, re)
     assert markov_events.total_probability == 1
 
+
 import pytest
+
+
 def test_markov_simulations_results():
     markov_simulation = MarkovSimulation(termination_threshold=1e-4)
 
