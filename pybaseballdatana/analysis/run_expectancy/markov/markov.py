@@ -16,9 +16,13 @@ from pybaseballdatana.analysis.simulations import (
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
+    RunEventProbability,
 )
 from pybaseballdatana.analysis.utils import check_between_zero_one
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @attr.s(frozen=True)
@@ -200,14 +204,92 @@ NUM_PROCESSES = 5
 MAX_OUTS = 3
 
 
+batting_event_probs = BattingEventProbability(0.5, 0, 0, 0, 0)
+running_event_probs = RunEventProbability(0, 0, 0, 0)
+markov_events = MarkovEvents.from_probs(batting_event_probs, running_event_probs)
+
+
+@attr.s
+class StateVector:
+    _states = attr.ib(
+        type=List[MarkovState],
+        default=[MarkovState(game_state=GameState(), probability=1)],
+    )
+
+    def __iter__(self):
+        for state in self.states:
+            yield state
+
+    def to_df(self):
+        return pd.concat([MarkovState.to_df(state) for state in self.states], axis=0)
+
+    @property
+    def mean_score(self):
+        return sum(
+            [
+                s.probability * s.game_state.score
+                for s in self
+            ]
+        )
+
+    @property
+    def end_probability(self):
+        return sum(
+            [
+                s.probability
+                for s in self
+                if s.game_state.base_out_state.outs == MAX_OUTS
+            ]
+        )
+
+    @property
+    def states(self):
+        return self._states
+
+    @staticmethod
+    def combine_states(markov_states):
+        def _update(acc, item):
+            acc[item.game_state] += item.probability
+            return acc
+
+        return StateVector(
+            [
+                MarkovState(*e)
+                for e in reduce(_update, markov_states, defaultdict(float)).items()
+            ]
+        )
+
+
 @attr.s
 class MarkovSimulation:
-    state = attr.ib(type=GameState, default=GameState())
+    state_vector = attr.ib(
+        type=StateVector, default=StateVector([MarkovState(GameState(), 1)])
+    )
     termination_threshold = attr.ib(type=float, default=1e-6)
 
-    def __call__(self):
-        pass
+    def __call__(self, batting_event_probs, running_event_probs):
+        markov_events = MarkovEvents.from_probs(
+            batting_event_probs, running_event_probs
+        )
+        ncall = 0
+        MAX_CALL = 100
+        results = [self.state_vector]
+        while (
+            ncall < MAX_CALL
+            and self.state_vector.end_probability < 1 - self.termination_threshold
+        ):
+            state_vector = self.markov_step(self.state_vector, markov_events)
+            results.append(state_vector)
+            self.state_vector = state_vector
+            ncall += 1
+        if ncall >= MAX_CALL:
+            logger.warning("ncall exceed max call")
 
+        return results
+
+    @staticmethod
+    def state_vectors_to_df(state_vectors):
+        return pd.concat([state_vector.to_df() for state_vector in state_vectors], axis=0)
 
     @staticmethod
     def state_transition(markov_state, markov_event):
@@ -235,40 +317,3 @@ class MarkovSimulation:
                     itertools.product(state_vector, markov_events),
                 )
             )
-
-
-@attr.s
-class StateVector:
-    _states = attr.ib(
-        type=List[MarkovState],
-        default=[MarkovState(game_state=GameState(), probability=1)],
-    )
-
-    def __iter__(self):
-        for state in self.states:
-            yield state
-
-    @property
-    def end_probability(self):
-        return sum(
-            [
-                s.probability
-                for s in self
-                if s.game_state.base_out_state.outs == MAX_OUTS
-            ]
-        )
-
-    @property
-    def states(self):
-        return self._states
-
-    @staticmethod
-    def combine_states(markov_states):
-        def _update(acc, item):
-            acc[item.game_state] += item.probability
-            return acc
-
-        return StateVector([
-            MarkovState(*e)
-            for e in reduce(_update, markov_states, defaultdict(float)).items()
-        ])

@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.run_expectancy.markov.state_vector import StateVector
+from pybaseballdatana.analysis.run_expectancy.markov.markov import StateVector
 
 
 def test_state_vector():
