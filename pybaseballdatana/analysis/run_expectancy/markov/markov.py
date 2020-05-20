@@ -273,14 +273,14 @@ class MarkovSimulation:
         )
         ncall = 0
         MAX_CALL = 100
-        results = [self.state_vector]
+        state_vector = self.state_vector
+        results = [state_vector]
         while (
             ncall < MAX_CALL
-            and self.state_vector.end_probability < 1 - self.termination_threshold
+            and state_vector.end_probability < 1 - self.termination_threshold
         ):
-            state_vector = self.markov_step(self.state_vector, markov_events)
+            state_vector = self.markov_step(state_vector, markov_events)
             results.append(state_vector)
-            self.state_vector = state_vector
             ncall += 1
         if ncall >= MAX_CALL:
             logger.warning("ncall exceed max call")
