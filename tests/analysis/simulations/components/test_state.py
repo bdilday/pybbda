@@ -1,7 +1,6 @@
 from functools import partial
 import itertools
 
-from pybaseballdatana.analysis.simulations.components.event import ALL_EVENTS
 from pybaseballdatana.analysis.simulations.components.state import (
     BaseState,
     BaseOutState,
@@ -13,6 +12,72 @@ from pybaseballdatana.analysis.simulations.components.state import (
 )
 
 import pytest
+
+
+@pytest.fixture
+def all_events():
+    return (
+        (
+            BattingEvent.OUT,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.BASE_ON_BALLS,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.SINGLE,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.SINGLE,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.SECOND_TO_HOME,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.SINGLE,
+            FirstBaseRunningEvent.FIRST_TO_THIRD,
+            SecondBaseRunningEvent.SECOND_TO_HOME,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.SINGLE,
+            FirstBaseRunningEvent.FIRST_TO_HOME,
+            SecondBaseRunningEvent.SECOND_TO_HOME,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.DOUBLE,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.DOUBLE,
+            FirstBaseRunningEvent.FIRST_TO_HOME,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.TRIPLE,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+        (
+            BattingEvent.HOME_RUN,
+            FirstBaseRunningEvent.DEFAULT,
+            SecondBaseRunningEvent.DEFAULT,
+            ThirdBaseRunningEvent.DEFAULT,
+        ),
+    )
 
 
 @pytest.fixture
@@ -116,8 +181,8 @@ def test_get_running_events():
     )
 
 
-def test_all_events(all_base_out_states):
-    for state, event in itertools.product(all_base_out_states, ALL_EVENTS):
+def test_all_events(all_base_out_states, all_events):
+    for state, event in itertools.product(all_base_out_states, all_events):
         _ = state.evolve(*event)
 
 

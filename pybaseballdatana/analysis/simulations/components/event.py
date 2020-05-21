@@ -43,69 +43,6 @@ RunningEvent = namedtuple(
     ),
 )
 
-ALL_EVENTS = (
-    (
-        BattingEvent.OUT,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.BASE_ON_BALLS,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.SINGLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.SINGLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.SECOND_TO_HOME,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.SINGLE,
-        FirstBaseRunningEvent.FIRST_TO_THIRD,
-        SecondBaseRunningEvent.SECOND_TO_HOME,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.SINGLE,
-        FirstBaseRunningEvent.FIRST_TO_HOME,
-        SecondBaseRunningEvent.SECOND_TO_HOME,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.DOUBLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.DOUBLE,
-        FirstBaseRunningEvent.FIRST_TO_HOME,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.TRIPLE,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-    (
-        BattingEvent.HOME_RUN,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    ),
-)
-
 
 @attr.s(frozen=True)
 class BattingEventProbability:
