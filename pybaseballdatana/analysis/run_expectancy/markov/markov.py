@@ -24,13 +24,36 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+NUM_PROCESSES = 5
+MAX_OUTS = 3
+
 
 @attr.s(frozen=True)
 class MarkovState:
+    """
+    A MarkovState comprises a `GameState` and a probability for being in that state.
+
+    :param game_state: The GameState
+    :param probability: Probability for the GameState
+    """
     game_state = attr.ib(type=GameState)
     probability = attr.ib(type=float, validator=check_between_zero_one)
 
     def to_df(self):
+        """
+        Converts the MarkovState to a Pandas DataFrame.
+
+        :return: MarkovState as a DataFrame.
+
+        .. code-block:: python
+
+            markov_state = MarkovState(GameState(), 1)
+            markov_state.to_df()
+            first_base  second_base  third_base  outs  score  pa_count  prob
+                     0            0           0     0      0         1     1
+
+
+        """
         return pd.DataFrame(
             {
                 "first_base": [self.game_state.base_out_state.base_state.first_base],
@@ -46,12 +69,23 @@ class MarkovState:
 
 @attr.s(frozen=True)
 class MarkovEvent:
+    """
+    A MarkovEvent comprises a GameEvent and a probability for that event to occur
+
+    :param game_event: The GameEvent
+    :param probability: Probability for the GameEvent
+    """
     game_event = attr.ib(type=GameEvent)
     probability = attr.ib(type=float, validator=check_between_zero_one)
 
 
 @attr.s(frozen=True)
 class MarkovEvents:
+    """
+    MarkovEvents comprise a list of `MarkovEvent` type
+
+    :param events: List of `MarkovEvent`
+    """
     events = attr.ib(type=List[MarkovEvent])
 
     def __iter__(self):
@@ -60,6 +94,7 @@ class MarkovEvents:
 
     @property
     def total_probability(self):
+        """The total probability for the events to occur"""
         return sum([event.probability for event in self.events])
 
     @staticmethod
@@ -70,6 +105,21 @@ class MarkovEvents:
 
     @staticmethod
     def from_probs(batting_event_probs, running_event_probs):
+        """
+        Constructs a `MarkovEvents` from batting and running probabilities
+
+        :param batting_event_probs: `BattingEventProbability`
+        :param running_event_probs: `RunEventProbability`
+        :return: `MarkovEvents`
+
+        .. code-block:: python
+            markov_events = (
+                MarkovEvents.from_probs(BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03),
+                                        RunEventProbability(0.1, 0.1, 0.1, 0.1)
+                                        )
+                            )
+
+        """
         total_prob_on_singles = (
             running_event_probs.first_to_second_on_single
             + (
@@ -197,17 +247,15 @@ class MarkovEvents:
         return MarkovEvents([MarkovEvent(*e) for e in events])
 
 
-NUM_PROCESSES = 5
-MAX_OUTS = 3
-
-
-batting_event_probs = BattingEventProbability(0.5, 0, 0, 0, 0)
-running_event_probs = RunEventProbability(0, 0, 0, 0)
-markov_events = MarkovEvents.from_probs(batting_event_probs, running_event_probs)
 
 
 @attr.s
 class StateVector:
+    """
+    A StateVector comprises a List of `MarkovState` objects
+
+    :param _states: List of `MarkovState`
+    """
     _states = attr.ib(
         type=List[MarkovState],
         default=[MarkovState(game_state=GameState(), probability=1)],
@@ -218,14 +266,36 @@ class StateVector:
             yield state
 
     def to_df(self):
+        """
+        Converts `StateVector` object to Pandas DataFrame
+
+        :return:
+
+        .. code-block:: python
+            state_vector = StateVector()
+            state_vector.to_df()
+            first_base  second_base  third_base  outs  score  pa_count  prob
+                     0            0           0     0      0         1     1
+
+        """
         return pd.concat([MarkovState.to_df(state) for state in self.states], axis=0)
 
     @property
     def mean_score(self):
+        """
+        Mean score of the state vector
+
+        :return: The mean score of the state
+        """
         return sum([s.probability * s.game_state.score for s in self])
 
     @property
     def end_probability(self):
+        """
+        Proability for the state vector to be in an end state, example having 3 outs
+
+        :return: Probability of being in an end state
+        """
         return sum(
             [
                 s.probability
@@ -240,6 +310,14 @@ class StateVector:
 
     @staticmethod
     def combine_states(markov_states):
+        """
+        Combines a list of `MarkovState`. It deduplicates states and sums the probabilities.
+
+        :param markov_states: List of `MarkovState`
+        :return: `StateVector`
+
+        """
+        # TODO: include example in doc string
         def _update(acc, item):
             acc[item.game_state] += item.probability
             return acc
