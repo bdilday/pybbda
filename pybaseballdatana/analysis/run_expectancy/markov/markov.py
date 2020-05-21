@@ -1,4 +1,6 @@
 from functools import reduce
+import multiprocessing
+import itertools
 
 import attr
 from collections import defaultdict
@@ -8,8 +10,6 @@ from pybaseballdatana.analysis.simulations.components.state import (
 )
 from pybaseballdatana.analysis.simulations import (
     GameState,
-    BaseOutState,
-    BaseState,
     GameEvent,
     BattingEventProbability,
     BattingEvent,
@@ -196,9 +196,6 @@ class MarkovEvents:
 
         return MarkovEvents([MarkovEvent(*e) for e in events])
 
-
-import multiprocessing
-import itertools
 
 NUM_PROCESSES = 5
 MAX_OUTS = 3

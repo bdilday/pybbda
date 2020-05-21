@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 import logging
-import pathlib
 from pybaseballdatana import PYBBDA_DATA_ROOT, PYBBDA_LOG_LEVEL
 
 from ..sources.lahman._update import _update as update_lahman

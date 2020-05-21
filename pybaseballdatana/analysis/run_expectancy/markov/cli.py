@@ -1,9 +1,7 @@
 import argparse
 import sys
 
-from pybaseballdatana.analysis.run_expectancy import (
-    MarkovSimulation,
-)
+from pybaseballdatana.analysis.run_expectancy import MarkovSimulation
 from pybaseballdatana.analysis.simulations import (
     BattingEventProbability,
     RunEventProbability,
@@ -23,13 +21,13 @@ def _parse_args():
 
 
 def summarise_result(result):
-    print("mean_score per inning= {:.2f}".format(result[-1].mean_score))
+    print("mean_score per inning= {:.4f}".format(result[-1].mean_score))
 
 
 def main():
     args = _parse_args()
 
-    markov_simulation = MarkovSimulation(termination_threshold=1e-4)
+    markov_simulation = MarkovSimulation(termination_threshold=1e-6)
     batting_event_probs = BattingEventProbability(*args.batting_probs)
     running_event_probs = RunEventProbability(*args.running_probs)
     result = markov_simulation(batting_event_probs, running_event_probs)

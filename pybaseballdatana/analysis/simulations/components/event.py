@@ -121,9 +121,8 @@ class BattingEventProbability:
         )
         if not 0 <= partial_sum < 1:
             raise ValueError(
-                "The sum of event probabilities must be between zero and one, not {}".format(
-                    partial_sum
-                )
+                "The sum of event probabilities "
+                "must be between zero and one, not {}".format(partial_sum)
             )
         # https://www.attrs.org/en/stable/init.html#post-init-hook
         object.__setattr__(self, "out", 1 - partial_sum)
@@ -153,9 +152,8 @@ class RunEventProbability:
         )
         if not 0 <= first_base_partial_sum <= 1:
             raise ValueError(
-                "The sum of event probabilities must be between zero and one, not {}".format(
-                    first_base_partial_sum
-                )
+                "The sum of event probabilities "
+                "must be between zero and one, not {}".format(first_base_partial_sum)
             )
         # https://www.attrs.org/en/stable/init.html#post-init-hook
         object.__setattr__(

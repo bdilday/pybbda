@@ -216,7 +216,8 @@ class BaseOutState:
             base_state = BaseState(0, 0, 0)
         else:
             raise ValueError(
-                "evolving with batting event {} and running events %{} is not valid".format(
+                "evolving with batting event {} "
+                "and running events %{} is not valid".format(
                     batting_event,
                     (
                         first_base_running_event,

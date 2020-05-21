@@ -158,7 +158,8 @@ class MarcelsProjectionsBase(ABC):
 
         sa_df = (
             seasonal_avg_df.query(
-                f"yearID >= {season - len(self.metric_weights)+1} and yearID <= {season}"
+                f"yearID >= {season - len(self.metric_weights)+1} "
+                f"and yearID <= {season}"
             )
             .sort_values("yearID", ascending=False)
             .loc[:, "seasonal_avg"]
