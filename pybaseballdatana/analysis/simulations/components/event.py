@@ -89,7 +89,7 @@ class RunEventProbability:
         )
         if not 0 <= first_base_partial_sum <= 1:
             raise ValueError(
-                "The sum of event probabilities "
+                "The sum of first-base-on-single event probabilities "
                 "must be between zero and one, not {}".format(first_base_partial_sum)
             )
         # https://www.attrs.org/en/stable/init.html#post-init-hook
