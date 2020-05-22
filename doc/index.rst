@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pybaseballdatana's documentation!
+Welcome to pybaseballdatana documentation!
 ============================================
 
 .. toctree::
@@ -22,6 +22,7 @@ Reference
 
    modules/data/index.rst
    modules/analysis/index.rst
+   modules/utils/index.rst
 
 
 
