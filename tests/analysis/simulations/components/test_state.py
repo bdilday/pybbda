@@ -150,6 +150,14 @@ def test_base_out_runs(initial_state, end_state, expected_runs):
     assert runs_scored_cached.cache_info().hits > 0
 
 
+def test_base_out_runs_invalid():
+    bo1 = BaseOutState(BaseState(0, 0, 0), 0)
+    bo2 = BaseOutState(BaseState(1, 1, 1), 0)
+
+    with pytest.raises(ValueError):
+        _ = BaseOutState.runs_scored(bo1, bo2)
+
+
 def test_game_state():
     gs1 = GameState(BaseOutState(BaseState(0, 0, 0), 0), lineup_slot=1)
     gs2 = GameState()
