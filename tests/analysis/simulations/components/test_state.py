@@ -100,6 +100,13 @@ def test_bases():
 
     _ = BaseState(*(1, 1, 1))
 
+    assert sum(BaseState(1, 1, 0)) == 2
+    assert sum(BaseState(1, 0, 1)) == 2
+    assert sum(BaseState(1, 0, 0)) == 1
+    assert sum(BaseState(1, 1, 1)) == 3
+    assert sum(BaseState(0, 0, 0)) == 0
+
+
 
 def test_bases_fail():
     with pytest.raises(TypeError):

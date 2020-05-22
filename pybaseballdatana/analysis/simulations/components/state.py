@@ -22,6 +22,10 @@ class BaseState:
             self, "bases", (self.first_base, self.second_base, self.third_base)
         )
 
+    def __iter__(self):
+        yield self.first_base
+        yield self.second_base
+        yield self.third_base
 
 @lru_cache(maxsize=1024)
 def base_out_state_evolve_cached(

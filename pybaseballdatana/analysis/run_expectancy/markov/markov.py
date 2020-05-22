@@ -6,7 +6,7 @@ import attr
 from collections import defaultdict
 from typing import List
 from pybaseballdatana.analysis.simulations.components.state import (
-    base_out_state_evolve_fun,
+    base_out_state_evolve_cached,
 )
 from pybaseballdatana.analysis.simulations import (
     GameState,
@@ -432,7 +432,7 @@ class MarkovSimulation:
         :return: `MarkovState`
         """
         return MarkovState(
-            base_out_state_evolve_fun(
+            base_out_state_evolve_cached(
                 markov_state.game_state,
                 markov_event.game_event.batting_event,
                 markov_event.game_event.first_base_running_event,
