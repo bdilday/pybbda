@@ -21,11 +21,11 @@ from pybaseballdatana.analysis.simulations import (
 from pybaseballdatana.analysis.utils import check_between_zero_one
 import pandas as pd
 import logging
+from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
 
 logger = logging.getLogger(__name__)
 
 NUM_PROCESSES = 5
-MAX_OUTS = 3
 
 
 @attr.s(frozen=True)

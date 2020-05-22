@@ -1,0 +1,2 @@
+MAX_OUTS = 3
+INNING_OUTS = 3

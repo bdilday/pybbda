@@ -14,6 +14,7 @@ from .components.player import (
     RunEventProbability,
 )
 
+
 __all__ = [
     "BaseState",
     "BaseOutState",
