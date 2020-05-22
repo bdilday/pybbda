@@ -36,6 +36,7 @@ class MarkovState:
     :param game_state: The GameState
     :param probability: Probability for the GameState
     """
+
     game_state = attr.ib(type=GameState)
     probability = attr.ib(type=float, validator=check_between_zero_one)
 
@@ -75,6 +76,7 @@ class MarkovEvent:
     :param game_event: The GameEvent
     :param probability: Probability for the GameEvent
     """
+
     game_event = attr.ib(type=GameEvent)
     probability = attr.ib(type=float, validator=check_between_zero_one)
 
@@ -86,6 +88,7 @@ class MarkovEvents:
 
     :param events: List of `MarkovEvent`
     """
+
     events = attr.ib(type=List[MarkovEvent])
 
     def __iter__(self):
@@ -247,8 +250,6 @@ class MarkovEvents:
         return MarkovEvents([MarkovEvent(*e) for e in events])
 
 
-
-
 @attr.s
 class StateVector:
     """
@@ -256,6 +257,7 @@ class StateVector:
 
     :param _states: List of `MarkovState`
     """
+
     _states = attr.ib(
         type=List[MarkovState],
         default=[MarkovState(game_state=GameState(), probability=1)],
@@ -315,6 +317,12 @@ class StateVector:
 
         :param markov_states: List of `MarkovState`
         :return: `StateVector`
+
+        .. code-block:: python
+         m1 = MarkovState(GameState(), 0.2)
+         m2 = MarkovState(GameState(), 0.25)
+         StateVector.combine_states((m1, m2))
+         StateVector(_states=[MarkovState(game_state=GameState(base_out_state=BaseOutState(base_state=BaseState(first_base=0, second_base=0, third_base=0), outs=0), pa_count=1, lineup_slot=1, score=0), probability=0.45)])
 
         """
         # TODO: include example in doc string
