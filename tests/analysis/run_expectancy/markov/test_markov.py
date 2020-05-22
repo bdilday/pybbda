@@ -100,3 +100,13 @@ def test_markov_simulations_results():
     running_event_probs = RunEventProbability(0, 0, 0, 0)
     result = markov_simulation(batting_event_probs, running_event_probs)
     assert result[-1].mean_score == pytest.approx(3, 0.01)
+
+
+def test_markov_step():
+    markov_simulation = MarkovSimulation()
+    state_vector = markov_simulation.state_vector
+    be = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03)
+    re = RunEventProbability(0.1, 0.1, 0.1, 0.1)
+    markov_events = MarkovEvents.from_probs(be, re)
+    markov_simulation.markov_step(state_vector, markov_events, num_processes=2)
+    markov_simulation.markov_step(state_vector, markov_events, num_processes=1)

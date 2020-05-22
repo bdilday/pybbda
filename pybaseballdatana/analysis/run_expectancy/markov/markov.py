@@ -322,10 +322,8 @@ class StateVector:
          m1 = MarkovState(GameState(), 0.2)
          m2 = MarkovState(GameState(), 0.25)
          StateVector.combine_states((m1, m2))
-         StateVector(_states=[MarkovState(game_state=GameState(base_out_state=BaseOutState(base_state=BaseState(first_base=0, second_base=0, third_base=0), outs=0), pa_count=1, lineup_slot=1, score=0), probability=0.45)])
-
         """
-        # TODO: include example in doc string
+
         def _update(acc, item):
             acc[item.game_state] += item.probability
             return acc
@@ -340,12 +338,35 @@ class StateVector:
 
 @attr.s
 class MarkovSimulation:
+    """
+    A class for executing a Markov simulation by executing state transitions to an
+    initial StateVector until a threshold of probability for being in the end state
+    is crossed. The simulation is executed by calling the `Markovsimulation` object.
+
+    :param state_vector: The intial `StateVector`
+    :param termination_threshold: Termination threshold. Simulation will stop when
+        probability to be in the end state is larger than `1 - termination_threshold`
+    """
+
     state_vector = attr.ib(
         type=StateVector, default=StateVector([MarkovState(GameState(), 1)])
     )
     termination_threshold = attr.ib(type=float, default=1e-6)
 
     def __call__(self, batting_event_probs, running_event_probs):
+        """
+        Executes the MarkovSimulation
+
+        :param batting_event_probs: A BattingEventProbability object
+        :param running_event_probs: A RunEventProbability object
+        :return: List of StateVector
+
+        .. code-block:: python
+        markov_simulation = MarkovSimulation()
+        batting_event_probability = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03)
+        running_event_probability = RunEventProbability(0.1, 0.1, 0.1, 0.1)
+        results = markov_simulation(batting_event_probability, running_event_probability)
+        """
         markov_events = MarkovEvents.from_probs(
             batting_event_probs, running_event_probs
         )
@@ -371,12 +392,45 @@ class MarkovSimulation:
 
     @staticmethod
     def state_vectors_to_df(state_vectors):
+        """
+        Converts list of `StateVector` to Pandas DataFrame
+
+        :param state_vectors: List of `StateVector`
+        :return: Pandas DataFrame
+
+        .. code-block:: python
+        markov_simulation = MarkovSimulation()
+        batting_event_probability = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03)
+        running_event_probability = RunEventProbability(0.1, 0.1, 0.1, 0.1)
+        results = markov_simulation(batting_event_probability, running_event_probability)
+        sim_df = MarkovSimulation.state_vectors_to_df(results)
+        sim_df
+        first_base  second_base  third_base  outs  score  pa_count          prob
+                 0            0           0     0      0         1  1.000000e+00
+                 0            0           0     1      0         2  6.850000e-01
+                 1            0           0     0      0         2  2.300000e-01
+                 0            1           0     0      0         2  5.000000e-02
+                 0            0           1     0      0         2  5.000000e-03
+               ...          ...         ...   ...    ...       ...           ...
+                 1            0           0     0     17        19  8.443152e-11
+                 0            1           1     0     16        19  9.725439e-11
+                 0            1           0     0     17        19  5.074142e-11
+                 0            0           1     0     17        19  1.479958e-11
+                 0            0           0     0     18        19  8.879749e-11
+        """
         return pd.concat(
             [state_vector.to_df() for state_vector in state_vectors], axis=0
         )
 
     @staticmethod
     def state_transition(markov_state, markov_event):
+        """
+        Transition from `markov_state` based on `markov_event`
+
+        :param markov_state: `MarkovState`
+        :param markov_event: `MarkovEvent`
+        :return: `MarkovState`
+        """
         return MarkovState(
             base_out_state_evolve_fun(
                 markov_state.game_state,
@@ -390,11 +444,34 @@ class MarkovSimulation:
 
     @staticmethod
     def state_transition_tuple(markov_state_event):
+        """
+        MarkovState expressed as a tuple. This is a helper to be able to apply `map`
+        to a set of transitions.
+
+        :param markov_state_event:
+        :return:
+        """
         return MarkovSimulation.state_transition(*markov_state_event)
 
     @staticmethod
-    def markov_step(state_vector, markov_events):
-        with multiprocessing.Pool(NUM_PROCESSES) as mp:
+    def markov_step(state_vector, markov_events, num_processes=NUM_PROCESSES):
+        """
+        A step in the Markov simulation. Applies the set of `markov_events` to the
+        `MarkovState` in the `state_vector`, and then combines the results into a `StateVector`
+
+        :param state_vector:
+        :param markov_events:
+        :param num_processes: Number of processes to use for computing the updated `StateVector`
+        :return: `StateVector`
+        """
+        if num_processes == 1:
+            return StateVector.combine_states(
+                map(
+                    MarkovSimulation.state_transition_tuple,
+                    itertools.product(state_vector, markov_events),
+                )
+            )
+        with multiprocessing.Pool(num_processes) as mp:
             return StateVector.combine_states(
                 mp.map(
                     MarkovSimulation.state_transition_tuple,
