@@ -5,16 +5,26 @@
 
 Welcome to pybaseballdatana's documentation!
 ============================================
-Contents
---------------------------------------------
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    README.md
+
+Examples
+========
+
+Reference
+=========
+.. toctree::
+   :maxdepth: 2
+
    modules/data/index.rst
    modules/analysis/index.rst
+
+
+
 
 Indices and tables
 ==================

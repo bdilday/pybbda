@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 
 class DataSource(Singleton):
-    SOURCE_DATA_PATH = None
-    SOURCE_TABLES = None
-    SOURCE_URLS = None
+    _SOURCE_DATA_PATH = None
+    _SOURCE_TABLES = None
+    _SOURCE_URLS = None
 
     def __init__(self, data_path=None):
-        self.tables = self.SOURCE_TABLES
-        self.data_path = data_path or self.SOURCE_DATA_PATH
+        self.tables = self._SOURCE_TABLES
+        self.data_path = data_path or self._SOURCE_DATA_PATH
 
     def _locate_file(self, name):
         data_file = self.tables[name]

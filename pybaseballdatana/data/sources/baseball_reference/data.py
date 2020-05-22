@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class BaseballReferenceData:
-    def __init__(self, data_path=BBREF_DATA_PATH):
+    def __init__(self, data_path=None):
+        if data_path is None:
+            data_path = BBREF_DATA_PATH
         self.tables = BASEBALL_REFERENCE_TABLES
         self.data_path = data_path
 

@@ -1,4 +1,4 @@
-# pybaseballdatana
+# pybaseballdatana introduction
 
 This is the docs site for 
 Python Baseball Data and Analysis 

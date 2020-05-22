@@ -1,6 +1,6 @@
 import logging
 
-from . import FANGRAPHS_GUTS_CONSTANTS_URL
+from .constants import FANGRAPHS_GUTS_CONSTANTS_URL
 from pybaseballdatana import PYBBDA_DATA_ROOT
 from pybaseballdatana.data.sources.data_source.base import DataSource
 
@@ -21,6 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 class FangraphsData(DataSource):
-    SOURCE_DATA_PATH = FANGRAPHS_DATA_PATH
-    SOURCE_TABLES = FANGRAPHS_TABLES
-    SOURCE_URLS = FANGRAPHS_URLS
+    _SOURCE_DATA_PATH = FANGRAPHS_DATA_PATH
+    _SOURCE_TABLES = FANGRAPHS_TABLES
+    _SOURCE_URLS = FANGRAPHS_URLS
