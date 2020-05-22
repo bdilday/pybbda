@@ -1,7 +1,5 @@
 import pandas as pd
-import pathlib
 import os
-from ._update import _update_file
 from . import WAR_PITCHING_URL, WAR_BATTING_URL
 from pybaseballdatana import PYBBDA_DATA_ROOT
 import logging

@@ -3,6 +3,8 @@ import psycopg2
 import pandas as pd
 import logging
 
+logger = logging.getLogger(__name__)
+
 
 class RetrosheetData:
     def __init__(self, database="retrosheet"):

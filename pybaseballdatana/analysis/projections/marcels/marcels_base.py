@@ -2,12 +2,8 @@ from abc import ABC
 
 import pandas as pd
 import numpy as np
-from pybaseballdatana.data.tools.processing.aggregate import aggregate_by_season
 from pybaseballdatana.data.tools.processing.transform import get_age
-from pybaseballdatana.data.tools.lahman.data import (
-    get_primary_position,
-    augment_lahman_batting,
-)
+from pybaseballdatana.data.tools.lahman.data import get_primary_position
 from pybaseballdatana.data import LahmanData
 import sys
 from pybaseballdatana.analysis.projections.marcels.age_adjustment import age_adjustment
@@ -162,7 +158,8 @@ class MarcelsProjectionsBase(ABC):
 
         sa_df = (
             seasonal_avg_df.query(
-                f"yearID >= {season - len(self.metric_weights)+1} and yearID <= {season}"
+                f"yearID >= {season - len(self.metric_weights)+1} "
+                f"and yearID <= {season}"
             )
             .sort_values("yearID", ascending=False)
             .loc[:, "seasonal_avg"]

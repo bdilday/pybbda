@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.simulations.player import Player, Batter
+from pybaseballdatana.analysis.simulations.components.player import Batter
 import pytest
 
 

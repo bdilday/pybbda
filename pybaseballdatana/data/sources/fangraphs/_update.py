@@ -53,6 +53,7 @@ def _update_file(
         if not overwrite:
             logger.info("file %s exists, not overwriting", output_file_path)
             return
+        else:
             logger.warning("file %s exists, but overwriting", output_file_path)
 
     lines = url_to_table_rows(url, table_id)
