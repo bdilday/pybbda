@@ -3,3 +3,4 @@ tox==3.14.3
 setuptools
 Sphinx==3.0.3
 recommonmark==0.6.0
+Pygments>=2.5.1
