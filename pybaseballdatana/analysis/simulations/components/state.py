@@ -23,8 +23,8 @@ class BaseState:
         )
 
 
-@lru_cache(maxsize=512)
-def base_out_state_evolve_fun(
+@lru_cache(maxsize=1024)
+def base_out_state_evolve_cached(
     cls,
     batting_event,
     first_base_running_event=FirstBaseRunningEvent.DEFAULT,
@@ -39,13 +39,41 @@ def base_out_state_evolve_fun(
     )
 
 
+@lru_cache(maxsize=1024)
+def runs_scored_cached(initial_state, end_state):
+    return BaseOutState.runs_scored(initial_state, end_state)
+
+
+@lru_cache(maxsize=1024)
+def get_running_events_cached(
+    batting_event,
+    first_base_running_event,
+    second_base_running_event,
+    third_base_running_event,
+):
+    return BaseOutState.get_running_events(
+        batting_event,
+        first_base_running_event,
+        second_base_running_event,
+        third_base_running_event,
+    )
+
+
+@lru_cache(maxsize=1024)
+def validate_running_events_cached(
+    first_base_running_event, second_base_running_event, third_base_running_event
+):
+    return BaseOutState._validate_running_events(
+        first_base_running_event, second_base_running_event, third_base_running_event
+    )
+
+
 @attr.s(frozen=True)
 class BaseOutState:
     base_state = attr.ib(type=BaseState)
     outs = attr.ib(type=int)
 
     @staticmethod
-    @lru_cache(maxsize=128)
     def runs_scored(initial_state, end_state):
         # runs = -d(runners) - d(outs) + 1
         if end_state.outs == 3:
@@ -57,7 +85,6 @@ class BaseOutState:
         return 1 - delta_runners - delta_outs
 
     @staticmethod
-    @lru_cache(maxsize=128)
     def get_running_events(
         batting_event,
         first_base_running_event,
@@ -110,7 +137,6 @@ class BaseOutState:
         return running_events
 
     @staticmethod
-    @lru_cache(maxsize=128)
     def _validate_running_events(
         first_base_running_event, second_base_running_event, third_base_running_event
     ):
@@ -127,7 +153,6 @@ class BaseOutState:
                 ),
             )
 
-    @lru_cache(maxsize=128)
     def evolve(
         self,
         batting_event,
@@ -233,6 +258,23 @@ class BaseOutState:
 @attr.s
 class Lineup:
     lineup = attr.ib(List[Batter], validator=partial(check_len, len_constraint=9))
+
+
+@lru_cache(maxsize=1024)
+def game_state_evolve_cached(
+    cls,
+    batting_event,
+    first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+    second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+    third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+):
+    return GameState.evolve(
+        cls,
+        batting_event,
+        first_base_running_event,
+        second_base_running_event,
+        third_base_running_event,
+    )
 
 
 @attr.s(hash=True)

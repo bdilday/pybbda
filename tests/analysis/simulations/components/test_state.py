@@ -9,7 +9,11 @@ from pybaseballdatana.analysis.simulations.components.state import (
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
-    base_out_state_evolve_fun,
+    base_out_state_evolve_cached,
+    get_running_events_cached,
+    runs_scored_cached,
+    validate_running_events_cached,
+    game_state_evolve_cached,
 )
 
 import pytest
@@ -129,8 +133,15 @@ def test_base_outs():
 def test_base_out_runs(initial_state, end_state, expected_runs):
     bo1 = BaseOutState(BaseState(*initial_state[0:3]), initial_state[3])
     bo2 = BaseOutState(BaseState(*end_state[0:3]), end_state[3])
+
     runs = BaseOutState.runs_scored(bo1, bo2)
     assert runs == expected_runs
+
+    runs = runs_scored_cached(bo1, bo2)
+    assert runs == expected_runs
+
+    _ = runs_scored_cached(bo1, bo2)
+    assert runs_scored_cached.cache_info().hits > 0
 
 
 def test_game_state():
@@ -138,6 +149,14 @@ def test_game_state():
     gs2 = GameState()
     assert gs1 == gs2
 
+    gs_new = gs1.evolve(BattingEvent.BASE_ON_BALLS, FirstBaseRunningEvent.DEFAULT, SecondBaseRunningEvent.DEFAULT, ThirdBaseRunningEvent.DEFAULT)
+    assert gs_new == GameState(BaseOutState(BaseState(1, 0, 0), 0), lineup_slot=2, pa_count=2)
+
+    gs_new_cached = game_state_evolve_cached(gs1, BattingEvent.BASE_ON_BALLS, FirstBaseRunningEvent.DEFAULT, SecondBaseRunningEvent.DEFAULT, ThirdBaseRunningEvent.DEFAULT)
+    assert gs_new == gs_new_cached
+
+    _ = game_state_evolve_cached(gs1, BattingEvent.BASE_ON_BALLS, FirstBaseRunningEvent.DEFAULT, SecondBaseRunningEvent.DEFAULT, ThirdBaseRunningEvent.DEFAULT)
+    assert game_state_evolve_cached.cache_info().hits > 0
 
 def test_base_out_running_events():
     validate_func = partial(
@@ -165,6 +184,37 @@ def test_base_out_running_events():
         )
 
 
+def test_base_out_running_events_cached():
+    validate_func = partial(
+        validate_running_events_cached,
+        third_base_running_event=ThirdBaseRunningEvent.THIRD_TO_HOME,
+    )
+    validate_func(
+        FirstBaseRunningEvent.FIRST_TO_SECOND, SecondBaseRunningEvent.SECOND_TO_THIRD
+    )
+    validate_func(
+        FirstBaseRunningEvent.FIRST_TO_SECOND, SecondBaseRunningEvent.SECOND_TO_THIRD
+    )
+    validate_func(
+        FirstBaseRunningEvent.FIRST_TO_SECOND, SecondBaseRunningEvent.SECOND_TO_HOME
+    )
+    validate_func(
+        FirstBaseRunningEvent.FIRST_TO_THIRD, SecondBaseRunningEvent.SECOND_TO_HOME
+    )
+
+    with pytest.raises(ValueError):
+        validate_func(
+            FirstBaseRunningEvent.FIRST_TO_THIRD, SecondBaseRunningEvent.SECOND_TO_THIRD
+        )
+
+    with pytest.raises(ValueError):
+        validate_func(
+            FirstBaseRunningEvent.FIRST_TO_HOME, SecondBaseRunningEvent.SECOND_TO_THIRD
+        )
+
+    assert validate_func.func.cache_info().hits > 0
+
+
 def test_get_running_events():
     get_running_events_func = partial(
         BaseOutState.get_running_events,
@@ -181,6 +231,26 @@ def test_get_running_events():
         ThirdBaseRunningEvent.THIRD_TO_HOME,
     )
 
+    assert BaseOutState.get_running_events(
+        batting_event=BattingEvent.SINGLE,
+        first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+        second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+        third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+    ) == get_running_events_cached(
+        batting_event=BattingEvent.SINGLE,
+        first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+        second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+        third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+    )
+
+    _ = get_running_events_cached(
+        batting_event=BattingEvent.SINGLE,
+        first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+        second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+        third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+    )
+    assert get_running_events_cached.cache_info().hits > 0
+
 
 def test_all_events(all_base_out_states, all_events):
     for state, event in itertools.product(all_base_out_states, all_events):
@@ -189,12 +259,12 @@ def test_all_events(all_base_out_states, all_events):
 
 def test_all_events_caching(all_base_out_states, all_events):
     for state, event in itertools.product(all_base_out_states, all_events):
-        _ = base_out_state_evolve_fun(state, *event)
+        _ = base_out_state_evolve_cached(state, *event)
 
     for state, event in itertools.product(all_base_out_states, all_events):
-        _ = base_out_state_evolve_fun(state, *event)
+        _ = base_out_state_evolve_cached(state, *event)
 
-    assert base_out_state_evolve_fun.cache_info().hits > 0
+    assert base_out_state_evolve_cached.cache_info().hits > 0
 
 
 def test_base_outs_evolve_out(all_base_out_states):
