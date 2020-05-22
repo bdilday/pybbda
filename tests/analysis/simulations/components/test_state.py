@@ -9,6 +9,7 @@ from pybaseballdatana.analysis.simulations.components.state import (
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
+    base_out_state_evolve_fun,
 )
 
 import pytest
@@ -184,6 +185,16 @@ def test_get_running_events():
 def test_all_events(all_base_out_states, all_events):
     for state, event in itertools.product(all_base_out_states, all_events):
         _ = state.evolve(*event)
+
+
+def test_all_events_caching(all_base_out_states, all_events):
+    for state, event in itertools.product(all_base_out_states, all_events):
+        _ = base_out_state_evolve_fun(state, *event)
+
+    for state, event in itertools.product(all_base_out_states, all_events):
+        _ = base_out_state_evolve_fun(state, *event)
+
+    assert base_out_state_evolve_fun.cache_info().hits > 0
 
 
 def test_base_outs_evolve_out(all_base_out_states):

@@ -23,7 +23,7 @@ class BaseState:
         )
 
 
-@lru_cache(maxsize=128)
+@lru_cache(maxsize=512)
 def base_out_state_evolve_fun(
     cls,
     batting_event,
