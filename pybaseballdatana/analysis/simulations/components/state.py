@@ -17,15 +17,11 @@ class BaseState:
     second_base = attr.ib(type=int, validator=check_is_zero_one)
     third_base = attr.ib(type=int, validator=check_is_zero_one)
 
-    def __attrs_post_init__(self):
-        object.__setattr__(
-            self, "bases", (self.first_base, self.second_base, self.third_base)
-        )
-
     def __iter__(self):
         yield self.first_base
         yield self.second_base
         yield self.third_base
+
 
 @lru_cache(maxsize=1024)
 def base_out_state_evolve_cached(
@@ -82,8 +78,8 @@ class BaseOutState:
         # runs = -d(runners) - d(outs) + 1
         if end_state.outs == 3:
             return 0
-        runners_end = sum(end_state.base_state.bases)
-        runners_start = sum(initial_state.base_state.bases)
+        runners_end = sum(end_state.base_state)
+        runners_start = sum(initial_state.base_state)
         delta_runners = runners_end - runners_start
         delta_outs = end_state.outs - initial_state.outs
         return 1 - delta_runners - delta_outs

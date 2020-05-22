@@ -107,7 +107,6 @@ def test_bases():
     assert sum(BaseState(0, 0, 0)) == 0
 
 
-
 def test_bases_fail():
     with pytest.raises(TypeError):
         _ = BaseState()
@@ -156,14 +155,34 @@ def test_game_state():
     gs2 = GameState()
     assert gs1 == gs2
 
-    gs_new = gs1.evolve(BattingEvent.BASE_ON_BALLS, FirstBaseRunningEvent.DEFAULT, SecondBaseRunningEvent.DEFAULT, ThirdBaseRunningEvent.DEFAULT)
-    assert gs_new == GameState(BaseOutState(BaseState(1, 0, 0), 0), lineup_slot=2, pa_count=2)
+    gs_new = gs1.evolve(
+        BattingEvent.BASE_ON_BALLS,
+        FirstBaseRunningEvent.DEFAULT,
+        SecondBaseRunningEvent.DEFAULT,
+        ThirdBaseRunningEvent.DEFAULT,
+    )
+    assert gs_new == GameState(
+        BaseOutState(BaseState(1, 0, 0), 0), lineup_slot=2, pa_count=2
+    )
 
-    gs_new_cached = game_state_evolve_cached(gs1, BattingEvent.BASE_ON_BALLS, FirstBaseRunningEvent.DEFAULT, SecondBaseRunningEvent.DEFAULT, ThirdBaseRunningEvent.DEFAULT)
+    gs_new_cached = game_state_evolve_cached(
+        gs1,
+        BattingEvent.BASE_ON_BALLS,
+        FirstBaseRunningEvent.DEFAULT,
+        SecondBaseRunningEvent.DEFAULT,
+        ThirdBaseRunningEvent.DEFAULT,
+    )
     assert gs_new == gs_new_cached
 
-    _ = game_state_evolve_cached(gs1, BattingEvent.BASE_ON_BALLS, FirstBaseRunningEvent.DEFAULT, SecondBaseRunningEvent.DEFAULT, ThirdBaseRunningEvent.DEFAULT)
+    _ = game_state_evolve_cached(
+        gs1,
+        BattingEvent.BASE_ON_BALLS,
+        FirstBaseRunningEvent.DEFAULT,
+        SecondBaseRunningEvent.DEFAULT,
+        ThirdBaseRunningEvent.DEFAULT,
+    )
     assert game_state_evolve_cached.cache_info().hits > 0
+
 
 def test_base_out_running_events():
     validate_func = partial(
