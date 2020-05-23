@@ -11,12 +11,10 @@ from pybaseballdatana.analysis.simulations.components.state import (
 from pybaseballdatana.analysis.simulations import (
     GameState,
     GameEvent,
-    BattingEventProbability,
     BattingEvent,
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
-    RunEventProbability,
 )
 from pybaseballdatana.analysis.utils import check_between_zero_one
 import pandas as pd
@@ -117,10 +115,11 @@ class MarkovEvents:
 
         .. code-block:: python
             markov_events = (
-                MarkovEvents.from_probs(BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03),
-                                        RunEventProbability(0.1, 0.1, 0.1, 0.1)
-                                        )
-                            )
+                MarkovEvents.from_probs(
+                 BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03),
+                 RunEventProbability(0.1, 0.1, 0.1, 0.1)
+                                       )
+                             )
 
         """
         total_prob_on_singles = (
@@ -294,7 +293,8 @@ class StateVector:
     @property
     def end_probability(self):
         """
-        Proability for the state vector to be in an end state, example having 3 outs
+        Proability for the state vector to be in an end state,
+        example having 3 outs
 
         :return: Probability of being in an end state
         """
@@ -313,7 +313,8 @@ class StateVector:
     @staticmethod
     def combine_states(markov_states):
         """
-        Combines a list of `MarkovState`. It deduplicates states and sums the probabilities.
+        Combines a list of `MarkovState`.
+        It deduplicates states and sums the probabilities.
 
         :param markov_states: List of `MarkovState`
         :return: `StateVector`
@@ -363,9 +364,11 @@ class MarkovSimulation:
 
         .. code-block:: python
         markov_simulation = MarkovSimulation()
-        batting_event_probability = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03)
+        batting_event_probability = BattingEventProbability(
+                                      0.08, 0.15, 0.05, 0.005, 0.03)
         running_event_probability = RunEventProbability(0.1, 0.1, 0.1, 0.1)
-        results = markov_simulation(batting_event_probability, running_event_probability)
+        results = markov_simulation(batting_event_probability,
+                                    running_event_probability)
         """
         markov_events = MarkovEvents.from_probs(
             batting_event_probs, running_event_probs
@@ -457,11 +460,13 @@ class MarkovSimulation:
     def markov_step(state_vector, markov_events, num_processes=NUM_PROCESSES):
         """
         A step in the Markov simulation. Applies the set of `markov_events` to the
-        `MarkovState` in the `state_vector`, and then combines the results into a `StateVector`
+        `MarkovState` in the `state_vector`, and then combines the results
+        into a `StateVector`
 
         :param state_vector:
         :param markov_events:
-        :param num_processes: Number of processes to use for computing the updated `StateVector`
+        :param num_processes: Number of processes to use for computing
+                              the updated `StateVector`
         :return: `StateVector`
         """
         if num_processes == 1:

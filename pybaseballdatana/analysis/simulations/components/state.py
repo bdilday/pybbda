@@ -41,7 +41,8 @@ def base_out_state_evolve_cached(
     """
     A function to call the `evolve` method of a `BaseOutState`.
     This is identical to the `BaseOutState.evolve` method,
-    but implemented as a function to simplify application of an `functools.lru_cache` decorator.
+    but implemented as a function to simplify application of
+    an `functools.lru_cache` decorator.
 
     :param cls: An instance of a `BaseOutState`
     :param batting_event: `BattingEvent`
@@ -102,7 +103,8 @@ def validate_running_events_cached(
 ):
     """
     A function to validate that running events are self consistent, i.e. that
-    if first base runner goes to third or home, it's not blocked by the second base runner.
+    if first base runner goes to third or home, it's not blocked by the
+    second-base runner.
 
     :param first_base_running_event:
     :param second_base_running_event:
@@ -230,7 +232,8 @@ class BaseOutState:
         outs = self.outs
         base_state = attr.evolve(self.base_state)
 
-        # TODO: handle the case where MAX_OUTS greater than 3, ie reset bases at end of inning
+        # TODO: handle the case where MAX_OUTS greater than 3,
+        # ie reset bases at end of inning
         if outs == MAX_OUTS:
             pass
 

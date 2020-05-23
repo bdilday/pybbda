@@ -4,7 +4,6 @@ import pathlib
 import logging
 import gzip
 import itertools
-import concurrent.futures
 from functools import partial
 import multiprocessing
 
@@ -119,6 +118,6 @@ def _update(
     season_stats_it = itertools.product(seasons, stat_names, [output_root])
     func = partial(_pool_do_update, overwrite)
     logger.debug("Starting downloads with %d threads", num_threads)
+    # TODO: consider using a concurrent.futures.ThreadPoolExecutor instead
     with multiprocessing.Pool(num_threads) as mp:
-        # with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as mp:
         mp.map(func, season_stats_it)

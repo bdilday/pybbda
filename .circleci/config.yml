@@ -23,7 +23,10 @@ jobs:
           command: python -m pybaseballdatana.data.tools.update --data-source Fangraphs --make-dirs --min-year 2019 --max-year 2019 --num-threads 2
           name: Update Fangraphs
       - run:
-          command: python -m pytest tests/
+          command: make lint
+          name: Lint
+      - run:
+          command: make test
           name: Test
 
 workflows:

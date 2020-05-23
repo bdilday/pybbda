@@ -3,7 +3,6 @@ pybaseballdatana data module
 
 some data, and blah
 """
-import logging
 
 from pandas import Int32Dtype
 
