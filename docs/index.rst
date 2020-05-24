@@ -16,11 +16,6 @@ pybbda is a package for Python Baseball Data and Analysis.
    installation.rst
    features.rst
 
-
-========
-Examples
-========
-
 =========
 Reference
 =========
