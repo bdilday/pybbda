@@ -3,18 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pybaseballdatana documentation!
+Welcome to pybbda documentation!
 ============================================
+
+
+pybbda is a package for Python Baseball Data and Analysis.
+
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   README.md
+   installation.rst
+   features.rst
 
+
+========
 Examples
 ========
 
+=========
 Reference
 =========
 .. toctree::
@@ -25,12 +32,6 @@ Reference
    modules/utils/index.rst
 
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 

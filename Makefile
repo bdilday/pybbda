@@ -17,7 +17,7 @@ dist: clean
 	python setup.py sdist
 
 docs: install-dev
-	cd doc && make html
+	cd docs && make html
 
 install-dev:
 	pip install -r requirements-dev.txt
