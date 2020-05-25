@@ -2,6 +2,11 @@ from pandas import isnull
 
 
 def age_adjustment(age):
+    """
+
+    :param age:
+    :return:
+    """
     if isnull(age):
         return float("nan")
     elif age <= 0:

@@ -1,3 +1,9 @@
+"""
+pybaseballdatana data module
+
+some data, and blah
+"""
+
 from pandas import Int32Dtype
 
 from .sources.lahman.data import LahmanData
