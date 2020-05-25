@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>trajectories &mdash; pybbda  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="utils" href="../utils/index.html" />
+    <link rel="prev" title="projections" href="projections.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pybbda
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html">Features</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../data/index.html">data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="projections.html">projections</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pybbda</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">analysis</a> &raquo;</li>
+        
+      <li>trajectories</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/modules/analysis/trajectories.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pybaseballdatana.analysis.trajectories">
+<span id="trajectories"></span><h1>trajectories<a class="headerlink" href="#module-pybaseballdatana.analysis.trajectories" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory">
+<em class="property">class </em><code class="sig-prename descclassname">pybaseballdatana.analysis.trajectories.</code><code class="sig-name descname">BattedBallTrajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">x0</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">y0</span><span class="o">=</span><span class="default_value">2.0</span></em>, <em class="sig-param"><span class="n">z0</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">spin</span><span class="o">=</span><span class="default_value">2675</span></em>, <em class="sig-param"><span class="n">spin_phi</span><span class="o">=</span><span class="default_value">- 18.5</span></em>, <em class="sig-param"><span class="n">drag_strength</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">magnus_strength</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">batted_ball_constants</span><span class="o">=</span><span class="default_value">BattedBallConstants(mass=5.125, circumference=9.125)</span></em>, <em class="sig-param"><span class="n">drag_force_coefs</span><span class="o">=</span><span class="default_value">DragForceCoefficients(cd0=0.3008, cdspin=0.0292)</span></em>, <em class="sig-param"><span class="n">lift_force_coefs</span><span class="o">=</span><span class="default_value">LiftForceCoefficients(cl0=0.583, cl1=2.333, cl2=1.12, tau=10000)</span></em>, <em class="sig-param"><span class="n">env_parameters</span><span class="o">=</span><span class="default_value">EnvironmentalParameters(g_gravity=32.174, vwind=0, phiwind=0, hwind=0, relative_humidity=50, pressure_in_hg=29.92, temperature_f=70, elevation_ft=15, beta=0.0001217)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory.cd_fun">
+<code class="sig-name descname">cd_fun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">vw</span></em>, <em class="sig-param"><span class="n">spin</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory.cd_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.cd_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory.cl_fun">
+<code class="sig-name descname">cl_fun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">vw</span></em>, <em class="sig-param"><span class="n">spin</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory.cl_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.cl_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory.get_trajectory">
+<code class="sig-name descname">get_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">initial_speed</span></em>, <em class="sig-param"><span class="n">launch_angle</span></em>, <em class="sig-param"><span class="n">launch_direction_angle</span></em>, <em class="sig-param"><span class="n">initial_spin</span></em>, <em class="sig-param"><span class="n">spin_angle</span></em>, <em class="sig-param"><span class="n">delta_time</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.get_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory.omega_fun">
+<code class="sig-name descname">omega_fun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">spin</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory.omega_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.omega_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory.s_fun">
+<code class="sig-name descname">s_fun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">vw</span></em>, <em class="sig-param"><span class="n">spin</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory.s_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.s_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallTrajectory.trajectory_fun">
+<code class="sig-name descname">trajectory_fun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">trajectory_vars</span></em>, <em class="sig-param"><span class="n">spin</span><span class="o">=</span><span class="default_value">2500</span></em>, <em class="sig-param"><span class="n">spin_angle</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">launch_angle</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">launch_direction_angle</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/calculator.html#BattedBallTrajectory.trajectory_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.trajectory_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pybaseballdatana.analysis.trajectories.BattedBallConstants">
+<em class="property">class </em><code class="sig-prename descclassname">pybaseballdatana.analysis.trajectories.</code><code class="sig-name descname">BattedBallConstants</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">mass</span><span class="o">=</span><span class="default_value">5.125</span></em>, <em class="sig-param"><span class="n">circumference</span><span class="o">=</span><span class="default_value">9.125</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/parameters.html#BattedBallConstants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.BattedBallConstants" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pybaseballdatana.analysis.trajectories.DragForceCoefficients">
+<em class="property">class </em><code class="sig-prename descclassname">pybaseballdatana.analysis.trajectories.</code><code class="sig-name descname">DragForceCoefficients</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">cd0</span><span class="o">=</span><span class="default_value">0.3008</span></em>, <em class="sig-param"><span class="n">cdspin</span><span class="o">=</span><span class="default_value">0.0292</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/parameters.html#DragForceCoefficients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.DragForceCoefficients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pybaseballdatana.analysis.trajectories.LiftForceCoefficients">
+<em class="property">class </em><code class="sig-prename descclassname">pybaseballdatana.analysis.trajectories.</code><code class="sig-name descname">LiftForceCoefficients</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">cl0</span><span class="o">=</span><span class="default_value">0.583</span></em>, <em class="sig-param"><span class="n">cl1</span><span class="o">=</span><span class="default_value">2.333</span></em>, <em class="sig-param"><span class="n">cl2</span><span class="o">=</span><span class="default_value">1.12</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">10000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/parameters.html#LiftForceCoefficients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.LiftForceCoefficients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pybaseballdatana.analysis.trajectories.EnvironmentalParameters">
+<em class="property">class </em><code class="sig-prename descclassname">pybaseballdatana.analysis.trajectories.</code><code class="sig-name descname">EnvironmentalParameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">g_gravity</span><span class="o">=</span><span class="default_value">32.174</span></em>, <em class="sig-param"><span class="n">vwind</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">phiwind</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">hwind</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">relative_humidity</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">pressure_in_hg</span><span class="o">=</span><span class="default_value">29.92</span></em>, <em class="sig-param"><span class="n">temperature_f</span><span class="o">=</span><span class="default_value">70</span></em>, <em class="sig-param"><span class="n">elevation_ft</span><span class="o">=</span><span class="default_value">15</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">0.0001217</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pybaseballdatana/analysis/trajectories/batted_balls/parameters.html#EnvironmentalParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybaseballdatana.analysis.trajectories.EnvironmentalParameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../utils/index.html" class="btn btn-neutral float-right" title="utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="projections.html" class="btn btn-neutral float-left" title="projections" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Ben Dilday
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

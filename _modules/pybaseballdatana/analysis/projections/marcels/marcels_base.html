@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pybaseballdatana.analysis.projections.marcels.marcels_base &mdash; pybbda  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> pybbda
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../features.html">Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/data/index.html">data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/analysis/index.html">analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/utils/index.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">pybbda</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pybaseballdatana.analysis.projections.marcels.marcels_base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pybaseballdatana.analysis.projections.marcels.marcels_base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pybaseballdatana.data.tools.processing.transform</span> <span class="kn">import</span> <span class="n">get_age</span>
+<span class="kn">from</span> <span class="nn">pybaseballdatana.data.tools.lahman.data</span> <span class="kn">import</span> <span class="n">get_primary_position</span>
+<span class="kn">from</span> <span class="nn">pybaseballdatana.data</span> <span class="kn">import</span> <span class="n">LahmanData</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pybaseballdatana.analysis.projections.marcels.age_adjustment</span> <span class="kn">import</span> <span class="n">age_adjustment</span>
+
+<span class="c1"># http://www.tangotiger.net/archives/stud0346.shtml</span>
+
+
+<span class="k">class</span> <span class="nc">MarcelsProjectionsBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="n">COMPUTED_METRICS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">RECIPROCAL_AGE_METRICS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">LEAGUE_AVG_PT</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">NUM_REGRESSION_PLAYING_TIME</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">METRIC_WEIGHTS</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">PT_WEIGHTS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_pos_df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ld</span> <span class="o">=</span> <span class="n">LahmanData</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats_df</span> <span class="o">=</span> <span class="n">stats_df</span> <span class="k">if</span> <span class="n">stats_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats_df</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats_df</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_pos_df</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">get_primary_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ld</span><span class="o">.</span><span class="n">fielding</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">primary_pos_df</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">primary_pos_df</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">METRIC_WEIGHTS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pt_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PT_WEIGHTS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">league_avg_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LEAGUE_AVG_PT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">people</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ld</span><span class="o">.</span><span class="n">people</span>
+
+    <span class="k">def</span> <span class="nf">_load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="nf">preprocess_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats_df</span><span class="p">):</span>
+        <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="nf">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats_df</span><span class="p">):</span>
+        <span class="n">missing_columns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">required_column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">REQUIRED_COLUMNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">required_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">missing_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">required_column</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;the following required columns are missing </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">missing_columns</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compute_playing_time_projection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_values</span><span class="p">,</span>
+        <span class="n">pt_values</span><span class="p">,</span>
+        <span class="n">metric_weights</span><span class="p">,</span>
+        <span class="n">pt_weights</span><span class="p">,</span>
+        <span class="n">seasonal_averages</span><span class="p">,</span>
+        <span class="n">num_regression_pt</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pt_values</span> <span class="o">*</span> <span class="n">pt_weights</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">num_regression_pt</span>
+
+    <span class="k">def</span> <span class="nf">compute_rate_projection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_values</span><span class="p">,</span>
+        <span class="n">pt_values</span><span class="p">,</span>
+        <span class="n">metric_weights</span><span class="p">,</span>
+        <span class="n">pt_weights</span><span class="p">,</span>
+        <span class="n">seasonal_averages</span><span class="p">,</span>
+        <span class="n">num_regression_pt</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">pt_values</span><span class="p">[</span><span class="n">pt_values</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">min</span>
+        <span class="n">normalized_metric_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">metric_weights</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">metric_weights</span><span class="p">)</span>
+        <span class="n">unregressed_player_projection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">metric_values</span> <span class="o">*</span> <span class="n">normalized_metric_weights</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="n">mean_rate_projection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">seasonal_averages</span> <span class="o">*</span> <span class="n">pt_values</span> <span class="o">*</span> <span class="n">normalized_metric_weights</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pt_values</span> <span class="o">*</span> <span class="n">normalized_metric_weights</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">projection_numerator</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">unregressed_player_projection</span> <span class="o">+</span> <span class="n">num_regression_pt</span> <span class="o">*</span> <span class="n">mean_rate_projection</span>
+        <span class="p">)</span>
+        <span class="n">projection_denominator</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pt_values</span> <span class="o">*</span> <span class="n">normalized_metric_weights</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">num_regression_pt</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">projection_numerator</span> <span class="o">/</span> <span class="n">projection_denominator</span>
+
+    <span class="k">def</span> <span class="nf">metric_projection_detail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">projected_season</span><span class="p">):</span>
+        <span class="n">season</span> <span class="o">=</span> <span class="n">projected_season</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">playing_time_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PLAYING_TIME_COLUMN</span>
+
+        <span class="n">stats_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_non_representative_data</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stats_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_pos_df</span>
+        <span class="p">)</span>
+        <span class="n">num_regression_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_regression_pt</span><span class="p">(</span>
+            <span class="n">stats_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;yearID == </span><span class="si">{</span><span class="n">season</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">seasonal_avg_df</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seasonal_average</span><span class="p">(</span>
+                <span class="n">stats_df</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">playing_time_column</span><span class="o">=</span><span class="n">playing_time_column</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;yearID&quot;</span><span class="p">,</span> <span class="s2">&quot;seasonal_avg&quot;</span><span class="p">]]</span>
+        <span class="p">)</span>
+
+        <span class="n">stats_df</span> <span class="o">=</span> <span class="n">stats_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="p">:,</span> <span class="p">[</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">,</span> <span class="n">playing_time_column</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">stats_df_season</span> <span class="o">=</span> <span class="n">stats_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;yearID == </span><span class="si">{</span><span class="n">season</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="p">:,</span> <span class="p">[</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">metric_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="n">stats_df_season</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                        <span class="n">stats_df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+                            <span class="n">yearID</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">yearID</span> <span class="o">+</span> <span class="n">prior_year_offset</span>
+                        <span class="p">),</span>
+                        <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">],</span>
+                        <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                        <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_x&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">])</span>
+                    <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">metric_name</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">prior_year_offset</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span><span class="p">)</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">pa_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="n">stats_df_season</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                        <span class="n">stats_df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+                            <span class="n">yearID</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">yearID</span> <span class="o">+</span> <span class="n">prior_year_offset</span>
+                        <span class="p">),</span>
+                        <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">],</span>
+                        <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                        <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_x&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">])</span>
+                    <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">playing_time_column</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">prior_year_offset</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span><span class="p">)</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">sa_df</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">seasonal_avg_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;yearID &gt;= </span><span class="si">{</span><span class="n">season</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;and yearID &lt;= </span><span class="si">{</span><span class="n">season</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;yearID&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;seasonal_avg&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">rate_projection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_rate_projection</span><span class="p">(</span>
+            <span class="n">metric_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">pa_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pt_weights</span><span class="p">,</span>
+            <span class="n">sa_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">num_regression_pt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LEAGUE_AVG_PT</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">pt_projection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_playing_time_projection</span><span class="p">(</span>
+            <span class="n">metric_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">pa_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pt_weights</span><span class="p">,</span>
+            <span class="n">sa_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">num_regression_pt</span><span class="o">=</span><span class="n">num_regression_pt</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">age_df</span> <span class="o">=</span> <span class="n">get_age</span><span class="p">(</span><span class="n">stats_df_season</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">people</span><span class="p">)</span>
+        <span class="n">age_values</span> <span class="o">=</span> <span class="n">age_df</span><span class="o">.</span><span class="n">age</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">age_adjustment_value</span> <span class="o">=</span> <span class="n">age_values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">age_adjustment</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">if</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RECIPROCAL_AGE_METRICS</span><span class="p">:</span>
+            <span class="n">age_adjustment_value</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">age_adjustment_value</span>
+
+        <span class="n">weighted_average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span> <span class="o">*</span> <span class="n">sa_df</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metric_weights</span>
+        <span class="p">)</span>
+        <span class="n">weighted_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">rate_projection</span> <span class="o">*</span> <span class="n">age_adjustment_value</span> <span class="o">*</span> <span class="n">pt_projection</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pt_projection</span><span class="p">)</span>
+
+        <span class="n">rebaseline_value</span> <span class="o">=</span> <span class="n">weighted_average</span> <span class="o">/</span> <span class="n">weighted_value</span>
+
+        <span class="k">return</span> <span class="n">stats_df_season</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+            <span class="n">yearID</span><span class="o">=</span><span class="n">projected_season</span><span class="p">,</span>
+            <span class="n">age</span><span class="o">=</span><span class="n">age_values</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">rate_projection</span><span class="o">=</span><span class="n">rate_projection</span><span class="p">,</span>
+            <span class="n">pt_projection</span><span class="o">=</span><span class="n">pt_projection</span><span class="p">,</span>
+            <span class="n">age_adjustment_value</span><span class="o">=</span><span class="n">age_adjustment_value</span><span class="p">,</span>
+            <span class="n">rebaseline_value</span><span class="o">=</span><span class="n">rebaseline_value</span><span class="p">,</span>
+            <span class="n">weighted_average</span><span class="o">=</span><span class="n">weighted_average</span><span class="p">,</span>
+            <span class="n">weighted_value</span><span class="o">=</span><span class="n">weighted_value</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;playerID&quot;</span><span class="p">,</span> <span class="s2">&quot;yearID&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">metric_projection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">projected_season</span><span class="p">):</span>
+        <span class="n">x_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_projection_detail</span><span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="n">projected_season</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">x_df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">rate_projection</span>
+                <span class="o">*</span> <span class="n">row</span><span class="o">.</span><span class="n">pt_projection</span>
+                <span class="o">*</span> <span class="n">row</span><span class="o">.</span><span class="n">age_adjustment_value</span>
+                <span class="o">*</span> <span class="n">row</span><span class="o">.</span><span class="n">rebaseline_value</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">metric_name</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="n">metric_name</span><span class="p">]]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">projections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">projected_season</span><span class="p">,</span> <span class="n">computed_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">computed_metrics</span> <span class="o">=</span> <span class="n">computed_metrics</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">COMPUTED_METRICS</span>
+
+        <span class="n">projections</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metric_projection</span><span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="n">projected_season</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">computed_metrics</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">projections</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">seasonal_average</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats_df</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">playing_time_column</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">stats_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;yearID&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">metric_name</span><span class="p">:</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">playing_time_column</span><span class="p">:</span> <span class="nb">sum</span><span class="p">})</span>
+            <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+                <span class="n">seasonal_avg</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="n">playing_time_column</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_num_regression_pt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats_df</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_REGRESSION_PLAYING_TIME</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Ben Dilday
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

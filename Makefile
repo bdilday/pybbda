@@ -39,3 +39,6 @@ install-dev:
 
 install: install-dev
 	pip install -e .
+
+gh-pages: docs
+	rsync -ruva docs/_build/html/* .

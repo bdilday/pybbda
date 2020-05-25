@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; pybbda  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Features" href="features.html" />
+    <link rel="prev" title="Welcome to pybbda documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pybbda
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-vs-module-name">Package vs module name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-data">Installing data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/data/index.html">data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/analysis/index.html">analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/utils/index.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pybbda</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>This package is not available on PyPi but is on github.</p>
+<p>You can install directly from the repo using
+<code class="docutils literal notranslate"><span class="pre">pip</span></code>,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/bdilday/pybbda.git
+</pre></div>
+</div>
+<p>or clone the source repo,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:bdilday/pybbda.git
+<span class="nb">cd</span> pybbda
+pip install -e .
+</pre></div>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>This package explicitly
+supports <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">3.6</span></code> and <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">3.7</span></code>. It aims
+to support <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">3.8</span></code> but this is not guaranteed.
+It explicitly <em>does not</em> support any versions
+prior to <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">3.6</span></code>, including <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">2.7</span></code>.</p>
+</div>
+<div class="section" id="package-vs-module-name">
+<h2>Package vs module name<a class="headerlink" href="#package-vs-module-name" title="Permalink to this headline">¶</a></h2>
+<p>In the tradition of <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>, the <code class="docutils literal notranslate"><span class="pre">pybbda</span></code> <em>package</em>
+provides a <em>module</em> <code class="docutils literal notranslate"><span class="pre">pybaseballdatana</span></code>. This means imports work in
+the following way,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pybaseballdatana.data</span> <span class="kn">import</span> <span class="n">LahmanData</span>
+</pre></div>
+</div>
+<p>This also means the installation directory is <code class="docutils literal notranslate"><span class="pre">pybaseballdatana</span></code>
+and not <code class="docutils literal notranslate"><span class="pre">pybbda</span></code>.</p>
+</div>
+<div class="section" id="environment-variables">
+<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>The package uses the following environment variables</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PYBBDA_DATA_ROOT</span></code></p></li>
+</ul>
+<p>The root directory for storing data
+(See [Installing data](#Installing-data)). Defaults to <code class="docutils literal notranslate"><span class="pre">${INSTALLATION_ROOT}/data/assets</span></code>
+where <code class="docutils literal notranslate"><span class="pre">${INSTALLATION_ROOT}</span></code> is the path the the <code class="docutils literal notranslate"><span class="pre">pybbda</span></code> installation.
+The code location is typically a path to the <code class="docutils literal notranslate"><span class="pre">Python</span></code> installation
+plus <code class="docutils literal notranslate"><span class="pre">site-packages/pybaseballdatana</span></code>.</p>
+<p>This can cause a problem with write permissions
+if you’re using a system <cite>Python</cite> instead of a user-controlled
+[virtual environment](<a class="reference external" href="https://docs.python.org/3.7/library/venv.html">https://docs.python.org/3.7/library/venv.html</a>).
+For this reason, and to avoid duplication if the package is
+installed into multiple virtual environments, it’s
+recommended to use a custom path for <cite>PYBBDA_DATA_ROOT</cite>, for example,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">PYBBDA_DATA_ROOT</span><span class="o">=</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span>/.pybbda/data
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PYBBDA_LOG_LEVEL</span></code></p></li>
+</ul>
+<p>This sets the [logging level](<a class="reference external" href="https://docs.python.org/3.7/library/logging.html">https://docs.python.org/3.7/library/logging.html</a>) for the package at runtime.
+The default is <code class="docutils literal notranslate"><span class="pre">INFO</span></code>.</p>
+</div>
+<div class="section" id="installing-data">
+<h2>Installing data<a class="headerlink" href="#installing-data" title="Permalink to this headline">¶</a></h2>
+<p>This package ships without any data. Instead it provides tools
+to fetch and store data from a variety of sources. To install
+data you can use the <code class="docutils literal notranslate"><span class="pre">update</span></code> tool in the <code class="docutils literal notranslate"><span class="pre">pybaseballdatana.data.tools</span></code>
+sub-module.</p>
+<p>Example,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python -m pybaseballdatana.data.tools.update -h
+usage: update.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--data-root DATA_ROOT<span class="o">]</span> --data-source
+                 <span class="o">{</span>Lahman,BaseballReference,Fangraphs,all<span class="o">}</span> <span class="o">[</span>--make-dirs<span class="o">]</span>
+                 <span class="o">[</span>--overwrite<span class="o">]</span> <span class="o">[</span>--min-year MIN_YEAR<span class="o">]</span> <span class="o">[</span>--max-year MAX_YEAR<span class="o">]</span>
+                 <span class="o">[</span>--num-threads NUM_THREADS<span class="o">]</span>
+
+optional arguments:
+  -h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+  --data-root DATA_ROOT
+                        Root directory <span class="k">for</span> data storage
+  --data-source <span class="o">{</span>Lahman,BaseballReference,Fangraphs,all<span class="o">}</span>
+                        Update <span class="nb">source</span>
+  --make-dirs           Make root dir <span class="k">if</span> does not exist
+  --overwrite           Overwrite files <span class="k">if</span> they exist
+  --min-year MIN_YEAR   Min year to download
+  --max-year MAX_YEAR   Max year to download
+  --num-threads NUM_THREADS
+                        Number of threads to use <span class="k">for</span> downloads
+</pre></div>
+</div>
+<p>The data will be downloaded to <code class="docutils literal notranslate"><span class="pre">--data-root</span></code>, which defaults to the
+<code class="docutils literal notranslate"><span class="pre">PYBBDA_DATA_ROOT</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">min-year</span></code> and <code class="docutils literal notranslate"><span class="pre">max-year</span></code> arguments refer only
+to Fangraphs leaderboards as of now.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="features.html" class="btn btn-neutral float-right" title="Features" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to pybbda documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Ben Dilday
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

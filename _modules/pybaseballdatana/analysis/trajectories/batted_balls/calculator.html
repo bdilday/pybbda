@@ -1,0 +1,374 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pybaseballdatana.analysis.trajectories.batted_balls.calculator &mdash; pybbda  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> pybbda
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../features.html">Features</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/data/index.html">data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/analysis/index.html">analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/utils/index.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">pybbda</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pybaseballdatana.analysis.trajectories.batted_balls.calculator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pybaseballdatana.analysis.trajectories.batted_balls.calculator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">attr</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">RK45</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pybaseballdatana.analysis.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_between_zero_one</span><span class="p">,</span>
+    <span class="n">cos_in_degrees</span><span class="p">,</span>
+    <span class="n">sin_in_degrees</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.parameters</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BattedBallConstants</span><span class="p">,</span>
+    <span class="n">DragForceCoefficients</span><span class="p">,</span>
+    <span class="n">LiftForceCoefficients</span><span class="p">,</span>
+    <span class="n">EnvironmentalParameters</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="BattedBallTrajectory"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">BattedBallTrajectory</span><span class="p">:</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">})</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">})</span>
+    <span class="n">z0</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">})</span>
+    <span class="n">spin</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">2675</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;revs_per_second&quot;</span><span class="p">})</span>
+    <span class="n">spin_phi</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=-</span><span class="mf">18.5</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">})</span>
+    <span class="n">drag_strength</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">check_between_zero_one</span><span class="p">)</span>
+    <span class="n">magnus_strength</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">check_between_zero_one</span><span class="p">)</span>
+    <span class="n">batted_ball_constants</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">BattedBallConstants</span><span class="p">())</span>
+    <span class="n">drag_force_coefs</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">DragForceCoefficients</span><span class="p">())</span>
+    <span class="n">lift_force_coefs</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">LiftForceCoefficients</span><span class="p">())</span>
+    <span class="n">env_parameters</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">EnvironmentalParameters</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pi_30</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">30</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c0</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">0.07182</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_parameters</span><span class="o">.</span><span class="n">air_density</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_parameters</span><span class="o">.</span><span class="n">unit_conversions</span><span class="o">.</span><span class="n">kgm3_to_lbft3</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mf">5.125</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">batted_ball_constants</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batted_ball_constants</span><span class="o">.</span><span class="n">circumference</span> <span class="o">/</span> <span class="mf">9.125</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="BattedBallTrajectory.omega_fun"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.omega_fun">[docs]</a>    <span class="k">def</span> <span class="nf">omega_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spin</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">spin</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">30</span></div>
+
+<div class="viewcode-block" id="BattedBallTrajectory.s_fun"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.s_fun">[docs]</a>    <span class="k">def</span> <span class="nf">s_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">vw</span><span class="p">,</span> <span class="n">spin</span><span class="p">):</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega_fun</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">spin</span><span class="p">)</span>
+        <span class="n">romega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batted_ball_constants</span><span class="o">.</span><span class="n">circumference</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">romega</span> <span class="o">/</span> <span class="n">vw</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span> <span class="o">*</span> <span class="n">vw</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lift_force_coefs</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="mf">146.7</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BattedBallTrajectory.cl_fun"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.cl_fun">[docs]</a>    <span class="k">def</span> <span class="nf">cl_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">vw</span><span class="p">,</span> <span class="n">spin</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_fun</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">vw</span><span class="p">,</span> <span class="n">spin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lift_force_coefs</span><span class="o">.</span><span class="n">cl2</span>
+            <span class="o">*</span> <span class="n">s</span>
+            <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lift_force_coefs</span><span class="o">.</span><span class="n">cl0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lift_force_coefs</span><span class="o">.</span><span class="n">cl1</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="BattedBallTrajectory.cd_fun"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.cd_fun">[docs]</a>    <span class="k">def</span> <span class="nf">cd_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">vw</span><span class="p">,</span> <span class="n">spin</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">drag_force_coefs</span><span class="o">.</span><span class="n">cd0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drag_force_coefs</span><span class="o">.</span><span class="n">cdspin</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">spin</span> <span class="o">*</span> <span class="mf">1e-3</span>
+        <span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span> <span class="o">*</span> <span class="n">vw</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lift_force_coefs</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="mf">146.7</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BattedBallTrajectory.get_trajectory"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.get_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">initial_speed</span><span class="p">,</span>
+        <span class="n">launch_angle</span><span class="p">,</span>
+        <span class="n">launch_direction_angle</span><span class="p">,</span>
+        <span class="n">initial_spin</span><span class="p">,</span>
+        <span class="n">spin_angle</span><span class="p">,</span>
+        <span class="n">delta_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="n">initial_velocity</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">initial_speed</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_parameters</span><span class="o">.</span><span class="n">unit_conversions</span><span class="o">.</span><span class="n">mph_to_fts</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">launch_angle</span><span class="p">)</span>
+                    <span class="o">*</span> <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">launch_direction_angle</span><span class="p">),</span>
+                    <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">launch_angle</span><span class="p">)</span>
+                    <span class="o">*</span> <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">launch_direction_angle</span><span class="p">),</span>
+                    <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">launch_angle</span><span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">initial_conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_position</span><span class="p">,</span> <span class="n">initial_velocity</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+
+        <span class="n">rk_solution</span> <span class="o">=</span> <span class="n">RK45</span><span class="p">(</span>
+            <span class="n">partial</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_fun</span><span class="p">,</span>
+                <span class="n">launch_angle</span><span class="o">=</span><span class="n">launch_angle</span><span class="p">,</span>
+                <span class="n">launch_direction_angle</span><span class="o">=</span><span class="n">launch_direction_angle</span><span class="p">,</span>
+                <span class="n">spin</span><span class="o">=</span><span class="n">initial_spin</span><span class="p">,</span>
+                <span class="n">spin_angle</span><span class="o">=</span><span class="n">spin_angle</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">initial_conditions</span><span class="p">,</span>
+            <span class="n">t_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">max_step</span><span class="o">=</span><span class="n">delta_time</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">z</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rk_solution</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">rk_solution</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">ans</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">rk_solution</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+        <span class="n">result_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;vx&quot;</span><span class="p">,</span> <span class="s2">&quot;vy&quot;</span><span class="p">,</span> <span class="s2">&quot;vz&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result_df</span></div>
+
+<div class="viewcode-block" id="BattedBallTrajectory.trajectory_fun"><a class="viewcode-back" href="../../../../../modules/analysis/trajectories.html#pybaseballdatana.analysis.trajectories.BattedBallTrajectory.trajectory_fun">[docs]</a>    <span class="k">def</span> <span class="nf">trajectory_fun</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t</span><span class="p">,</span>
+        <span class="n">trajectory_vars</span><span class="p">,</span>
+        <span class="n">spin</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span>
+        <span class="n">spin_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">launch_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">launch_direction_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># trajectory_vars = x, y, z, vx, vy, vz</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">vz</span> <span class="o">=</span> <span class="n">trajectory_vars</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vx</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">vz</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">sidespin</span> <span class="o">=</span> <span class="n">spin</span> <span class="o">*</span> <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">spin_angle</span><span class="p">)</span>
+        <span class="n">backspin</span> <span class="o">=</span> <span class="n">spin</span> <span class="o">*</span> <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">spin_angle</span><span class="p">)</span>
+
+        <span class="n">wb</span> <span class="o">=</span> <span class="n">backspin</span>
+        <span class="n">ws</span> <span class="o">=</span> <span class="n">sidespin</span>
+
+        <span class="n">wx</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">wb</span> <span class="o">*</span> <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">launch_direction_angle</span><span class="p">)</span>
+                <span class="o">-</span> <span class="n">ws</span>
+                <span class="o">*</span> <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">launch_angle</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">launch_direction_angle</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+            <span class="o">/</span> <span class="mi">30</span>
+        <span class="p">)</span>
+        <span class="n">wy</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span>
+                <span class="o">-</span><span class="n">wb</span> <span class="o">*</span> <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">launch_direction_angle</span><span class="p">)</span>
+                <span class="o">-</span> <span class="n">ws</span>
+                <span class="o">*</span> <span class="n">sin_in_degrees</span><span class="p">(</span><span class="n">launch_angle</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">launch_direction_angle</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+            <span class="o">/</span> <span class="mi">30</span>
+        <span class="p">)</span>
+        <span class="n">wz</span> <span class="o">=</span> <span class="n">ws</span> <span class="o">*</span> <span class="n">cos_in_degrees</span><span class="p">(</span><span class="n">launch_angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">30</span>
+
+        <span class="n">cd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cd_fun</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">spin</span><span class="p">)</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cl_fun</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">spin</span><span class="p">)</span>
+
+        <span class="n">magnus_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c0</span> <span class="o">*</span> <span class="n">cl</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega_fun</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">spin</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span>
+        <span class="n">magnus_const</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">magnus_strength</span>
+
+        <span class="n">drag_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c0</span> <span class="o">*</span> <span class="n">cd</span> <span class="o">*</span> <span class="n">v</span>
+        <span class="n">drag_const</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drag_strength</span>
+        <span class="n">fx</span> <span class="o">=</span> <span class="o">-</span><span class="n">drag_const</span> <span class="o">*</span> <span class="n">vx</span> <span class="o">+</span> <span class="n">magnus_const</span> <span class="o">*</span> <span class="p">(</span><span class="n">wy</span> <span class="o">*</span> <span class="n">vz</span> <span class="o">-</span> <span class="n">wz</span> <span class="o">*</span> <span class="n">vy</span><span class="p">)</span>
+
+        <span class="n">fy</span> <span class="o">=</span> <span class="o">-</span><span class="n">drag_const</span> <span class="o">*</span> <span class="n">vy</span> <span class="o">+</span> <span class="n">magnus_const</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">wx</span> <span class="o">*</span> <span class="n">vz</span> <span class="o">+</span> <span class="n">wz</span> <span class="o">*</span> <span class="n">vx</span><span class="p">)</span>
+
+        <span class="n">fz</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">drag_const</span> <span class="o">*</span> <span class="n">vz</span>
+            <span class="o">+</span> <span class="n">magnus_const</span> <span class="o">*</span> <span class="p">(</span><span class="n">wx</span> <span class="o">*</span> <span class="n">vy</span> <span class="o">-</span> <span class="n">wy</span> <span class="o">*</span> <span class="n">vx</span><span class="p">)</span>
+            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_parameters</span><span class="o">.</span><span class="n">g_gravity</span>
+        <span class="p">)</span>
+
+        <span class="n">gx</span> <span class="o">=</span> <span class="n">vx</span>
+        <span class="n">gy</span> <span class="o">=</span> <span class="n">vy</span>
+        <span class="n">gz</span> <span class="o">=</span> <span class="n">vz</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gz</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">fz</span><span class="p">])</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Ben Dilday
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
