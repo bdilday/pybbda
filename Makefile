@@ -1,7 +1,7 @@
 .PHONY: test lint clean dev dist
 
 lint:
-	black pybaseballdatana/ tests/
+	python -m black pybaseballdatana/ tests/
 	python -m flake8 pybaseballdatana
 
 test:
