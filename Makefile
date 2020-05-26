@@ -1,23 +1,22 @@
-.PHONY: test lint clean dev dist
+.PHONY: test test-analysis test-data test-markov lint clean install-dev install dist
 
-lint:
+lint: install-dev
 	python -m black pybaseballdatana/ tests/
 	python -m flake8 pybaseballdatana
 
-test-analysis:
+test-analysis: install-dev
 	python -m pytest tests/analysis/
 
-test-data:
+test-data: install-dev
 	python -m pytest tests/data/
 
-test-markov:
+test-markov: install
 	python -m pybaseballdatana.analysis.run_expectancy.markov.cli \
 	--batting-probs 0.1 0.1 0.1 0.1 0.1 \
 	--running-probs 0.1 0.1 0.1 0.1
 
-test:
+test: install-dev
 	python -m pytest tests/
-
 
 clean:
 	rm -fr pybaseballdatana.egg-info
