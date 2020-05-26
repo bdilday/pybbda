@@ -11,7 +11,7 @@ from .components.player import (
     Batter,
     BattingEventProbability,
     Runner,
-    RunEventProbability,
+    RunningEventProbability,
     Lineup,
 )
 
@@ -30,5 +30,5 @@ __all__ = [
     "Batter",
     "BattingEventProbability",
     "Runner",
-    "RunEventProbability",
+    "RunningEventProbability",
 ]

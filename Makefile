@@ -10,8 +10,14 @@ test-analysis:
 test-data:
 	python -m pytest tests/data/
 
+test-markov:
+	python -m pybaseballdatana.analysis.run_expectancy.markov.cli \
+	--batting-probs 0.1 0.1 0.1 0.1 0.1 \
+	--running-probs 0.1 0.1 0.1 0.1
+
 test:
 	python -m pytest tests/
+
 
 clean:
 	rm -fr pybaseballdatana.egg-info

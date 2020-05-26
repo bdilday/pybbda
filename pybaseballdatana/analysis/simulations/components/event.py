@@ -56,7 +56,7 @@ class BattingEventProbability:
         partial_sum = (
             self.base_on_balls + self.single + self.double + self.triple + self.home_run
         )
-        if not 0 <= partial_sum < 1:
+        if not 0 <= partial_sum <= 1:
             raise ValueError(
                 "The sum of event probabilities "
                 "must be between zero and one, not {}".format(partial_sum)
@@ -77,7 +77,7 @@ class BattingEventProbability:
 
 
 @attr.s(frozen=True)
-class RunEventProbability:
+class RunningEventProbability:
     first_to_third_on_single = attr.ib(
         type=float,
         validator=check_between_zero_one,

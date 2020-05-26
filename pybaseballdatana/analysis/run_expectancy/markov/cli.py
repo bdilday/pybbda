@@ -4,7 +4,9 @@ import sys
 from pybaseballdatana.analysis.run_expectancy import MarkovSimulation
 from pybaseballdatana.analysis.simulations import (
     BattingEventProbability,
-    RunEventProbability,
+    RunningEventProbability,
+    Batter,
+    Lineup,
 )
 
 import logging
@@ -29,8 +31,11 @@ def main():
 
     markov_simulation = MarkovSimulation(termination_threshold=1e-6)
     batting_event_probs = BattingEventProbability(*args.batting_probs)
-    running_event_probs = RunEventProbability(*args.running_probs)
-    result = markov_simulation(batting_event_probs, running_event_probs)
+    batter = Batter(player_id="xyz", batting_event_probabilities=batting_event_probs)
+    running_event_probs = RunningEventProbability(*args.running_probs)
+    result = markov_simulation(
+        lineup=Lineup([batter] * 9), running_event_probabilities=running_event_probs
+    )
     summarise_result(result)
 
 
