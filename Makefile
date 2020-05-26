@@ -4,6 +4,12 @@ lint:
 	python -m black pybaseballdatana/ tests/
 	python -m flake8 pybaseballdatana
 
+test-analysis:
+	python -m pytest tests/analysis/
+
+test-data:
+	python -m pytest tests/data/
+
 test:
 	python -m pytest tests/
 
