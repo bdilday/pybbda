@@ -1,4 +1,4 @@
-from .components.state import BaseState, BaseOutState, GameState, Lineup
+from .components.state import BaseState, BaseOutState, GameState
 from .components.event import (
     BattingEvent,
     RunningEvent,
@@ -12,6 +12,7 @@ from .components.player import (
     BattingEventProbability,
     Runner,
     RunEventProbability,
+    Lineup,
 )
 
 

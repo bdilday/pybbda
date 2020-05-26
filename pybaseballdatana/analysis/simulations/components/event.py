@@ -78,10 +78,26 @@ class BattingEventProbability:
 
 @attr.s(frozen=True)
 class RunEventProbability:
-    first_to_third_on_single = attr.ib(type=float, validator=check_between_zero_one)
-    first_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
-    first_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
-    second_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
+    first_to_third_on_single = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[0],
+    )
+    first_to_home_on_single = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[1],
+    )
+    first_to_home_on_double = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[2],
+    )
+    second_to_home_on_single = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[3],
+    )
 
     def __attrs_post_init__(self):
         first_base_partial_sum = (

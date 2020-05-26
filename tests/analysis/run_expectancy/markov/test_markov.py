@@ -8,6 +8,8 @@ from pybaseballdatana.analysis.simulations import (
     BaseState,
     RunEventProbability,
     GameEvent,
+    Lineup,
+    Batter,
 )
 from pybaseballdatana.analysis.run_expectancy.markov import (
     MarkovSimulation,
@@ -88,25 +90,51 @@ def test_markov_events():
     assert markov_events.total_probability == 1
 
 
-def test_markov_simulations_results():
-    markov_simulation = MarkovSimulation(termination_threshold=1e-4)
-
-    batting_event_probs = BattingEventProbability(0.5, 0, 0, 0, 0)
-    running_event_probs = RunEventProbability(0, 0, 0, 0)
-    result = markov_simulation(batting_event_probs, running_event_probs)
-    assert result[-1].mean_score == pytest.approx(0.9375, 0.01)
-
-    batting_event_probs = BattingEventProbability(0, 0, 0, 0, 0.5)
-    running_event_probs = RunEventProbability(0, 0, 0, 0)
-    result = markov_simulation(batting_event_probs, running_event_probs)
-    assert result[-1].mean_score == pytest.approx(3, 0.01)
-
-
 def test_markov_step():
     markov_simulation = MarkovSimulation()
     state_vector = markov_simulation.state_vector
     be = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03)
     re = RunEventProbability(0.1, 0.1, 0.1, 0.1)
     markov_events = MarkovEvents.from_probs(be, re)
+
+    for expected_lineup_slot in range(1, 10):
+        assert state_vector.lineup_slot == expected_lineup_slot
+        state_vector = markov_simulation.markov_step(state_vector, markov_events)
+
+    for expected_lineup_slot in range(1, 10):
+        assert state_vector.lineup_slot == expected_lineup_slot
+        state_vector = markov_simulation.markov_step(state_vector, markov_events)
+
     markov_simulation.markov_step(state_vector, markov_events, num_processes=2)
     markov_simulation.markov_step(state_vector, markov_events, num_processes=1)
+
+
+def test_markov_simulations_results():
+    markov_simulation = MarkovSimulation(termination_threshold=1e-4)
+
+    batting_event_probs = BattingEventProbability(0, 0, 0, 0, 0)
+    running_event_probs = RunEventProbability(0, 0, 0, 0)
+    batter = Batter(player_id="abc123", event_probabilities=batting_event_probs)
+    lineup = Lineup(lineup=[batter] * 9)
+    result = markov_simulation(lineup)
+    assert result[-1].mean_score == pytest.approx(0)
+
+    batting_event_probs = BattingEventProbability(0.5, 0, 0, 0, 0)
+    running_event_probs = RunEventProbability(0, 0, 0, 0)
+    batter = Batter(player_id="abc123", event_probabilities=batting_event_probs)
+    lineup = Lineup(lineup=[batter] * 9)
+    result = markov_simulation(lineup)
+    assert result[-1].mean_score == pytest.approx(0.9375, 0.01)
+
+    batting_event_probs = BattingEventProbability(0, 0, 0, 0, 0.5)
+    running_event_probs = RunEventProbability(0, 0, 0, 0)
+    batter = Batter(player_id="abc123", event_probabilities=batting_event_probs)
+    lineup = Lineup(lineup=[batter] * 9)
+    result = markov_simulation(lineup)
+    assert result[-1].mean_score == pytest.approx(3, 0.01)
+
+    other_batter = Batter(player_id="xyz789", event_probabilities=batting_event_probs)
+    other_batter.set_event_probs(home_run=0)
+    lineup.set_lineup_slot(1, other_batter)
+    result = markov_simulation(lineup)
+    assert result[-1].mean_score < 3

@@ -15,6 +15,7 @@ from pybaseballdatana.analysis.simulations import (
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
+    RunEventProbability,
 )
 from pybaseballdatana.analysis.utils import check_between_zero_one
 import pandas as pd
@@ -37,6 +38,10 @@ class MarkovState:
 
     game_state = attr.ib(type=GameState)
     probability = attr.ib(type=float, validator=check_between_zero_one)
+
+    @property
+    def lineup_slot(self):
+        return self.game_state.lineup_slot
 
     def to_df(self):
         """
@@ -266,6 +271,10 @@ class StateVector:
         for state in self.states:
             yield state
 
+    @property
+    def lineup_slot(self):
+        return self.states[0].lineup_slot
+
     def to_df(self):
         """
         Converts `StateVector` object to Pandas DataFrame
@@ -354,7 +363,7 @@ class MarkovSimulation:
     )
     termination_threshold = attr.ib(type=float, default=1e-6)
 
-    def __call__(self, batting_event_probs, running_event_probs):
+    def __call__(self, lineup):
         """
         Executes the MarkovSimulation
 
@@ -370,9 +379,7 @@ class MarkovSimulation:
         results = markov_simulation(batting_event_probability,
                                     running_event_probability)
         """
-        markov_events = MarkovEvents.from_probs(
-            batting_event_probs, running_event_probs
-        )
+
         ncall = 0
         MAX_CALL = 100
         state_vector = self.state_vector
@@ -381,6 +388,14 @@ class MarkovSimulation:
             ncall < MAX_CALL
             and state_vector.end_probability < 1 - self.termination_threshold
         ):
+            lineup_slot = state_vector.lineup_slot
+            batting_event_probs = lineup.get_batting_probs(lineup_slot)
+            running_event_probs = RunEventProbability()
+
+            markov_events = MarkovEvents.from_probs(
+                batting_event_probs, running_event_probs
+            )
+
             state_vector = self.markov_step(state_vector, markov_events)
             results.append(state_vector)
             ncall += 1

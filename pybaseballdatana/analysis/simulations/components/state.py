@@ -1,6 +1,5 @@
 import attr
-from functools import partial, lru_cache
-from typing import List
+from functools import lru_cache
 
 from pybaseballdatana.analysis.simulations.components.event import (
     BattingEvent,
@@ -8,8 +7,7 @@ from pybaseballdatana.analysis.simulations.components.event import (
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
 )
-from pybaseballdatana.analysis.simulations.components.player import Batter
-from pybaseballdatana.analysis.utils import check_len, check_is_zero_one
+from pybaseballdatana.analysis.utils import check_is_zero_one
 from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
 
 
@@ -325,11 +323,6 @@ class BaseOutState:
         return attr.evolve(self, base_state=base_state, outs=outs)
 
 
-@attr.s
-class Lineup:
-    lineup = attr.ib(List[Batter], validator=partial(check_len, len_constraint=9))
-
-
 @lru_cache(maxsize=1024)
 def game_state_evolve_cached(
     cls,
@@ -356,6 +349,9 @@ class GameState:
     lineup_slot = attr.ib(type=int, default=1)
     score = attr.ib(type=int, default=0)
 
+    @staticmethod
+    def pa_count_to_lineup_slot(pa_count):
+        return ((pa_count-1)% 9)+1
     def evolve(
         self,
         batting_event,
@@ -374,7 +370,7 @@ class GameState:
             self,
             base_out_state=base_out_state,
             pa_count=self.pa_count + 1,
-            lineup_slot=self.lineup_slot + 1,
+            lineup_slot=self.pa_count_to_lineup_slot(self.pa_count+1),
             score=self.score + runs_scored,
         )
 
