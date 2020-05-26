@@ -138,3 +138,13 @@ def test_markov_simulations_results():
     lineup.set_lineup_slot(1, other_batter)
     result = markov_simulation(lineup)
     assert result[-1].mean_score < 3
+
+    batting_event_probs = BattingEventProbability(0, 0, 0, 0, 0)
+    running_event_probs = RunEventProbability(0, 0, 0, 0)
+    batter = Batter(player_id="abc123", event_probabilities=batting_event_probs)
+    lineup = Lineup(lineup=[batter] * 9)
+    other_batter = Batter(player_id="xyz789", event_probabilities=batting_event_probs)
+    other_batter.set_event_probs(home_run=1)
+    lineup.set_lineup_slot(1, other_batter)
+    result = markov_simulation(lineup)
+    assert result[-1].mean_score == 1
