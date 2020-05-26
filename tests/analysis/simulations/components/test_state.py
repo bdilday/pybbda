@@ -191,11 +191,11 @@ def test_game_state():
     )
     assert game_state_evolve_cached.cache_info().hits > 0
 
+
 def test_lineup_slot():
     assert GameState.pa_count_to_lineup_slot(1) == 1
     assert GameState.pa_count_to_lineup_slot(9) == 9
     assert GameState.pa_count_to_lineup_slot(10) == 1
-
 
 
 def test_base_out_running_events():

@@ -351,7 +351,8 @@ class GameState:
 
     @staticmethod
     def pa_count_to_lineup_slot(pa_count):
-        return ((pa_count-1)% 9)+1
+        return ((pa_count - 1) % 9) + 1
+
     def evolve(
         self,
         batting_event,
@@ -370,7 +371,7 @@ class GameState:
             self,
             base_out_state=base_out_state,
             pa_count=self.pa_count + 1,
-            lineup_slot=self.pa_count_to_lineup_slot(self.pa_count+1),
+            lineup_slot=self.pa_count_to_lineup_slot(self.pa_count + 1),
             score=self.score + runs_scored,
         )
 
