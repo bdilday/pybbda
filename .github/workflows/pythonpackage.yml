@@ -42,5 +42,5 @@ jobs:
         make test
     - name: Test Markov CLI
       run: |
-        python -m pybaseballdatana.analysis.run_expectancy.markov.cli --batting-probs 0.1 0.1 0.1 0.1 0.1 --running-probs 0.1 0.1 0.1 0.1
+        make test-markov
 
