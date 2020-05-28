@@ -8,7 +8,7 @@ from pybaseballdatana.analysis.simulations.components.event import (
     ThirdBaseRunningEvent,
 )
 from pybaseballdatana.analysis.utils import check_is_zero_one
-from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
+from pybaseballdatana.analysis.simulations.constants import MAX_OUTS, INNING_OUTS
 
 
 @attr.s(frozen=True)
@@ -120,6 +120,7 @@ def validate_running_events_cached(
 class BaseOutState:
     base_state = attr.ib(type=BaseState)
     outs = attr.ib(type=int)
+    max_outs = attr.ib(type=int, default=MAX_OUTS)
 
     @staticmethod
     def runs_scored(initial_state, end_state):
@@ -136,7 +137,7 @@ class BaseOutState:
         :raises: `ValueError` if runs scored is less than zero
         """
         # runs = -d(runners) - d(outs) + 1
-        if end_state.outs == MAX_OUTS:
+        if end_state.outs == INNING_OUTS:
             return 0
         runners_end = sum(end_state.base_state)
         runners_start = sum(initial_state.base_state)
@@ -232,11 +233,13 @@ class BaseOutState:
 
         # TODO: handle the case where MAX_OUTS greater than 3,
         # ie reset bases at end of inning
-        if outs == MAX_OUTS:
+        if outs == self.max_outs:
             pass
 
         elif batting_event == BattingEvent.OUT:
             outs = self.outs + 1
+            if outs % INNING_OUTS == 0:
+                base_state = BaseState(0, 0, 0)
 
         elif batting_event == BattingEvent.BASE_ON_BALLS:
             base_state = BaseState(

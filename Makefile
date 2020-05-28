@@ -1,4 +1,8 @@
-.PHONY: test test-analysis test-data test-markov lint clean install-dev install dist
+.PHONY: lint \
+test-analysis test-data test-markov test \
+clean \
+install-dev install \
+dist
 
 lint: install-dev
 	python -m black pybaseballdatana/ tests/
@@ -31,7 +35,7 @@ docs: install-dev
 	cd docs && make html
 
 install-dev:
-	pip install -r requirements-dev.txt
+	pip install --quiet -r requirements-dev.txt
 
 install: install-dev
 	pip install -e .
