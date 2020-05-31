@@ -24,7 +24,7 @@ from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
 
 logger = logging.getLogger(__name__)
 
-NUM_PROCESSES = 5
+NUM_PROCESSES = 1
 
 
 @attr.s(frozen=True)

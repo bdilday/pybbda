@@ -371,7 +371,7 @@ class GameState:
             second_base_running_event,
             third_base_running_event,
         )
-        runs_scored = BaseOutState.runs_scored(self.base_out_state, base_out_state)
+        runs_scored = runs_scored_cached(self.base_out_state, base_out_state)
         game_state = attr.evolve(
             self,
             base_out_state=base_out_state,

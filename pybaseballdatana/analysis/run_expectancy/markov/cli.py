@@ -52,7 +52,7 @@ def test_lineups():
 def sim_player_id(player_id):
     player_registry = PlayerRegistry()
     player_registry.load_from_lahman()
-    lineup1 = Lineup([player_registry.registry[player_id]]*9)
+    lineup1 = Lineup([player_registry.registry[player_id]] * 9)
     markov_simulation = MarkovSimulation(termination_threshold=1e-4)
     res1 = markov_simulation(lineup1)
     summarise_result(res1)
