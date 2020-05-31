@@ -23,6 +23,7 @@ def _parse_args():
     parser.add_argument("--batting-probs", type=float, nargs=5, required=True)
     parser.add_argument("--running-probs", type=float, nargs=4, required=True)
     parser.add_argument("--lahman", action="store_true")
+    parser.add_argument("--player-id")
     return parser.parse_args(sys.argv[1:])
 
 
@@ -48,11 +49,23 @@ def test_lineups():
     summarise_result(res2)
 
 
+def sim_player_id(player_id):
+    player_registry = PlayerRegistry()
+    player_registry.load_from_lahman()
+    lineup1 = Lineup([player_registry.registry[player_id]]*9)
+    markov_simulation = MarkovSimulation(termination_threshold=1e-4)
+    res1 = markov_simulation(lineup1)
+    summarise_result(res1)
+
+
 def main():
     args = _parse_args()
     if args.lahman:
         test_lineups()
-        sys.exit(0)
+        sys.exit(1)
+    if args.player_id:
+        sim_player_id(player_id=args.player_id)
+        sys.exit(1)
     markov_simulation = MarkovSimulation(termination_threshold=1e-4)
     batting_event_probs = BattingEventProbability(*args.batting_probs)
     batter = Batter(player_id="xyz", batting_event_probabilities=batting_event_probs)
