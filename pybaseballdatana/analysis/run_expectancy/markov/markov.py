@@ -411,7 +411,10 @@ class MarkovSimulation:
             approx_error = results[-1].mean_score - results[-2].mean_score
             # TODO: compute error based on second derivative
             logger.warning(
-                "ncall exceed max call. approximate error is TODO", approx_error
+                "ncall exceed max call. end_state probability is %.3e. "
+                "approximate error is %.3e",
+                state_vector.end_probability,
+                approx_error,
             )
 
         return results

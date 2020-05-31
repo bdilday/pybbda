@@ -137,7 +137,9 @@ class BaseOutState:
         :raises: `ValueError` if runs scored is less than zero
         """
         # runs = -d(runners) - d(outs) + 1
-        if end_state.outs == INNING_OUTS:
+        if end_state.outs % INNING_OUTS == 0 and end_state.outs > initial_state.outs:
+            return 0
+        if end_state.outs == MAX_OUTS:
             return 0
         runners_end = sum(end_state.base_state)
         runners_start = sum(initial_state.base_state)

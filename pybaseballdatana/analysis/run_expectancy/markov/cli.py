@@ -11,6 +11,8 @@ from pybaseballdatana.analysis.simulations import (
     PlayerRegistry,
 )
 
+from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,7 +27,9 @@ def _parse_args():
 
 
 def summarise_result(result):
-    print("mean_score per inning= {:.4f}".format(result[-1].mean_score))
+    print(
+        "mean_score per 27 outs = {:.4f}".format(result[-1].mean_score / MAX_OUTS * 27)
+    )
 
 
 def test_lineups():
@@ -49,7 +53,7 @@ def main():
     if args.lahman:
         test_lineups()
         sys.exit(0)
-    markov_simulation = MarkovSimulation(termination_threshold=1e-6)
+    markov_simulation = MarkovSimulation(termination_threshold=1e-4)
     batting_event_probs = BattingEventProbability(*args.batting_probs)
     batter = Batter(player_id="xyz", batting_event_probabilities=batting_event_probs)
     running_event_probs = RunningEventProbability(*args.running_probs)
