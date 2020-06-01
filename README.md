@@ -387,6 +387,13 @@ bauertr01 2020    162.130978  23.420415  79.459799  67.396411  210.995752  11.85
 >>> trajectory.z.max()
 57.57010079059938
 ```
+
+### Run expectancies from Markov chains
+
+There is a cli tool for computing run expectancies from 
+Markov chains. 
+
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
