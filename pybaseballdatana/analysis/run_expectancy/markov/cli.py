@@ -1,6 +1,5 @@
 import argparse
 import sys
-import numpy as np
 
 from pybaseballdatana.analysis.run_expectancy import MarkovSimulation
 from pybaseballdatana.analysis.simulations import (
@@ -11,6 +10,9 @@ from pybaseballdatana.analysis.simulations import (
     PlayerRegistry,
 )
 
+from pybaseballdatana.analysis.simulations.components.event import (
+    _DEFAULT_RUNNING_EVENT_PROBS,
+)
 from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
 
 import logging
@@ -20,9 +22,15 @@ logger = logging.getLogger(__name__)
 
 def _parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--batting-probs", type=float, nargs=5, required=True)
-    parser.add_argument("--running-probs", type=float, nargs=4, required=True)
-    parser.add_argument("--lahman", action="store_true")
+    parser.add_argument("--lineup-slot", action="append", nargs=2)
+    parser.add_argument("--batting-probs", type=float, nargs=5, required=False)
+    parser.add_argument(
+        "--running-probs",
+        type=float,
+        nargs=4,
+        required=False,
+        default=_DEFAULT_RUNNING_EVENT_PROBS,
+    )
     parser.add_argument("--player-id")
     return parser.parse_args(sys.argv[1:])
 
@@ -31,22 +39,6 @@ def summarise_result(result):
     print(
         "mean_score per 27 outs = {:.4f}".format(result[-1].mean_score / MAX_OUTS * 27)
     )
-
-
-def test_lineups():
-    np.random.seed(101)
-    player_registry = PlayerRegistry()
-    player_registry.load_from_lahman()
-    ks = list(player_registry.registry.keys())
-    p1 = np.random.choice(ks, 9)
-    p2 = np.random.choice(ks, 9)
-    lineup1 = Lineup([player_registry.registry[k] for k in p1])
-    lineup2 = Lineup([player_registry.registry[k] for k in p2])
-    markov_simulation = MarkovSimulation(termination_threshold=1e-6)
-    res1 = markov_simulation(lineup1)
-    res2 = markov_simulation(lineup2)
-    summarise_result(res1)
-    summarise_result(res2)
 
 
 def sim_player_id(player_id):
@@ -60,9 +52,8 @@ def sim_player_id(player_id):
 
 def main():
     args = _parse_args()
-    if args.lahman:
-        test_lineups()
-        sys.exit(1)
+    print(args.lineup_slot)
+    #    sys.exit(1)
     if args.player_id:
         sim_player_id(player_id=args.player_id)
         sys.exit(1)
