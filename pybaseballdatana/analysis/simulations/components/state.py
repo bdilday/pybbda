@@ -383,7 +383,6 @@ class BaseOutState:
         return attr.evolve(self, base_state=base_state, outs=outs)
 
 
-
 @attr.s(hash=True)
 class GameState:
     base_out_state = attr.ib(

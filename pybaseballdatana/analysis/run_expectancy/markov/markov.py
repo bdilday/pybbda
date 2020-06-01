@@ -1,5 +1,4 @@
 from functools import reduce
-import multiprocessing
 import itertools
 
 import attr
@@ -23,8 +22,6 @@ import logging
 from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
 
 logger = logging.getLogger(__name__)
-
-NUM_PROCESSES = 1
 
 
 @attr.s(frozen=True)
@@ -483,7 +480,7 @@ class MarkovSimulation:
         return MarkovSimulation.state_transition(*markov_state_event)
 
     @staticmethod
-    def markov_step(state_vector, markov_events, num_processes=NUM_PROCESSES):
+    def markov_step(state_vector, markov_events):
         """
         A step in the Markov simulation. Applies the set of `markov_events` to the
         `MarkovState` in the `state_vector`, and then combines the results
@@ -495,17 +492,9 @@ class MarkovSimulation:
                               the updated `StateVector`
         :return: `StateVector`
         """
-        if num_processes == 1:
-            return StateVector.combine_states(
-                map(
-                    MarkovSimulation.state_transition_tuple,
-                    itertools.product(state_vector, markov_events),
-                )
+        return StateVector.combine_states(
+            map(
+                MarkovSimulation.state_transition_tuple,
+                itertools.product(state_vector, markov_events),
             )
-        with multiprocessing.Pool(num_processes) as mp:
-            return StateVector.combine_states(
-                mp.map(
-                    MarkovSimulation.state_transition_tuple,
-                    itertools.product(state_vector, markov_events),
-                )
-            )
+        )
