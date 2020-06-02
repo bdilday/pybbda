@@ -105,8 +105,7 @@ def test_markov_step():
         assert state_vector.lineup_slot == expected_lineup_slot
         state_vector = markov_simulation.markov_step(state_vector, markov_events)
 
-    markov_simulation.markov_step(state_vector, markov_events, num_processes=2)
-    markov_simulation.markov_step(state_vector, markov_events, num_processes=1)
+    markov_simulation.markov_step(state_vector, markov_events)
 
 
 def test_markov_simulations_results():

@@ -4,6 +4,8 @@ import itertools
 import attr
 from collections import defaultdict
 from typing import List
+import numpy as np
+
 from pybaseballdatana.analysis.simulations.components.state import (
     base_out_state_evolve_cached,
 )
@@ -297,6 +299,19 @@ class StateVector:
         return sum([s.probability * s.game_state.score for s in self])
 
     @property
+    def std_score(self):
+        """
+        Standard deviation of the score of the state vector
+
+        :return: The std. dev score of the state
+        """
+        mean_score = self.mean_score
+        mean_score2 = sum(
+            [s.probability * s.game_state.score * s.game_state.score for s in self]
+        )
+        return np.sqrt(mean_score2 - mean_score * mean_score)
+
+    @property
     def end_probability(self):
         """
         Proability for the state vector to be in an end state,
@@ -488,8 +503,7 @@ class MarkovSimulation:
 
         :param state_vector:
         :param markov_events:
-        :param num_processes: Number of processes to use for computing
-                              the updated `StateVector`
+
         :return: `StateVector`
         """
         return StateVector.combine_states(

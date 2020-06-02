@@ -13,7 +13,6 @@ from pybaseballdatana.analysis.simulations.components.state import (
     get_running_events_cached,
     runs_scored_cached,
     validate_running_events_cached,
-    game_state_evolve_cached,
 )
 
 import pytest
@@ -172,24 +171,6 @@ def test_game_state():
     assert gs_new == GameState(
         BaseOutState(BaseState(1, 0, 0), 0), lineup_slot=2, pa_count=2
     )
-
-    gs_new_cached = game_state_evolve_cached(
-        gs1,
-        BattingEvent.BASE_ON_BALLS,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    )
-    assert gs_new == gs_new_cached
-
-    _ = game_state_evolve_cached(
-        gs1,
-        BattingEvent.BASE_ON_BALLS,
-        FirstBaseRunningEvent.DEFAULT,
-        SecondBaseRunningEvent.DEFAULT,
-        ThirdBaseRunningEvent.DEFAULT,
-    )
-    assert game_state_evolve_cached.cache_info().hits > 0
 
 
 def test_lineup_slot():
