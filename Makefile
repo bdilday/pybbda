@@ -16,8 +16,8 @@ test-data: install-dev
 
 test-markov: install
 	python -m pybaseballdatana.analysis.run_expectancy.markov.cli \
-	--batting-probs 0.1 0.1 0.1 0.1 0.1 \
-	--running-probs 0.1 0.1 0.1 0.1
+	-b 0 0.1 0.1 0.1 0.1 0.1 \
+	-i 1 henderi01_1982
 
 test: install-dev
 	python -m pytest tests/
