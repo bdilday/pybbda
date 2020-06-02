@@ -393,6 +393,70 @@ bauertr01 2020    162.130978  23.420415  79.459799  67.396411  210.995752  11.85
 There is a cli tool for computing run expectancies from 
 Markov chains. 
 
+```bash
+$ python -m pybaseballdatana.analysis.run_expectancy.markov.cli --help
+```
+
+This Markov chain uses a lineup of 
+9 batters instead of assuming each batter has the same characteristics.
+You can also assign running probabilities, although they apply to 
+all batters equally.
+
+You can assign batting-event probabilities using a sequence of 
+probabilities, or by referencing a player-season with the 
+format `{playerID}_{season}`, where playerID is the 
+Lahman ID and season is a 4-digit year. For example, to
+refer to Rickey Henderson's 1982 season, use `henderi01_1982`.
+
+The lineup is assigned by giving the lineup slot followed by either 
+5 probabilities, or a player-season id. The lineup-slot 0 is a code
+to assign all nine batters to this value. Any other specific slots 
+will be filled in as noted.
+
+The number of outs to model is 3 by default. It can be changed by setting the 
+environment variable PYBBDA_MAX_OUTS.
+
+**Example**: Use a default set of probabilities for all 9 slots
+
+```bash
+$ python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03
+mean score per 27 outs = 3.5227
+std. score per 27 outs = 2.8009
+```
+
+**Example**: Use a default set of probabilities for all 9 slots but let 
+Rickey Henderson 1982 bat leadoff (using 27 outs, instead of 3)
+
+```bash
+$ PYBBDA_MAX_OUTS=27  python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982
+WARNING:pybaseballdatana:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybaseballdatana/data/assets
+INFO:pybaseballdatana.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybaseballdatana/data/assets/Lahman/Batting.csv
+mean score per 27 outs = 3.6273
+std. score per 27 outs = 2.8751
+```
+
+**Example**: Use a default set of probabilities for all 9 slots but let 
+Rickey Henderson 1982 bat leadoff and Babe Ruth 1927 bat clean-up (using 27 outs, instead of 3)
+
+```bash
+$ PYBBDA_MAX_OUTS=27  python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982 -i 4 ruthba01_1927 
+WARNING:pybaseballdatana:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybaseballdatana/data/assets
+INFO:pybaseballdatana.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybaseballdatana/data/assets/Lahman/Batting.csv
+mean score per 27 outs = 4.3931
+std. score per 27 outs = 3.1946
+```
+
+**Example**: Use a default set of probabilities for all 9 slots but let 
+Rickey Henderson 1982 bat leadoff and Babe Ruth 1927 bat clean-up 
+and about 25% probability to take an extra base (using 27 outs, instead of 3)
+
+```bash
+$ PYBBDA_MAX_OUTS=27  python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982 -i 4 ruthba01_1927 --running-probs 0.20 0.05 0.25 0.25
+WARNING:pybaseballdatana:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybaseballdatana/data/assets
+INFO:pybaseballdatana.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybaseballdatana/data/assets/Lahman/Batting.csv
+mean score per 27 outs = 4.7898
+std. score per 27 outs = 3.3075
+```
 
 ## License
 
