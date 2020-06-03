@@ -1,11 +1,8 @@
-"""script to compute default lineup
-uses retrosheet events to estimate the batting event probabilities
-conditional on lineup slot. """
+"""script to estimate running event probabilities from retrosheet events"""
+
 import argparse
 import sys
-import os
 
-import pandas as pd
 from numpy import where as np_where
 
 from pybaseballdatana.data import RetrosheetData
@@ -62,7 +59,7 @@ def get_first_to_home_on_double(ana_df):
 
 
 def get_second_to_home_on_single(ana_df):
-    second_to_third=0
+    second_to_third = 0
     second_to_third += ana_df.query(
         "event_cd==20 and "
         "start_first_base and start_second_base "
