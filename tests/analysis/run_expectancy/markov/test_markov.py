@@ -174,7 +174,9 @@ def test_markov_simulations_with_running_results():
     batter.running_event_probabilities = running_event_probs
     lineup = Lineup(lineup=[batter] * 9)
 
-    result1 = markov_simulation(lineup)
+    result1 = markov_simulation(
+        lineup, running_event_probabilities=RunningEventProbability(0, 0, 0, 0)
+    )
     result2 = markov_simulation(lineup, running_event_probabilities=running_event_probs)
 
     assert result2[-1].mean_score > result1[-1].mean_score
