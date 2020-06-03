@@ -4,7 +4,7 @@ from pybaseballdatana.analysis.utils import check_between_zero_one
 from collections import namedtuple
 
 _DEFAULT_BATTING_EVENT_PROBS = (0, 0, 0, 0, 0)
-_DEFAULT_RUNNING_EVENT_PROBS = (0, 0, 0, 0)
+_DEFAULT_RUNNING_EVENT_PROBS = (0.26, 0.01, 0.41, 0.60)
 
 
 class BattingEvent(Enum):
