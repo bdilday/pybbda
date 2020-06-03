@@ -33,9 +33,9 @@ It currently supports:
 
 * Batted ball trajectories
 
-The following are planned for a future release:
-
 * Run expectancy via Markov chains
+
+The following are planned for a future release:
 
 * Simulations
 
@@ -414,7 +414,7 @@ to assign all nine batters to this value. Any other specific slots
 will be filled in as noted.
 
 The number of outs to model is 3 by default. It can be changed by setting the 
-environment variable PYBBDA_MAX_OUTS.
+environment variable `PYBBDA_MAX_OUTS`.
 
 **Example**: Use a default set of probabilities for all 9 slots with no taking extra bases
 
