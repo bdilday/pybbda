@@ -4,7 +4,7 @@ from pybaseballdatana.analysis.simulations.components.event import (
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
     BattingEventProbability,
-    RunEventProbability,
+    RunningEventProbability,
 )
 import pytest
 
@@ -27,7 +27,7 @@ def test_event_probability():
 
 
 def test_run_event_probability():
-    re = RunEventProbability(
+    re = RunningEventProbability(
         first_to_third_on_single=0.1,
         first_to_home_on_single=0.2,
         first_to_home_on_double=0.3,
@@ -37,16 +37,16 @@ def test_run_event_probability():
     assert re.first_to_third_on_double == pytest.approx(0.7)
     assert re.second_to_third_on_single == pytest.approx(0.6)
 
-    _ = RunEventProbability(0, 0, 0, 0)
+    _ = RunningEventProbability(0, 0, 0, 0)
 
     with pytest.raises(ValueError):
-        _ = RunEventProbability(1.1, 0, 0, 0)
+        _ = RunningEventProbability(1.1, 0, 0, 0)
 
     with pytest.raises(ValueError):
-        _ = RunEventProbability(-1.1, 0, 0, 0)
+        _ = RunningEventProbability(-1.1, 0, 0, 0)
 
     with pytest.raises(ValueError):
-        _ = RunEventProbability(0.5, 0.51, 0, 0)
+        _ = RunningEventProbability(0.5, 0.51, 0, 0)
 
 
 def test_event_probability_fails():

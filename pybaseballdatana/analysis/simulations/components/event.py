@@ -4,7 +4,7 @@ from pybaseballdatana.analysis.utils import check_between_zero_one
 from collections import namedtuple
 
 _DEFAULT_BATTING_EVENT_PROBS = (0, 0, 0, 0, 0)
-_DEFAULT_RUNNING_EVENT_PROBS = (0, 0, 0, 0)
+_DEFAULT_RUNNING_EVENT_PROBS = (0.26, 0.01, 0.41, 0.60)
 
 
 class BattingEvent(Enum):
@@ -56,7 +56,7 @@ class BattingEventProbability:
         partial_sum = (
             self.base_on_balls + self.single + self.double + self.triple + self.home_run
         )
-        if not 0 <= partial_sum < 1:
+        if not 0 <= partial_sum <= 1:
             raise ValueError(
                 "The sum of event probabilities "
                 "must be between zero and one, not {}".format(partial_sum)
@@ -77,11 +77,27 @@ class BattingEventProbability:
 
 
 @attr.s(frozen=True)
-class RunEventProbability:
-    first_to_third_on_single = attr.ib(type=float, validator=check_between_zero_one)
-    first_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
-    first_to_home_on_double = attr.ib(type=float, validator=check_between_zero_one)
-    second_to_home_on_single = attr.ib(type=float, validator=check_between_zero_one)
+class RunningEventProbability:
+    first_to_third_on_single = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[0],
+    )
+    first_to_home_on_single = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[1],
+    )
+    first_to_home_on_double = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[2],
+    )
+    second_to_home_on_single = attr.ib(
+        type=float,
+        validator=check_between_zero_one,
+        default=_DEFAULT_RUNNING_EVENT_PROBS[3],
+    )
 
     def __attrs_post_init__(self):
         first_base_partial_sum = (

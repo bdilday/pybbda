@@ -1,7 +1,8 @@
 import attr
+
 from pybaseballdatana.analysis.simulations.components.event import (
     BattingEventProbability,
-    RunEventProbability,
+    RunningEventProbability,
     _DEFAULT_BATTING_EVENT_PROBS,
     _DEFAULT_RUNNING_EVENT_PROBS,
 )
@@ -14,23 +15,35 @@ class Player:
 
 @attr.s(kw_only=True)
 class Batter(Player):
-    event_probabilities = attr.ib(
+    batting_event_probabilities = attr.ib(
         default=BattingEventProbability(*_DEFAULT_BATTING_EVENT_PROBS),
         type=BattingEventProbability,
     )
 
-    def set_event_probs(self, **event_probs):
-        self.event_probabilities = attr.evolve(self.event_probabilities, **event_probs)
+    running_event_probabilities = attr.ib(
+        default=RunningEventProbability(*_DEFAULT_RUNNING_EVENT_PROBS),
+        type=RunningEventProbability,
+    )
+
+    def set_batting_event_probs(self, **batting_event_probs):
+        self.batting_event_probabilities = attr.evolve(
+            self.batting_event_probabilities, **batting_event_probs
+        )
+
+    def set_running_event_probs(self, **running_event_probs):
+        self.running_event_probabilities = attr.evolve(
+            self.running_event_probabilities, **running_event_probs
+        )
 
 
 @attr.s(kw_only=True)
 class Runner(Player):
-    run_event_probabilities = attr.ib(
-        default=RunEventProbability(*_DEFAULT_RUNNING_EVENT_PROBS),
-        type=RunEventProbability,
+    running_event_probabilities = attr.ib(
+        default=RunningEventProbability(*_DEFAULT_RUNNING_EVENT_PROBS),
+        type=RunningEventProbability,
     )
 
-    def set_event_probs(self, **run_event_probs):
-        self.run_event_probabilities = attr.evolve(
-            self.run_event_probabilities, **run_event_probs
+    def set_event_probs(self, **running_event_probs):
+        self.running_event_probabilities = attr.evolve(
+            self.running_event_probabilities, **running_event_probs
         )

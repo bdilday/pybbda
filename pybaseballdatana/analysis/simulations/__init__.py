@@ -1,4 +1,4 @@
-from .components.state import BaseState, BaseOutState, GameState, Lineup
+from .components.state import BaseState, BaseOutState, GameState
 from .components.event import (
     BattingEvent,
     RunningEvent,
@@ -11,15 +11,16 @@ from .components.player import (
     Batter,
     BattingEventProbability,
     Runner,
-    RunEventProbability,
+    RunningEventProbability,
 )
+from .components.player_registry import PlayerRegistry
 
+from pybaseballdatana.analysis.simulations.components.lineup import Lineup
 
 __all__ = [
     "BaseState",
     "BaseOutState",
     "GameState",
-    "Lineup",
     "BattingEvent",
     "RunningEvent",
     "FirstBaseRunningEvent",
@@ -29,5 +30,7 @@ __all__ = [
     "Batter",
     "BattingEventProbability",
     "Runner",
-    "RunEventProbability",
+    "RunningEventProbability",
+    "Lineup",
+    "PlayerRegistry",
 ]

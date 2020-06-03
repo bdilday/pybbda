@@ -1,6 +1,5 @@
 import attr
-from functools import partial, lru_cache
-from typing import List
+from functools import lru_cache
 
 from pybaseballdatana.analysis.simulations.components.event import (
     BattingEvent,
@@ -8,9 +7,8 @@ from pybaseballdatana.analysis.simulations.components.event import (
     SecondBaseRunningEvent,
     ThirdBaseRunningEvent,
 )
-from pybaseballdatana.analysis.simulations.components.player import Batter
-from pybaseballdatana.analysis.utils import check_len, check_is_zero_one
-from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
+from pybaseballdatana.analysis.utils import check_is_zero_one
+from pybaseballdatana.analysis.simulations.constants import MAX_OUTS, INNING_OUTS
 
 
 @attr.s(frozen=True)
@@ -29,8 +27,133 @@ class BaseState:
         yield self.second_base
         yield self.third_base
 
+    def evolve(
+        self,
+        batting_event,
+        first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+        second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+        third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+    ):
+
+        if batting_event == BattingEvent.OUT:
+            base_state = attr.evolve(self)
+
+        elif batting_event == BattingEvent.BASE_ON_BALLS:
+            base_state = BaseState(
+                first_base=1,
+                second_base=1 if self.first_base == 1 else self.second_base,
+                third_base=1
+                if self.first_base == 1 and self.second_base == 1
+                else self.third_base,
+            )
+
+        elif batting_event == BattingEvent.SINGLE:
+
+            running_events = get_running_events_cached(
+                batting_event,
+                first_base_running_event,
+                second_base_running_event,
+                third_base_running_event,
+            )[0:2]
+
+            if running_events == (
+                FirstBaseRunningEvent.FIRST_TO_SECOND,
+                SecondBaseRunningEvent.SECOND_TO_THIRD,
+            ):
+                base_state = BaseState(
+                    1, 1 if self.first_base else 0, 1 if self.second_base else 0
+                )
+
+            elif running_events == (
+                FirstBaseRunningEvent.FIRST_TO_SECOND,
+                SecondBaseRunningEvent.SECOND_TO_HOME,
+            ):
+                base_state = BaseState(1, 1 if self.first_base else 0, 0)
+
+            elif running_events == (
+                FirstBaseRunningEvent.FIRST_TO_THIRD,
+                SecondBaseRunningEvent.SECOND_TO_HOME,
+            ):
+                base_state = BaseState(1, 0, 1 if self.first_base else 0)
+
+            elif running_events == (
+                FirstBaseRunningEvent.FIRST_TO_HOME,
+                SecondBaseRunningEvent.SECOND_TO_HOME,
+            ):
+                base_state = BaseState(1, 0, 0)
+
+            else:
+                raise ValueError(
+                    "running_events combination %s is not valid", running_events
+                )
+        elif batting_event == BattingEvent.DOUBLE:
+            running_events = get_running_events_cached(
+                batting_event,
+                first_base_running_event,
+                second_base_running_event,
+                third_base_running_event,
+            )[0]
+
+            if running_events == FirstBaseRunningEvent.FIRST_TO_THIRD:
+                base_state = BaseState(0, 1, 1 if self.first_base else 0)
+            elif running_events == FirstBaseRunningEvent.FIRST_TO_HOME:
+                base_state = BaseState(0, 1, 0)
+
+        elif batting_event == BattingEvent.TRIPLE:
+            base_state = BaseState(0, 0, 1)
+        elif batting_event == BattingEvent.HOME_RUN:
+            base_state = BaseState(0, 0, 0)
+        else:
+            raise ValueError(
+                "evolving with batting event {} "
+                "and running events %{} is not valid".format(
+                    batting_event,
+                    (
+                        first_base_running_event,
+                        second_base_running_event,
+                        third_base_running_event,
+                    ),
+                )
+            )
+
+        return attr.evolve(
+            self,
+            first_base=base_state.first_base,
+            second_base=base_state.second_base,
+            third_base=base_state.third_base,
+        )
+
 
 @lru_cache(maxsize=1024)
+def base_state_evolve_cached(
+    cls,
+    batting_event,
+    first_base_running_event=FirstBaseRunningEvent.DEFAULT,
+    second_base_running_event=SecondBaseRunningEvent.DEFAULT,
+    third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
+):
+    """
+    A function to call the `evolve` method of a `BaseState`.
+    This is identical to the `BaseState.evolve` method,
+    but implemented as a function to simplify application of
+    an `functools.lru_cache` decorator.
+
+    :param cls: An instance of a `BaseState`
+    :param batting_event: `BattingEvent`
+    :param first_base_running_event:
+    :param second_base_running_event:
+    :param third_base_running_event:
+    :return: `BaseState`
+    """
+    return cls.evolve(
+        batting_event,
+        first_base_running_event=first_base_running_event,
+        second_base_running_event=second_base_running_event,
+        third_base_running_event=third_base_running_event,
+    )
+
+
+@lru_cache(maxsize=8192)
 def base_out_state_evolve_cached(
     cls,
     batting_event,
@@ -122,6 +245,7 @@ def validate_running_events_cached(
 class BaseOutState:
     base_state = attr.ib(type=BaseState)
     outs = attr.ib(type=int)
+    max_outs = attr.ib(type=int, default=MAX_OUTS)
 
     @staticmethod
     def runs_scored(initial_state, end_state):
@@ -138,6 +262,8 @@ class BaseOutState:
         :raises: `ValueError` if runs scored is less than zero
         """
         # runs = -d(runners) - d(outs) + 1
+        if end_state.outs % INNING_OUTS == 0 and end_state.outs > initial_state.outs:
+            return 0
         if end_state.outs == MAX_OUTS:
             return 0
         runners_end = sum(end_state.base_state)
@@ -230,121 +356,31 @@ class BaseOutState:
     ):
 
         outs = self.outs
-        base_state = attr.evolve(self.base_state)
 
-        # TODO: handle the case where MAX_OUTS greater than 3,
-        # ie reset bases at end of inning
-        if outs == MAX_OUTS:
-            pass
-
+        if outs == self.max_outs:
+            base_state = attr.evolve(self)
         elif batting_event == BattingEvent.OUT:
             outs = self.outs + 1
-
-        elif batting_event == BattingEvent.BASE_ON_BALLS:
-            base_state = BaseState(
-                first_base=1,
-                second_base=1
-                if self.base_state.first_base == 1
-                else self.base_state.second_base,
-                third_base=1
-                if self.base_state.first_base == 1 and self.base_state.second_base == 1
-                else self.base_state.third_base,
-            )
-
-        elif batting_event == BattingEvent.SINGLE:
-
-            running_events = self.get_running_events(
-                batting_event,
-                first_base_running_event,
-                second_base_running_event,
-                third_base_running_event,
-            )[0:2]
-
-            if running_events == (
-                FirstBaseRunningEvent.FIRST_TO_SECOND,
-                SecondBaseRunningEvent.SECOND_TO_THIRD,
-            ):
-                base_state = BaseState(
-                    1,
-                    1 if self.base_state.first_base else 0,
-                    1 if self.base_state.second_base else 0,
-                )
-
-            elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_SECOND,
-                SecondBaseRunningEvent.SECOND_TO_HOME,
-            ):
-                base_state = BaseState(1, 1 if self.base_state.first_base else 0, 0)
-
-            elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_THIRD,
-                SecondBaseRunningEvent.SECOND_TO_HOME,
-            ):
-                base_state = BaseState(1, 0, 1 if self.base_state.first_base else 0)
-
-            elif running_events == (
-                FirstBaseRunningEvent.FIRST_TO_HOME,
-                SecondBaseRunningEvent.SECOND_TO_HOME,
-            ):
-                base_state = BaseState(1, 0, 0)
-
+            if outs % INNING_OUTS == 0:
+                base_state = BaseState(0, 0, 0)
             else:
-                raise ValueError(
-                    "running_events combination %s is not valid", running_events
+                base_state = base_state_evolve_cached(
+                    self.base_state,
+                    batting_event=batting_event,
+                    first_base_running_event=first_base_running_event,
+                    second_base_running_event=second_base_running_event,
+                    third_base_running_event=third_base_running_event,
                 )
-        elif batting_event == BattingEvent.DOUBLE:
-            running_events = self.get_running_events(
-                batting_event,
-                first_base_running_event,
-                second_base_running_event,
-                third_base_running_event,
-            )[0]
-
-            if running_events == FirstBaseRunningEvent.FIRST_TO_THIRD:
-                base_state = BaseState(0, 1, 1 if self.base_state.first_base else 0)
-            elif running_events == FirstBaseRunningEvent.FIRST_TO_HOME:
-                base_state = BaseState(0, 1, 0)
-
-        elif batting_event == BattingEvent.TRIPLE:
-            base_state = BaseState(0, 0, 1)
-        elif batting_event == BattingEvent.HOME_RUN:
-            base_state = BaseState(0, 0, 0)
         else:
-            raise ValueError(
-                "evolving with batting event {} "
-                "and running events %{} is not valid".format(
-                    batting_event,
-                    (
-                        first_base_running_event,
-                        second_base_running_event,
-                        third_base_running_event,
-                    ),
-                )
+            base_state = base_state_evolve_cached(
+                self.base_state,
+                batting_event=batting_event,
+                first_base_running_event=first_base_running_event,
+                second_base_running_event=second_base_running_event,
+                third_base_running_event=third_base_running_event,
             )
 
         return attr.evolve(self, base_state=base_state, outs=outs)
-
-
-@attr.s
-class Lineup:
-    lineup = attr.ib(List[Batter], validator=partial(check_len, len_constraint=9))
-
-
-@lru_cache(maxsize=1024)
-def game_state_evolve_cached(
-    cls,
-    batting_event,
-    first_base_running_event=FirstBaseRunningEvent.DEFAULT,
-    second_base_running_event=SecondBaseRunningEvent.DEFAULT,
-    third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
-):
-    return GameState.evolve(
-        cls,
-        batting_event,
-        first_base_running_event,
-        second_base_running_event,
-        third_base_running_event,
-    )
 
 
 @attr.s(hash=True)
@@ -356,6 +392,10 @@ class GameState:
     lineup_slot = attr.ib(type=int, default=1)
     score = attr.ib(type=int, default=0)
 
+    @staticmethod
+    def pa_count_to_lineup_slot(pa_count):
+        return ((pa_count - 1) % 9) + 1
+
     def evolve(
         self,
         batting_event,
@@ -363,18 +403,19 @@ class GameState:
         second_base_running_event=SecondBaseRunningEvent.DEFAULT,
         third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
     ):
-        base_out_state = self.base_out_state.evolve(
+        base_out_state = base_out_state_evolve_cached(
+            self.base_out_state,
             batting_event,
             first_base_running_event,
             second_base_running_event,
             third_base_running_event,
         )
-        runs_scored = BaseOutState.runs_scored(self.base_out_state, base_out_state)
+        runs_scored = runs_scored_cached(self.base_out_state, base_out_state)
         game_state = attr.evolve(
             self,
             base_out_state=base_out_state,
             pa_count=self.pa_count + 1,
-            lineup_slot=self.lineup_slot + 1,
+            lineup_slot=self.pa_count_to_lineup_slot(self.pa_count + 1),
             score=self.score + runs_scored,
         )
 

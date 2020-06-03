@@ -28,6 +28,9 @@ jobs:
       - run:
           command: make test
           name: Test
+      - run:
+          command: make test-markov
+          name: Test Markov CLI
 
 workflows:
   main:
