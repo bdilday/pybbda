@@ -1,11 +1,10 @@
 from io import BytesIO
 import os
 import requests
-import tempfile
 import zipfile
 import glob
 import pathlib
-import shutil
+import re
 
 import logging
 from pybaseballdatana.data.sources.retrosheet.data import RetrosheetData
@@ -35,9 +34,6 @@ def _validate_path(output_root):
         raise ValueError(f"Path {output_root} does not exist")
     if not os.path.isdir(output_root):
         raise ValueError(f"Path {output_root} must be a directory")
-
-
-import re
 
 
 def _filter_event_files(event_files, min_year, max_year):
