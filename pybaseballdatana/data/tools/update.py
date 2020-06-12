@@ -2,16 +2,21 @@ import argparse
 import os
 import sys
 import logging
-from pybaseballdatana import PYBBDA_DATA_ROOT, PYBBDA_LOG_LEVEL
 
-from ..sources.lahman._update import _update as update_lahman
-from ..sources.baseball_reference._update import _update as update_bbref
-from ..sources.fangraphs._update import _update as update_fangraphs
+from pybaseballdatana import PYBBDA_DATA_ROOT, PYBBDA_LOG_LEVEL
+from pybaseballdatana.data.sources.lahman._update import _update as update_lahman
+from pybaseballdatana.data.sources.baseball_reference._update import (
+    _update as update_bbref,
+)
+from pybaseballdatana.data.sources.fangraphs._update import _update as update_fangraphs
+from pybaseballdatana.data.sources.retrosheet._update import (
+    _update as update_retrosheet,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(PYBBDA_LOG_LEVEL)
 
-DATA_SOURCE_OPTIONS = ["Lahman", "BaseballReference", "Fangraphs"]
+DATA_SOURCE_OPTIONS = ["Lahman", "BaseballReference", "Fangraphs", "retrosheet"]
 NUM_THREADS = 1
 
 
@@ -78,6 +83,10 @@ def update_source(data_root, data_source, min_year, max_year, num_threads, overw
             max_year=max_year,
             num_threads=num_threads,
             overwrite=overwrite,
+        )
+    elif data_source == "retrosheet":
+        update_retrosheet(
+            data_root, min_year=min_year, max_year=max_year, overwrite=overwrite
         )
     else:
         raise ValueError(data_source)
