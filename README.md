@@ -17,11 +17,12 @@ The data sources it currently supports are:
 
 * Fangraphs leaderboards
 
+* Retrosheet event data
+
 The following are planned for a future release:
 
 * Statcast play-by-play data
 
-* Retrosheet event data
 
 ### analysis
 
@@ -43,13 +44,19 @@ The following are planned for a future release:
 
 ## Installation
 
-This package is available on github. 
+This package is available on PyPI, so you can install it with 
+`pip`, 
 
-You can install directly from the repo using
+```bash
+$ pip install -U pybbda
+```
+
+Or you can install the latest master branch 
+directly from the github repo using
 `pip`,
 
-```python
- pip install git+https://github.com/bdilday/pybbda.git
+```bash
+$ pip install git+https://github.com/bdilday/pybbda.git
 ```
 
 or download the source,
@@ -57,7 +64,7 @@ or download the source,
 ```bash
 $ git clone git@github.com:bdilday/pybbda.git
 $ cd pybbda
-$ pip install -e .
+$ pip install .
 ```
 
 ### Requirements
@@ -199,6 +206,10 @@ INFO:pybaseballdatana.data.sources.fangraphs._update:_update:saving file to /hom
 INFO:pybaseballdatana.data.sources.fangraphs._update:_update:saving file to /home/bdilday/.pybbda/data/Fangraphs/fg_pit_2019.csv.gz
 ```
 
+Example retrosheet event data. This downloads the event data 
+and stores it in a `sqlite` database, located in `--data-root`
+
+
 Example to download all sources,
 
 ```bash
@@ -333,6 +344,50 @@ INFO:pybaseballdatana.data.sources.baseball_reference.data:data:searching for fi
 141  142    Charlie Morton       Rays    2019   35  16   6  3.05  33  ...   114    82       68      95      99     110      98    110      89
 
 [6 rows x 323 columns]
+```
+
+### Retrosheet events
+
+Load data frame ID
+
+```python
+>>> from pybaseballdatana.data import RetrosheetData
+>>> retrosheet_data = RetrosheetData()
+>>> retrosheet_data.df_from_team_id("1982OAK")                                                                                                                              
+           GAME_ID AWAY_TEAM_ID  INN_CT  BAT_HOME_ID  OUTS_CT  BALLS_CT  ...  ASS7_FLD_CD ASS8_FLD_CD  ASS9_FLD_CD  ASS10_FLD_CD UNKNOWN_OUT_EXC_FL UNCERTAIN_PLAY_EXC_FL
+0     OAK198204060          CAL       1            0        0         0  ...            0           0            0             0                  F                     F
+1     OAK198204060          CAL       1            0        1         0  ...            0           0            0             0                  F                     F
+2     OAK198204060          CAL       1            0        2         0  ...            0           0            0             0                  F                     F
+3     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
+4     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
+...            ...          ...     ...          ...      ...       ...  ...          ...         ...          ...           ...                ...                   ...
+6204  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
+6205  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
+6206  OAK198209260          KCA       9            0        0         0  ...            0           0            0             0                  F                     F
+6207  OAK198209260          KCA       9            0        1         0  ...            0           0            0             0                  F                     F
+6208  OAK198209260          KCA       9            0        2         0  ...            0           0            0             0                  F                     F
+
+[6209 rows x 159 columns]
+```
+
+Load data frame from URl
+
+```python
+retrosheet_data.df_from_file("https://raw.githubusercontent.com/chadwickbureau/retrosheet/master/event/regular/1982OAK.EVA")                                            
+           GAME_ID AWAY_TEAM_ID  INN_CT  BAT_HOME_ID  OUTS_CT  BALLS_CT  ...  ASS7_FLD_CD ASS8_FLD_CD  ASS9_FLD_CD  ASS10_FLD_CD UNKNOWN_OUT_EXC_FL UNCERTAIN_PLAY_EXC_FL
+0     OAK198204060          CAL       1            0        0         0  ...            0           0            0             0                  F                     F
+1     OAK198204060          CAL       1            0        1         0  ...            0           0            0             0                  F                     F
+2     OAK198204060          CAL       1            0        2         0  ...            0           0            0             0                  F                     F
+3     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
+4     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
+...            ...          ...     ...          ...      ...       ...  ...          ...         ...          ...           ...                ...                   ...
+6204  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
+6205  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
+6206  OAK198209260          KCA       9            0        0         0  ...            0           0            0             0                  F                     F
+6207  OAK198209260          KCA       9            0        1         0  ...            0           0            0             0                  F                     F
+6208  OAK198209260          KCA       9            0        2         0  ...            0           0            0             0                  F                     F
+
+[6209 rows x 159 columns]
 ```
 
 ### Marcel projections 

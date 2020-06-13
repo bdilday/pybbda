@@ -47,6 +47,12 @@ def _parse_args():
         help="Overwrite files if they exist",
     )
     parser.add_argument(
+        "--create-event-database",
+        required=False,
+        action="store_true",
+        help="Create a sqlite database for retrosheet event files",
+    )
+    parser.add_argument(
         "--min-year",
         required=False,
         type=int,
@@ -71,7 +77,9 @@ def _parse_args():
     return parser.parse_args(sys.argv[1:])
 
 
-def update_source(data_root, data_source, min_year, max_year, num_threads, overwrite):
+def update_source(
+    data_root, data_source, min_year, max_year, num_threads, overwrite, create_database
+):
     if data_source == "Lahman":
         update_lahman(data_root)
     elif data_source == "BaseballReference":
@@ -86,7 +94,10 @@ def update_source(data_root, data_source, min_year, max_year, num_threads, overw
         )
     elif data_source == "retrosheet":
         update_retrosheet(
-            data_root, min_year=min_year, max_year=max_year, overwrite=overwrite
+            data_root,
+            min_year=min_year,
+            max_year=max_year,
+            create_database=create_database,
         )
     else:
         raise ValueError(data_source)
@@ -121,6 +132,7 @@ def main():
             args.max_year,
             args.num_threads,
             args.overwrite,
+            args.create_event_database,
         )
 
 

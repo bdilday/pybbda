@@ -23,6 +23,9 @@ jobs:
           command: python -m pybaseballdatana.data.tools.update --data-source Fangraphs --make-dirs --min-year 2019 --max-year 2019 --num-threads 2
           name: Update Fangraphs
       - run:
+          command: python -m pybaseballdatana.data.tools.update --min-year 1982 --max-year 1982 --data-source retrosheet
+          name: Update Retrosheet Events
+      - run:
           command: make lint
           name: Lint
       - run:

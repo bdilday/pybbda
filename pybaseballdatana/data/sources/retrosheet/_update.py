@@ -6,6 +6,7 @@ import glob
 import pathlib
 import re
 
+from tqdm import tqdm
 import logging
 from pybaseballdatana.data.sources.retrosheet.data import RetrosheetData
 
@@ -41,13 +42,22 @@ def _filter_event_files(event_files, min_year, max_year):
     for event_file in event_files:
         year = int(re.search("^([0-9]{4})", os.path.basename(event_file)).group(1))
         if min_year <= year <= max_year:
-            logger.info("including file %s", event_file)
+            logger.debug("including file %s", event_file)
             result.append(event_file)
 
     return result
 
 
-def _update(output_root=None, min_year=1871, max_year=2019, overwrite=False):
+def _create_database(retrosheet_data, event_files):
+    logger.info(f"creating database with {len(event_files)} files")
+
+    retrosheet_data.create_database()
+    retrosheet_data.initialize_table(retrosheet_data.df_from_file(event_files[0]))
+    for event_file in tqdm(event_files[1:]):
+        retrosheet_data.update_table(retrosheet_data.df_from_file(event_file))
+
+
+def _update(output_root=None, min_year=1871, max_year=2019, create_database=False):
     output_root = output_root or pathlib.Path(__file__).parent.parent / "assets"
     _validate_path(output_root)
     retrosheet_data = RetrosheetData(output_root)
@@ -56,7 +66,5 @@ def _update(output_root=None, min_year=1871, max_year=2019, overwrite=False):
         glob.glob(os.path.join(target, "event", "regular", "*EV*")), min_year, max_year
     )
 
-    retrosheet_data.create_database()
-    retrosheet_data.initialize_table(retrosheet_data.df_from_file(event_files[0]))
-    for event_file in event_files[1:]:
-        retrosheet_data.update_table(retrosheet_data.df_from_file(event_file))
+    if create_database:
+        _create_database(retrosheet_data, event_files)
