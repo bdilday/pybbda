@@ -2,6 +2,13 @@ from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
+def process_line(line):
+    return line.strip().split("=")[0]
+
+with open("requirements.txt", "r") as fh:
+    install_requires = [process_line(line) for line in fh.readlines() if len(line)>1]
+
 setup(
     name="pybbda",
     version="0.1.1",
@@ -19,4 +26,5 @@ setup(
     ],
     package_data={"pybaseballdatana": ["*.csv"]},
     include_package_data=True,
+     install_requires=install_requires,
 )
