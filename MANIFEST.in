@@ -1,0 +1,10 @@
+
+exclude scripts/*
+exclude .github/*
+exclude .circleci/*
+exclude MANIFEST
+
+include README.md
+include LICENSE requirements.txt
+include setup.cfg
+include requirements-dev.txt setup.py
