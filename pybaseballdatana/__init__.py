@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(format="%(levelname)s:%(name)s:%(module)s:%(message)s")
 logger = logging.getLogger("pybaseballdatana")
 
-_version = "0.1.1"
+_version = "0.1.2"
 
 PYBBDA_LOG_LEVEL_NAME = os.environ.get("PYBBDA_LOG_LEVEL", "")
 _PYBBDA_LOG_LEVEL_MAP = {
