@@ -13,8 +13,9 @@ pybbda is a package for Python Baseball Data and Analysis.
 .. toctree::
    :maxdepth: 2
 
-   installation.rst
+   getting_started.rst
    features.rst
+   examples.rst
 
 =========
 Reference

@@ -3,9 +3,10 @@ from pandas import isnull
 
 def age_adjustment(age):
     """
+    Marcel age adjustment
 
-    :param age:
-    :return:
+    :param age: numeric
+    :return: float
     """
     if isnull(age):
         return float("nan")

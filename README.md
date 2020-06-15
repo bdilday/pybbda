@@ -130,7 +130,7 @@ Example,
 ```bash
 $ python -m pybaseballdatana.data.tools.update -h
 usage: update.py [-h] [--data-root DATA_ROOT] --data-source
-                 {Lahman,BaseballReference,Fangraphs,all} [--make-dirs]
+                 {Lahman,BaseballReference,Fangraphs,retrosheet,all} [--make-dirs]
                  [--overwrite] [--min-year MIN_YEAR] [--max-year MAX_YEAR]
                  [--num-threads NUM_THREADS]
 
@@ -138,7 +138,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --data-root DATA_ROOT
                         Root directory for data storage
-  --data-source {Lahman,BaseballReference,Fangraphs,all}
+  --data-source {Lahman,BaseballReference,Fangraphs,retrosheet,all}
                         Update source
   --make-dirs           Make root dir if does not exist
   --overwrite           Overwrite files if they exist
@@ -153,7 +153,7 @@ The data will be downloaded to `--data-root`, which defaults to the
 `PYBBDA_DATA_ROOT`
 
 The `min-year` and `max-year` arguments refer only
-to Fangraphs leaderboards as of now. 
+to Fangraphs leaderboards, and database storage of retrosheet events, as of now. 
 
 
 Example to download Lahman data
