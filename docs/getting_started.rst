@@ -176,19 +176,51 @@ To store a local copy,
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update --data-source retrosheet
+   $ python -m pybaseballdatana.data.tools.update --data-source retrosheet
 
-The ``pychadwick`` package provides a command line tool to parse retrosheet events data as a csv,
+The ``pychadwick`` package provides a command line tool to parse retrosheet events data as CSV. 
+The following downloads the events data to ``/tmp/retrosheet-example`` and then parse them to CSV
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs
+   $ python -m pybaseballdatana.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs
    INFO:pybaseballdatana.data.sources.retrosheet._update:_update:downloading file from https://github.com/chadwickbureau/retrosheet/archive/master.zip
+
+   $ pycwevent --data-root /tmp/retrosheet-example/retrosheet/retrosheet-master/event/regular > /tmp/all_events.csv
+
+The argument ``--create-event-database`` will cause a ``sqlite`` database to be created. Inserting data
+takes much longer than bulk uploading a csv, however, this is provided as a convenience. 
+The ``min-year`` and ``--max-year`` arguments will limit the years to populate the database with.
+
+.. code-block:: bash
+
+   $ python -m pybaseballdatana.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs --min-year 1982 --max-year 1982 --create-event-database
+   INFO:pybaseballdatana.data.sources.retrosheet._update:_update:path /tmp/retrosheet-example/retrosheet/retrosheet-master exists, not downloading
+   INFO:pybaseballdatana.data.sources.retrosheet._update:_update:creating database with 26 files
+
+.. code-block:: bash
+   
+   $ ls /tmp/retrosheet-example/retrosheet/
+   retrosheet.db  retrosheet-master
+   
+   $ sqlite3 
+   SQLite version 3.11.0 2016-02-15 17:29:24
+   Enter ".help" for usage hints.
+   Connected to a transient in-memory database.
+   Use ".open FILENAME" to reopen on a persistent database.
+   sqlite> .open /tmp/retrosheet-example/retrosheet/retrosheet.db
+   sqlite> select GAME_ID, BAT_ID, EVENT_CD from event limit 2;
+   CIN198204050|willb101|23
+   CIN198204050|bowal001|2
+   sqlite> .q
 
 
 ~~~~~~~~~~~~~
 All sources
 ~~~~~~~~~~~~~
+
+The argument ``--data-source all`` is a shortcut to downloaded data from 
+all the supported sources.
 
 .. code-block:: bash
 
