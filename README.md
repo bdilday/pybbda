@@ -76,53 +76,12 @@ It explicitly *does not* support any versions
 prior to `Python 3.6`, including`Python 2.7`.
 
 
-### Package vs module name
-
-In the tradition of `scikit-learn`, the `pybbda` *package*
-provides a *module* `pybaseballdatana`. This means imports work in
-the following way,
-
-```python
-from pybaseballdatana.data import LahmanData
-``` 
-
-This also means the installation directory is `pybaseballdatana`
-and not `pybbda`.
-
-### Environment variables
-
-The package uses the following environment variables
-
-* `PYBBDA_DATA_ROOT` 
-
-The root directory for storing data 
-(See [Installing data](#Installing-data)). Defaults to `${INSTALLATION_ROOT}/data/assets` 
-where `${INSTALLATION_ROOT}` is the path the the `pybbda` installation. 
-The code location is typically a path to the `Python` installation
-plus `site-packages/pybaseballdatana`. 
-
-This can cause a problem with write permissions 
-if you're using a system `Python` instead of a user-controlled
-[virtual environment](https://docs.python.org/3.7/library/venv.html). 
-For this reason, and to avoid duplication if the package is 
-installed into multiple virtual environments, it's 
-recommended to use a custom path for `PYBBDA_DATA_ROOT`, for example,
-
-```bash
-export PYBBDA_DATA_ROOT=${HOME}/.pybbda/data
-```
-
-* PYBBDA_LOG_LEVEL
-
-This sets the [logging level](https://docs.python.org/3.7/library/logging.html) for the package at runtime.
-The default is `INFO`.
-
-
 ### Installing data
 
 This package ships without any data. Instead it provides tools 
-to fetch and store data from a variety of sources. To install
-data you can use the `update` tool in the `pybaseballdatana.data.tools`
+to fetch and store data from a variety of sources. 
+
+To install data you can use the `update` tool in the `pybaseballdatana.data.tools`
 sub-module. 
 
 Example, 
@@ -152,69 +111,8 @@ optional arguments:
 The data will be downloaded to `--data-root`, which defaults to the 
 `PYBBDA_DATA_ROOT`
 
-The `min-year` and `max-year` arguments refer only
-to Fangraphs leaderboards, and database storage of retrosheet events, as of now. 
+Detailed instruction are provided in the documentation https://pybbda.readthedocs.io/en/stable/
 
-
-Example to download Lahman data
-
-```bash
-$ python -m pybaseballdatana.data.tools.update --data-source Lahman 
-INFO:pybaseballdatana.data.sources.lahman._update:_update:downloading file from https://github.com/chadwickbureau/baseballdatabank/archive/master.zip
-```
-
-By default the script will expect the target 
-directory to exist and raise a `ValueError` and exit if it does not, example, 
-
-```bash
-$ python -m pybaseballdatana.data.tools.update --data-source Lahman --data-root /tmp/missing
-CRITICAL:root:update:The target path /tmp/missing does not exist. You can create it or pass option --make-dirs to update to create it automatically
-ValueError: missing target path /tmp/missing. You can create it or pass option --make-dirs to update to create it automatically
-```
-
-Use the `--make-dirs` flag to allow the script to make missing
-directories,
-
-```bash
-$ python -m pybaseballdatana.data.tools.update --data-source Lahman --data-root /tmp/missing --make-dirs
-INFO:pybaseballdatana.data.sources.lahman._update:_update:downloading file from https://github.com/chadwickbureau/baseballdatabank/archive/master.zip
-
-$ ls /tmp/missing/
-Lahman
-```
-
-
-Example to download Baseball Reference WAR
-
-```bash
-$ python -m pybaseballdatana.data.tools.update --data-source BaseballReference
-INFO:pybaseballdatana.data.sources.baseball_reference._update:_update:downloading file from https://www.baseball-reference.com/data/war_daily_bat.txt
-INFO:pybaseballdatana.data.sources.baseball_reference._update:_update:saving file to /home/bdilday/.pybbda/data/BaseballReference/war_daily_bat.txt.gz
-INFO:pybaseballdatana.data.sources.baseball_reference._update:_update:downloading file from https://www.baseball-reference.com/data/war_daily_pitch.txt
-INFO:pybaseballdatana.data.sources.baseball_reference._update:_update:saving file to /home/bdilday/.pybbda/data/BaseballReference/war_daily_pitch.txt.gz
-```
-
-Example Fangraphs guts constants and leaderboards. Note that because downloading the full set of
-leaderboard data starting from 1871 takes 5-10 minutes, 
-by default the years downloaded are 2018 - 2019 only. To get them all
-use `--min-year 1871`
-
-```bash
-$ python -m pybaseballdatana.data.tools.update --data-source Fangraphs --min-year 2019
-INFO:pybaseballdatana.data.sources.fangraphs._update:_update:saving file to /home/bdilday/.pybbda/data/Fangraphs/fg_guts_constants.csv.gz
-INFO:pybaseballdatana.data.sources.fangraphs._update:_update:saving file to /home/bdilday/.pybbda/data/Fangraphs/fg_bat_2019.csv.gz
-INFO:pybaseballdatana.data.sources.fangraphs._update:_update:saving file to /home/bdilday/.pybbda/data/Fangraphs/fg_pit_2019.csv.gz
-```
-
-Example retrosheet event data. This downloads the event data 
-and stores it in a `sqlite` database, located in `--data-root`
-
-
-Example to download all sources,
-
-```bash
-$ python -m pybaseballdatana.data.tools.update --data-source all --min-year 2019
-```
 
 ## Example Usage
 
