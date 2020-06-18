@@ -2,11 +2,16 @@
 Examples
 =========
 
+.. toctree::
+   :maxdepth: 2
+
+   /auto_examples/lahman.rst
+
 -------------------
 marcel projections
 -------------------
 
 ---------------------------------
-run expectency via Markov chains
+run expectancy via Markov chains
 ---------------------------------
 

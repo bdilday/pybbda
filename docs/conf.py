@@ -25,10 +25,10 @@ author = "Ben Dilday"
 
 # -- General configuration ---------------------------------------------------
 
-needs_sphinx = '3.0.0'
+needs_sphinx = "3.0.0"
 
 # for readthedocs
-master_doc = 'index'
+master_doc = "index"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -40,6 +40,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
+    "sphinx_gallery.gen_gallery",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -71,3 +72,21 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+binder_branch = "master"
+
+sphinx_gallery_conf = {
+    "doc_module": "pybbda",
+    "show_memory": False,
+    "backreferences_dir": os.path.join("modules", "generated"),
+    "reference_url": {"pybbda": None, "pybaseballdatana": None},
+    "examples_dirs": ["../examples"],
+    "gallery_dirs": ["auto_examples"],
+    #'subsection_order': SubSectionTitleOrder('../examples'),
+    # avoid generating too many cross links
+    "inspect_global_variables": False,
+    "remove_config_comments": True,
+    "filename_pattern": "/",
+    "download_all_examples": False,
+    "plot_gallery": "True",
+}

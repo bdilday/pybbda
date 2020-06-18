@@ -109,3 +109,5 @@ pybaseballdatana/data/assets/BaseballReference/war_daily*txt.gz
 pybaseballdatana/data/assets
 
 **_build/
+**auto_examples/
+**docs/modules/generated/

@@ -118,6 +118,7 @@ class MarkovEvents:
         :return: `MarkovEvents`
 
         .. code-block:: python
+
             markov_events = (
                 MarkovEvents.from_probs(
                  BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03),
@@ -281,6 +282,7 @@ class StateVector:
         :return:
 
         .. code-block:: python
+
             state_vector = StateVector()
             state_vector.to_df()
             first_base  second_base  third_base  outs  score  pa_count  prob
@@ -341,6 +343,7 @@ class StateVector:
         :return: `StateVector`
 
         .. code-block:: python
+
          m1 = MarkovState(GameState(), 0.2)
          m2 = MarkovState(GameState(), 0.25)
          StateVector.combine_states((m1, m2))
@@ -388,6 +391,7 @@ class MarkovSimulation:
         :return: List of StateVector
 
         .. code-block:: python
+
         markov_simulation = MarkovSimulation()
         batting_event_probability = BattingEventProbability(
                                       0.08, 0.15, 0.05, 0.005, 0.03)
@@ -440,6 +444,7 @@ class MarkovSimulation:
         :return: Pandas DataFrame
 
         .. code-block:: python
+
         markov_simulation = MarkovSimulation()
         batting_event_probability = BattingEventProbability(0.08, 0.15, 0.05, 0.005, 0.03)
         running_event_probability = RunningEventProbability(0.1, 0.1, 0.1, 0.1)
@@ -458,6 +463,7 @@ class MarkovSimulation:
                  0            1           0     0     17        19  5.074142e-11
                  0            0           1     0     17        19  1.479958e-11
                  0            0           0     0     18        19  8.879749e-11
+
         """
         return pd.concat(
             [state_vector.to_df() for state_vector in state_vectors], axis=0

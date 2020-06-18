@@ -43,24 +43,3 @@ class MarcelProjectionsBatting(MarcelsProjectionsBase):
             .query(r'primaryPos != "P"')
             .drop("primaryPos", axis=1)
         )
-
-
-if __name__ == "__main__":
-
-    ld = LahmanData()
-
-    md = MarcelProjectionsBatting(ld.batting)
-
-    import time
-
-    start = time.time()
-    cnt = 0
-    for season in range(2019, 2020 + 1):
-        cnt += 1
-        res = md.projections(season)
-        # print(res)
-        # print(res[res.playerID.str.contains("^bel")])
-    end = time.time()
-    dt = end - start
-    print(res.sort_values("HR", ascending=False))
-    print(dt, dt / cnt)
