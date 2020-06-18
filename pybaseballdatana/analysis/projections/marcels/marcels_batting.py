@@ -1,6 +1,5 @@
 from pybaseballdatana.data.tools.processing.aggregate import aggregate_by_season
 from pybaseballdatana.data.tools.lahman.data import augment_lahman_batting
-from pybaseballdatana.data import LahmanData
 from pybaseballdatana.analysis.projections.marcels.marcels_base import (
     MarcelsProjectionsBase,
 )
