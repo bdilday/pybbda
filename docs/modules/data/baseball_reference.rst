@@ -1,5 +1,5 @@
 ==================
-baseball reference
+Baseball Reference
 ==================
 
 .. automodule:: pybaseballdatana.data.sources.baseball_reference

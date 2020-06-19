@@ -119,8 +119,8 @@ Detailed instruction are provided in the documentation https://pybbda.readthedoc
 After installing some or all of the data, you can start using the 
 package.
 
-Following are a few minimal examples, more extensive documentation,
-including examples, is a work in progress.
+Following is an example of accessing Lahman data. More examples are included in the documentation
+https://pybbda.readthedocs.io/en/stable/examples.html
 
 ### Lahman data
 
@@ -152,48 +152,6 @@ aardsda01      0
 Name: HR, Length: 19689, dtype: int64
 ```
 
-### Baseball Reference WAR
-
-```python
->>> from pybaseballdatana.data import BaseballReferenceData
->>> bbref_data = BaseballReferenceData()
->>> bbref_data.war_bat
-INFO:pybaseballdatana.data.sources.baseball_reference.data:data:searching for file /home/bdilday/.pybbda/data/BaseballReference/war_daily_bat.txt
-           name_common   age    mlb_ID  player_ID  year_ID  ... waa_win_perc_def  waa_win_perc_rep  OPS_plus   TOB_lg    TB_lg
-0        David Aardsma  22.0  430911.0  aardsda01     2004  ...           0.5000            0.5000       NaN    0.000    0.000
-1        David Aardsma  24.0  430911.0  aardsda01     2006  ...           0.5000            0.4998 -100.0000    0.694    0.896
-2        David Aardsma  25.0  430911.0  aardsda01     2007  ...           0.5000            0.5000       NaN    0.000    0.000
-3        David Aardsma  26.0  430911.0  aardsda01     2008  ...           0.5000            0.4992 -100.0000    0.345    0.434
-4        David Aardsma  27.0  430911.0  aardsda01     2009  ...           0.5000            0.5000       NaN    0.000    0.000
-...                ...   ...       ...        ...      ...  ...              ...               ...       ...      ...      ...
-107352  Dutch Zwilling  26.0  124791.0  zwilldu01     1915  ...           0.5000            0.4919  141.9576  199.168  188.348
-107353  Dutch Zwilling  27.0  124791.0  zwilldu01     1916  ...           0.4952            0.4934    7.3266   18.514   18.757
-107354       Tony Zych  24.0  543964.0   zychto01     2015  ...              NaN               NaN       NaN    0.000    0.000
-107355       Tony Zych  25.0  543964.0   zychto01     2016  ...              NaN               NaN       NaN    0.000    0.000
-107356       Tony Zych  26.0  543964.0   zychto01     2017  ...           0.5000            0.5000       NaN    0.000    0.000
-
-[107357 rows x 49 columns]
->>> bbref_data.war_bat.sort_values("WAR", ascending=False).head(6)
-             name_common   age    mlb_ID  player_ID  year_ID  ... waa_win_perc_def  waa_win_perc_rep  OPS_plus   TOB_lg    TB_lg
-84460          Babe Ruth  28.0  121578.0   ruthba01     1923  ...           0.5080            0.4834  239.0187  252.578  211.149
-84458          Babe Ruth  26.0  121578.0   ruthba01     1921  ...           0.4996            0.4841  238.4715  253.759  229.230
-84464          Babe Ruth  32.0  121578.0   ruthba01     1927  ...           0.5032            0.4840  225.0409  242.569  220.158
-106270  Carl Yastrzemski  27.0  124650.0  yastrca01     1967  ...           0.5118            0.4835  193.2196  219.724  219.557
-44652     Rogers Hornsby  28.0  116156.0  hornsro01     1924  ...           0.5085            0.4863  221.8809  214.748  214.614
-8817         Barry Bonds  36.0  111188.0  bondsba01     2001  ...           0.4930            0.4865  258.7176  219.120  202.824
-
-[6 rows x 49 columns]
->>> bbref_data.war_pitch.query("year_ID >= 1911").sort_values("WAR", ascending=False).head(6)
-          name_common   age    mlb_ID  player_ID  year_ID  ... pyth_exponent_rep  waa_win_perc_rep WAR_rep    ERA_plus    ER_lg
-21163  Walter Johnson  25.0  116635.0  johnswa01     1913  ...             1.843            0.4294  3.5162  258.925000  113.927
-21162  Walter Johnson  24.0  116635.0  johnswa01     1912  ...             1.915            0.4257  3.7861  242.798246  138.395
-15490   Dwight Gooden  20.0  114947.0  goodedw01     1985  ...             1.857            0.4293  2.5333  228.665957  107.473
-6474    Steve Carlton  27.0  112008.0  carltst01     1972  ...             1.835            0.4288  3.0028  182.243421  138.505
-7745    Roger Clemens  34.0  112388.0  clemero02     1997  ...             1.971            0.4188  2.6641  221.573333  132.944
-525    Pete Alexander  33.0  110127.0  alexape01     1920  ...             1.832            0.4380  2.9949  166.094805  127.893
-
-[6 rows x 42 columns]
-```
 
 ### Fangraphs guts
 
@@ -341,7 +299,7 @@ bauertr01 2020    162.130978  23.420415  79.459799  67.396411  210.995752  11.85
 57.57010079059938
 ```
 
-### Run expectancies from Markov chains
+### Run expectancies CLI tool
 
 There is a cli tool for computing run expectancies from 
 Markov chains. 

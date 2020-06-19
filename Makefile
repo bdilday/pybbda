@@ -22,6 +22,9 @@ test-markov: install
 test: install-dev
 	python -m pytest tests/
 
+clean-docs:
+	cd docs && make clean
+	rm -fr docs/auto_examples
 clean:
 	rm -fr pybaseballdatana.egg-info
 	rm -fr build
