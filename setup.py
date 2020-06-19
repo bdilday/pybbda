@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 def process_line(line):
-    return line.strip().split("=")[0]
+    return line.strip().split("=")[0].replace('>', '').replace("~", '')
 
 with open("requirements.txt", "r") as fh:
     install_requires = [process_line(line) for line in fh.readlines() if len(line)>1]
