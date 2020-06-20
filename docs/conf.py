@@ -90,3 +90,27 @@ sphinx_gallery_conf = {
     "download_all_examples": False,
     "plot_gallery": "True",
 }
+
+import os
+from pybaseballdatana.data.tools.update import update_source, DATA_SOURCE_OPTIONS, PYBBDA_DATA_ROOT
+
+
+MIN_YEAR = 2018
+MAX_YEAR = 2019
+NUM_THREADS = 1
+OVERWRITE = True
+CREATE_EVENT_DATABASE = False
+
+os.makedirs(PYBBDA_DATA_ROOT, exist_ok=True)
+
+for data_source in DATA_SOURCE_OPTIONS:
+    update_source(
+        PYBBDA_DATA_ROOT,
+        data_source,
+        MIN_YEAR,
+        MAX_YEAR,
+        NUM_THREADS,
+        OVERWRITE,
+        CREATE_EVENT_DATABASE
+    )
+

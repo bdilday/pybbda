@@ -25,6 +25,10 @@ test: install-dev
 clean-docs:
 	cd docs && make clean
 	rm -fr docs/auto_examples
+
+clean-data:
+	rm -rf pybaseballdatana/data/assets/*
+
 clean:
 	rm -fr pybaseballdatana.egg-info
 	rm -fr build
