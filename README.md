@@ -111,7 +111,7 @@ optional arguments:
 The data will be downloaded to `--data-root`, which defaults to the 
 `PYBBDA_DATA_ROOT`
 
-Detailed instruction are provided in the documentation https://pybbda.readthedocs.io/en/stable/
+Detailed instructions are [provided in the documentation](https://pybbda.readthedocs.io/en/stable/)
 
 
 ## Example Usage
@@ -119,8 +119,8 @@ Detailed instruction are provided in the documentation https://pybbda.readthedoc
 After installing some or all of the data, you can start using the 
 package.
 
-Following is an example of accessing Lahman data. More examples are included in the documentation
-https://pybbda.readthedocs.io/en/stable/examples.html
+Following is an example of accessing Lahman data. 
+More [examples are included in the documentation](https://pybbda.readthedocs.io/en/stable/examples.html)
 
 ### Lahman data
 
@@ -153,153 +153,9 @@ Name: HR, Length: 19689, dtype: int64
 ```
 
 
-### Fangraphs guts
+### CLI tools
 
-```python
->>> from pybaseballdatana.data import FangraphsData
->>> fg_data = FangraphsData()
->>> fg_data.fg_guts_constants
-     Season   wOBA  wOBAScale    wBB   wHBP    w1B    w2B    w3B    wHR  runSB  runCS   R/PA     R/W   cFIP
-0      2019  0.320      1.157  0.690  0.719  0.870  1.217  1.529  1.940    0.2 -0.435  0.126  10.296  3.214
-1      2018  0.315      1.226  0.690  0.720  0.880  1.247  1.578  2.031    0.2 -0.407  0.117   9.714  3.161
-2      2017  0.321      1.185  0.693  0.723  0.877  1.232  1.552  1.980    0.2 -0.423  0.122  10.048  3.158
-3      2016  0.318      1.212  0.691  0.721  0.878  1.242  1.569  2.015    0.2 -0.410  0.118   9.778  3.147
-4      2015  0.313      1.251  0.687  0.718  0.881  1.256  1.594  2.065    0.2 -0.392  0.113   9.421  3.134
-..      ...    ...        ...    ...    ...    ...    ...    ...    ...    ...    ...    ...     ...    ...
-144    1875  0.261      1.274  0.730  0.761  0.927  1.309  1.654  2.045    0.2 -0.531  0.156  12.231  2.370
-145    1874  0.282      1.145  0.760  0.789  0.938  1.281  1.591  1.886    0.2 -0.629  0.179  14.227  2.808
-146    1873  0.303      1.025  0.788  0.814  0.947  1.255  1.531  1.739    0.2 -0.741  0.207  16.482  2.932
-147    1872  0.297      1.020  0.791  0.816  0.949  1.255  1.530  1.725    0.2 -0.763  0.213  16.926  3.508
-148    1871  0.312      0.909  0.797  0.820  0.938  1.211  1.456  1.584    0.2 -0.863  0.237  18.954  3.580
-
-[149 rows x 14 columns]
-```
-
-### Fangraphs leaderboards
-
-```python
->>> from pybaseballdatana.data import FangraphsData
->>> fg_data = FangraphsData()
->>> fg_data.fg_batting_2019.sort_values("WAR", ascending=False).head(6)
-     #              Name          Team  Season  Age    G   AB   PA    H  ...  GB%+  FB%+  HR/FB%+  Pull%+  Cent%+  Oppo%+  Soft%+  Med%+  Hard%+
-20  21        Mike Trout        Angels    2019   27  134  470  600  137  ...    58   135      169     102      98      98      78     95     116
-28  29      Alex Bregman        Astros    2019   25  156  554  690  164  ...    75   126      122     110     107      74      89     89     118
-32  33    Cody Bellinger       Dodgers    2019   23  156  558  660  170  ...    73   119      159     118      94      79      78     85     126
-19  20  Christian Yelich       Brewers    2019   27  130  489  580  161  ...   101   101      212      97     109      93      86     79     130
-83  84     Marcus Semien     Athletics    2019   28  162  657  747  187  ...    97   107      100     107      93      99      89     96     110
-39  40       Ketel Marte  Diamondbacks    2019   25  144  569  628  187  ...   101    98      123     108     103      83      93     96     108
-
-[6 rows x 306 columns]
->>> fg_data.fg_pitching_2019.sort_values("WAR", ascending=False).head(6)
-       #              Name       Team  Season  Age   W   L   ERA   G  ...  GB%+  FB%+  HR/FB%+  Pull%+  Cent%+  Oppo%+  Soft%+  Med%+  Hard%+
-93    94       Gerrit Cole     Astros    2019   28  20   5  2.50  33  ...    95   108      110      90     101     114     115    103      89
-84    85      Jacob deGrom       Mets    2019   31  11   8  2.43  32  ...   102    99       73      96      96     112     127    108      78
-213  214        Lance Lynn    Rangers    2019   32  16  11  3.67  33  ...    95   105       65      93     100     111      93    100     103
-123  124      Max Scherzer  Nationals    2019   34  11   7  2.92  27  ...    94   109       76     103      90     108     110    102      94
-95    96  Justin Verlander     Astros    2019   36  21   6  2.58  34  ...    85   124      105     108     104      82     101     91     110
-141  142    Charlie Morton       Rays    2019   35  16   6  3.05  33  ...   114    82       68      95      99     110      98    110      89
-
-[6 rows x 323 columns]
-```
-
-### Retrosheet events
-
-Load data frame ID
-
-```python
->>> from pybaseballdatana.data import RetrosheetData
->>> retrosheet_data = RetrosheetData()
->>> retrosheet_data.df_from_team_id("1982OAK")                                                                                                                              
-           GAME_ID AWAY_TEAM_ID  INN_CT  BAT_HOME_ID  OUTS_CT  BALLS_CT  ...  ASS7_FLD_CD ASS8_FLD_CD  ASS9_FLD_CD  ASS10_FLD_CD UNKNOWN_OUT_EXC_FL UNCERTAIN_PLAY_EXC_FL
-0     OAK198204060          CAL       1            0        0         0  ...            0           0            0             0                  F                     F
-1     OAK198204060          CAL       1            0        1         0  ...            0           0            0             0                  F                     F
-2     OAK198204060          CAL       1            0        2         0  ...            0           0            0             0                  F                     F
-3     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
-4     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
-...            ...          ...     ...          ...      ...       ...  ...          ...         ...          ...           ...                ...                   ...
-6204  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
-6205  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
-6206  OAK198209260          KCA       9            0        0         0  ...            0           0            0             0                  F                     F
-6207  OAK198209260          KCA       9            0        1         0  ...            0           0            0             0                  F                     F
-6208  OAK198209260          KCA       9            0        2         0  ...            0           0            0             0                  F                     F
-
-[6209 rows x 159 columns]
-```
-
-Load data frame from URl
-
-```python
-retrosheet_data.df_from_file("https://raw.githubusercontent.com/chadwickbureau/retrosheet/master/event/regular/1982OAK.EVA")                                            
-           GAME_ID AWAY_TEAM_ID  INN_CT  BAT_HOME_ID  OUTS_CT  BALLS_CT  ...  ASS7_FLD_CD ASS8_FLD_CD  ASS9_FLD_CD  ASS10_FLD_CD UNKNOWN_OUT_EXC_FL UNCERTAIN_PLAY_EXC_FL
-0     OAK198204060          CAL       1            0        0         0  ...            0           0            0             0                  F                     F
-1     OAK198204060          CAL       1            0        1         0  ...            0           0            0             0                  F                     F
-2     OAK198204060          CAL       1            0        2         0  ...            0           0            0             0                  F                     F
-3     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
-4     OAK198204060          CAL       1            1        0         0  ...            0           0            0             0                  F                     F
-...            ...          ...     ...          ...      ...       ...  ...          ...         ...          ...           ...                ...                   ...
-6204  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
-6205  OAK198209260          KCA       8            1        2         0  ...            0           0            0             0                  F                     F
-6206  OAK198209260          KCA       9            0        0         0  ...            0           0            0             0                  F                     F
-6207  OAK198209260          KCA       9            0        1         0  ...            0           0            0             0                  F                     F
-6208  OAK198209260          KCA       9            0        2         0  ...            0           0            0             0                  F                     F
-
-[6209 rows x 159 columns]
-```
-
-### Marcel projections 
-
-```python
->>> from pybaseballdatana.analysis.projections import MarcelProjectionsBatting, MarcelProjectionsPitching
->>> batting_marcels = MarcelProjectionsBatting()
->>> batting_marcels.projections(projected_season=2020).sort_values("HR", ascending=False).head(5)
-                         1B         2B        3B         HR         BB        HBP         SB        CS          SO        SH        SF
-playerID  yearID                                                                                                                      
-alonspe01 2020    61.835746  24.424880  1.776910  36.479123  55.530717  13.808065   2.380606  0.634653  134.823677  0.268709  2.740424
-martijd02 2020    88.221199  30.439315  2.178894  35.774207  61.850212   3.273532   4.228616  0.703440  133.531288  0.176546  5.085481
-troutmi01 2020    68.296501  24.724267  2.726739  35.413694  98.294393  10.368346  15.968754  2.492124  110.910443  0.177973  3.910907
-bellico01 2020    78.348910  28.931966  4.151507  34.120187  73.574174   2.929709  12.346877  2.957267  121.966159  0.180862  3.481480
-suareeu01 2020    80.978952  21.878351  1.930468  33.101862  64.662073   8.582563   3.132271  2.358739  146.982596  0.173745  5.240382
-
-[635 rows x 11 columns]
->>> pitching_marcels = MarcelProjectionsPitching()
->>> pitching_marcels.projections(projected_season=2020).sort_values("SO", ascending=False).head(5)
-                           H         HR         ER         BB          SO        HBP          R
-playerID  yearID                                                                               
-colege01  2020    145.190329  23.916119  66.034603  53.325072  242.445196   4.835923  71.164678
-verlaju01 2020    145.192833  28.656685  65.550935  47.145311  233.046279   6.302306  68.739815
-degroja01 2020    147.740156  17.419418  55.997757  47.226040  214.747754   5.515039  61.433772
-scherma01 2020    134.729027  19.137910  57.718204  43.170277  212.630013   8.205640  61.732141
-bauertr01 2020    162.130978  23.420415  79.459799  67.396411  210.995752  11.851444  87.746950
-
-[775 rows x 7 columns]
-```
-
-### Batted ball trajectories
-
-```python
->>> from pybaseballdatana.analysis.trajectories import BattedBallTrajectory
->>> trajectory_calc = BattedBallTrajectory()
->>> trajectory = trajectory_calc.get_trajectory(initial_speed=100, launch_angle=20, launch_direction_angle=0, initial_spin=2500, spin_angle=-10)
->>> trajectory
-            t             x           y         z        vx          vy         vz
-0    0.000449  4.489077e-07    2.061907  3.022532  0.001999  137.830861  50.163946
-1    0.004940  5.425019e-05    2.680435  3.247593  0.021947  137.610786  50.059854
-2    0.014940  4.947793e-04    4.054102  3.747033  0.066097  137.123263  49.828060
-3    0.024940  1.374979e-03    5.422911  4.244154  0.109882  136.639159  49.596236
-4    0.034940  2.691216e-03    6.786897  4.738957  0.153305  136.158444  49.364384
-..        ...           ...         ...       ...       ...         ...        ...
-450  4.494940  1.882760e+01  387.451152  1.638192  5.647055   62.372619 -46.643721
-451  4.504940  1.888407e+01  388.074671  1.170890  5.647418   62.331176 -46.816578
-452  4.514940  1.894054e+01  388.697776  0.701861  5.647756   62.289952 -46.989108
-453  4.524940  1.899702e+01  389.320470  0.231109  5.648070   62.248948 -47.161310
-454  4.534940  1.905351e+01  389.942756 -0.241364  5.648359   62.208161 -47.333182
-
-[455 rows x 7 columns]
->>> trajectory.z.max()
-57.57010079059938
-```
-
-### Run expectancies CLI tool
+#### Run expectancies 
 
 There is a cli tool for computing run expectancies from 
 Markov chains. 

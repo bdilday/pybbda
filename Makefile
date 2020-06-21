@@ -5,8 +5,11 @@ install-dev install \
 dist
 
 lint: install-dev
-	python -m black pybaseballdatana/ tests/
+	python -m black pybaseballdatana/ tests/ examples/
 	python -m flake8 pybaseballdatana
+	python -m flake8 tests
+	python -m flake8 examples
+
 
 test-analysis: install-dev
 	python -m pytest tests/analysis/
