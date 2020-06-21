@@ -1,5 +1,5 @@
 import re
-from pybaseballdatana.analysis.simulations import PlayerRegistry, Batter, Lineup
+from pybaseballdatana.analysis.simulations import PlayerRegistry, Batter
 
 
 def test_player_regsitry_singleton():

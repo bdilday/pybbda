@@ -5,8 +5,11 @@ install-dev install \
 dist
 
 lint: install-dev
-	python -m black pybaseballdatana/ tests/
+	python -m black pybaseballdatana/ tests/ examples/
 	python -m flake8 pybaseballdatana
+	python -m flake8 tests
+	python -m flake8 examples
+
 
 test-analysis: install-dev
 	python -m pytest tests/analysis/
@@ -21,6 +24,13 @@ test-markov: install
 
 test: install-dev
 	python -m pytest tests/
+
+clean-docs:
+	cd docs && make clean
+	rm -fr docs/auto_examples
+
+clean-data:
+	rm -rf pybaseballdatana/data/assets/*
 
 clean:
 	rm -fr pybaseballdatana.egg-info

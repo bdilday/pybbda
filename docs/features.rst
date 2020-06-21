@@ -12,14 +12,12 @@ sources
 
 The following data sources are currently supported
 
-* Lahman database
+.. toctree::
+   :maxdepth: 2
 
-* Baseball reference daily WAR
-
-* Fangraphs GUTs constants
-
-* Fangraphs leaderboards
-
+   /modules/data/lahman.rst
+   /modules/data/fangraphs.rst
+   /modules/data/baseball_reference.rst
 
 
 ---------

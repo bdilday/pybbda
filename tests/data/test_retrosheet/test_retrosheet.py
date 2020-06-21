@@ -1,4 +1,3 @@
-import glob
 import pytest
 
 from pybaseballdatana.data import RetrosheetData

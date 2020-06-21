@@ -1,6 +1,5 @@
 from pybaseballdatana.data.tools.processing.aggregate import aggregate_by_season
 from pybaseballdatana.data.tools.lahman.data import augment_lahman_pitching
-from pybaseballdatana.data import LahmanData
 from pybaseballdatana.analysis.projections.marcels.marcels_base import (
     MarcelsProjectionsBase,
 )
@@ -36,24 +35,3 @@ class MarcelProjectionsPitching(MarcelsProjectionsBase):
             lambda row: row["GS"] / row["G"], axis=1
         ).values
         return 75 + 105 * fraction_games_started
-
-
-if __name__ == "__main__":
-
-    ld = LahmanData()
-
-    md = MarcelProjectionsPitching(ld.pitching)
-
-    import time
-
-    start = time.time()
-    cnt = 0
-    for season in range(2019, 2020 + 1):
-        cnt += 1
-        res = md.projections(season)
-        # print(res)
-        # print(res[res.playerID.str.contains("^bel")])
-    end = time.time()
-    dt = end - start
-    print(res.sort_values("SO", ascending=False))
-    print(dt, dt / cnt)
