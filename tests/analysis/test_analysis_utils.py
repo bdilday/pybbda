@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.utils import check_len
+from pybbda.analysis.utils import check_len
 import pytest
 
 

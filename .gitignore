@@ -104,9 +104,9 @@ venv.bak/
 .mypy_cache/
 .vscode/
 .idea/
-pybaseballdatana/data/assets/BaseballReference/war_daily*txt.gz
+pybbda/data/assets/BaseballReference/war_daily*txt.gz
 **/*csv
-pybaseballdatana/data/assets
+pybbda/data/assets
 
 **_build/
 **auto_examples/

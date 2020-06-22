@@ -6,7 +6,7 @@ Fangraphs Batting Leaderboards
 
 """
 
-from pybaseballdatana.data import FangraphsData
+from pybbda.data import FangraphsData
 
 fg_data = FangraphsData()
 

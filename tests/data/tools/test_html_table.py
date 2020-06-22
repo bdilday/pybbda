@@ -1,4 +1,4 @@
-from pybaseballdatana.utils import html_table
+from pybbda.utils import html_table
 import pytest
 
 

@@ -56,7 +56,7 @@ The root directory for storing data
 (See [Installing data](#Installing-data)). Defaults to ``${INSTALLATION_ROOT}/data/assets``
 where ``${INSTALLATION_ROOT}`` is the path the the ``pybbda`` installation.
 The code location is typically a path to the ``Python`` installation
-plus ``site-packages/pybaseballdatana``.
+plus ``site-packages/pybbda``.
 
 This can cause a problem with write permissions 
 if you're using a system `Python` instead of a user-controlled
@@ -81,14 +81,14 @@ Installing data
 
 This package ships without any data. Instead it provides tools 
 to fetch and store data from a variety of sources. To install
-data you can use the ``update`` tool in the ``pybaseballdatana.data.tools``
+data you can use the ``update`` tool in the ``pybbda.data.tools``
 sub-module. 
 
 Example, 
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update -h
+   python -m pybbda.data.tools.update -h
    
    usage: update.py [-h] [--data-root DATA_ROOT] --data-source
                  {Lahman,BaseballReference,Fangraphs,retrosheet,all}
@@ -133,11 +133,11 @@ Lahman
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update --data-source Lahman 
+   python -m pybbda.data.tools.update --data-source Lahman
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update --data-source Lahman --data-root /tmp/missing --make-dirs
+   python -m pybbda.data.tools.update --data-source Lahman --data-root /tmp/missing --make-dirs
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Baseball Reference WAR
@@ -145,7 +145,7 @@ Baseball Reference WAR
 
 .. code-block:: bash
    
-   python -m pybaseballdatana.data.tools.update --data-source BaseballReference
+   python -m pybbda.data.tools.update --data-source BaseballReference
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,7 +154,7 @@ Fangraphs GUTs and leaderboards
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update --data-source Fangraphs 
+   python -m pybbda.data.tools.update --data-source Fangraphs
 
 Note that because downloading the full set of
 leaderboard data starting from 1871 takes 5-10 minutes, 
@@ -163,7 +163,7 @@ use ``--min-year 1871``
 
 .. code-block:: bash
 
-   python -m pybaseballdatana.data.tools.update --data-source Fangraphs --min-year 1871
+   python -m pybbda.data.tools.update --data-source Fangraphs --min-year 1871
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -176,15 +176,15 @@ To store a local copy,
 
 .. code-block:: bash
 
-   $ python -m pybaseballdatana.data.tools.update --data-source retrosheet
+   $ python -m pybbda.data.tools.update --data-source retrosheet
 
 The ``pychadwick`` package provides a command line tool to parse retrosheet events data as CSV. 
 The following downloads the events data to ``/tmp/retrosheet-example`` and then parse them to CSV
 
 .. code-block:: bash
 
-   $ python -m pybaseballdatana.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs
-   INFO:pybaseballdatana.data.sources.retrosheet._update:_update:downloading file from https://github.com/chadwickbureau/retrosheet/archive/master.zip
+   $ python -m pybbda.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs
+   INFO:pybbda.data.sources.retrosheet._update:_update:downloading file from https://github.com/chadwickbureau/retrosheet/archive/master.zip
 
    $ pycwevent --data-root /tmp/retrosheet-example/retrosheet/retrosheet-master/event/regular > /tmp/all_events.csv
 
@@ -194,9 +194,9 @@ The ``min-year`` and ``--max-year`` arguments will limit the years to populate t
 
 .. code-block:: bash
 
-   $ python -m pybaseballdatana.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs --min-year 1982 --max-year 1982 --create-event-database
-   INFO:pybaseballdatana.data.sources.retrosheet._update:_update:path /tmp/retrosheet-example/retrosheet/retrosheet-master exists, not downloading
-   INFO:pybaseballdatana.data.sources.retrosheet._update:_update:creating database with 26 files
+   $ python -m pybbda.data.tools.update --data-source retrosheet --data-root /tmp/retrosheet-example --make-dirs --min-year 1982 --max-year 1982 --create-event-database
+   INFO:pybbda.data.sources.retrosheet._update:_update:path /tmp/retrosheet-example/retrosheet/retrosheet-master exists, not downloading
+   INFO:pybbda.data.sources.retrosheet._update:_update:creating database with 26 files
 
 .. code-block:: bash
    
@@ -224,7 +224,7 @@ all the supported sources.
 
 .. code-block:: bash
 
-    python -m pybaseballdatana.data.tools.update --data-source all
+    python -m pybbda.data.tools.update --data-source all
 
 
 .. _pychadwick: https://github.com/bdilday/pychadwick

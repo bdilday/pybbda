@@ -8,8 +8,8 @@ Run Expectancy
 
 import numpy as np
 
-from pybaseballdatana.analysis.run_expectancy import MarkovSimulation
-from pybaseballdatana.analysis.simulations import (
+from pybbda.analysis.run_expectancy import MarkovSimulation
+from pybbda.analysis.simulations import (
     BattingEventProbability,
     RunningEventProbability,
     Batter,
@@ -17,10 +17,10 @@ from pybaseballdatana.analysis.simulations import (
     PlayerRegistry,
 )
 
-from pybaseballdatana.analysis.simulations.components.event import (
+from pybbda.analysis.simulations.components.event import (
     _DEFAULT_RUNNING_EVENT_PROBS as DEFAULT_RUNNING_EVENT_PROBS,
 )
-from pybaseballdatana.analysis.simulations.constants import MAX_OUTS
+from pybbda.analysis.simulations.constants import MAX_OUTS
 
 
 def summarise_result(result):

@@ -1,6 +1,6 @@
-from pybaseballdatana.analysis.simulations import BattingEventProbability
+from pybbda.analysis.simulations import BattingEventProbability
 
-from pybaseballdatana.analysis.simulations.components.player import Batter
+from pybbda.analysis.simulations.components.player import Batter
 import pytest
 
 

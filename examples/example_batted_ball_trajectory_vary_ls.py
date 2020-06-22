@@ -12,7 +12,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from pybaseballdatana.analysis.trajectories import BattedBallTrajectory
+from pybbda.analysis.trajectories import BattedBallTrajectory
 
 trajectory_calc = BattedBallTrajectory()
 

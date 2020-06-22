@@ -5,7 +5,7 @@ import sys
 
 from numpy import where as np_where
 
-from pybaseballdatana.data import RetrosheetData
+from pybbda.data import RetrosheetData
 
 DEFAULT_MIN_YEAR = 2010
 DEFAULT_MAX_YEAR = 2019

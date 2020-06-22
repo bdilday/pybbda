@@ -4,7 +4,7 @@ Baseball Reference WAR
 =======================
 """
 
-from pybaseballdatana.data import BaseballReferenceData
+from pybbda.data import BaseballReferenceData
 
 bbref_data = BaseballReferenceData()
 

@@ -6,7 +6,7 @@ Lahman Data
 
 """
 
-from pybaseballdatana.data import LahmanData
+from pybbda.data import LahmanData
 
 lahman_data = LahmanData()
 

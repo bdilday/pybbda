@@ -2,7 +2,7 @@
 Baseball Reference
 ==================
 
-.. automodule:: pybaseballdatana.data.sources.baseball_reference
+.. automodule:: pybbda.data.sources.baseball_reference
     :members:
     :undoc-members:
     :inherited-members:

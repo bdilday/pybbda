@@ -5,8 +5,8 @@ install-dev install \
 dist
 
 lint: install-dev
-	python -m black pybaseballdatana/ tests/ examples/
-	python -m flake8 pybaseballdatana
+	python -m black pybbda/ tests/ examples/
+	python -m flake8 pybbda
 	python -m flake8 tests
 	python -m flake8 examples
 
@@ -18,7 +18,7 @@ test-data: install-dev
 	python -m pytest tests/data/
 
 test-markov: install
-	python -m pybaseballdatana.analysis.run_expectancy.markov.cli \
+	python -m pybbda.analysis.run_expectancy.markov.cli \
 	-b 0 0.1 0.1 0.1 0.1 0.1 \
 	-i 1 henderi01_1982
 
@@ -30,10 +30,10 @@ clean-docs:
 	rm -fr docs/auto_examples
 
 clean-data:
-	rm -rf pybaseballdatana/data/assets/*
+	rm -rf pybbda/data/assets/*
 
 clean:
-	rm -fr pybaseballdatana.egg-info
+	rm -fr pybbda.egg-info
 	rm -fr build
 	rm -fr dist
 	rm -fr .pytest_cache

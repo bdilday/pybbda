@@ -1,6 +1,6 @@
 import pytest
 
-from pybaseballdatana.data import RetrosheetData
+from pybbda.data import RetrosheetData
 
 
 @pytest.fixture
