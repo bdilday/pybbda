@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.utils import cos_in_degrees, sin_in_degrees
+from pybbda.analysis.utils import cos_in_degrees, sin_in_degrees
 from math import sqrt
 import pytest
 

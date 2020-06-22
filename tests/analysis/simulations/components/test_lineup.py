@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.simulations import Batter, Lineup
+from pybbda.analysis.simulations import Batter, Lineup
 
 
 def test_lineup():

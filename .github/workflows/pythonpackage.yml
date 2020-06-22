@@ -24,11 +24,11 @@ jobs:
         pip install -e .
     - name: Initialize package data
       run: |
-        python -m pybaseballdatana.data.tools.update --data-source Lahman --make-dirs
-        python -m pybaseballdatana.data.tools.update --data-source BaseballReference --make-dirs
-        python -m pybaseballdatana.data.tools.update --data-source Fangraphs \
+        python -m pybbda.data.tools.update --data-source Lahman --make-dirs
+        python -m pybbda.data.tools.update --data-source BaseballReference --make-dirs
+        python -m pybbda.data.tools.update --data-source Fangraphs \
         --make-dirs --min-year 2019 --max-year 2019 --num-threads 2
-        python -m pybaseballdatana.data.tools.update --min-year 1982 --max-year 1982 --data-source retrosheet
+        python -m pybbda.data.tools.update --min-year 1982 --max-year 1982 --data-source retrosheet
     - name: Lint with flake8
       run: |
         pip install flake8

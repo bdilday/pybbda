@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.projections.marcels.age_adjustment import age_adjustment
+from pybbda.analysis.projections.marcels.age_adjustment import age_adjustment
 
 
 def test_age_adjustment():

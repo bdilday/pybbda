@@ -1,6 +1,6 @@
 import pytest
 
-from pybaseballdatana.analysis.simulations import (
+from pybbda.analysis.simulations import (
     GameState,
     BattingEvent,
     BattingEventProbability,
@@ -11,7 +11,7 @@ from pybaseballdatana.analysis.simulations import (
     Lineup,
     Batter,
 )
-from pybaseballdatana.analysis.run_expectancy.markov import (
+from pybbda.analysis.run_expectancy.markov import (
     MarkovSimulation,
     MarkovState,
     MarkovEvent,

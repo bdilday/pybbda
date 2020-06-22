@@ -8,7 +8,7 @@ analysis
    projections.rst
    trajectories.rst
 
-.. automodule:: pybaseballdatana.analysis
+.. automodule:: pybbda.analysis
     :members:
     :undoc-members:
     :inherited-members:

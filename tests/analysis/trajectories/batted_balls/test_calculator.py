@@ -1,7 +1,5 @@
-from pybaseballdatana.analysis.trajectories.batted_balls.calculator import (
-    BattedBallTrajectory,
-)
-from pybaseballdatana.analysis.utils import sin_in_degrees
+from pybbda.analysis.trajectories.batted_balls.calculator import BattedBallTrajectory
+from pybbda.analysis.utils import sin_in_degrees
 import pytest
 
 

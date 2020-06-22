@@ -1,5 +1,5 @@
 from attr.exceptions import FrozenInstanceError
-from pybaseballdatana.analysis.trajectories.batted_balls.parameters import (
+from pybbda.analysis.trajectories.batted_balls.parameters import (
     BattedBallConstants,
     UnitConversions,
 )

@@ -9,7 +9,7 @@ data
    fangraphs.rst
    baseball_reference.rst
 
-.. automodule:: pybaseballdatana.data
+.. automodule:: pybbda.data
     :members:
     :undoc-members:
     :inherited-members:

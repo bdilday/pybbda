@@ -5,7 +5,7 @@ Marcel Projections - Batting
 
 """
 
-from pybaseballdatana.analysis.projections import MarcelProjectionsBatting
+from pybbda.analysis.projections import MarcelProjectionsBatting
 
 batting_marcels = MarcelProjectionsBatting()
 print(

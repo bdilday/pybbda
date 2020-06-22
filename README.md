@@ -81,13 +81,13 @@ prior to `Python 3.6`, including`Python 2.7`.
 This package ships without any data. Instead it provides tools 
 to fetch and store data from a variety of sources. 
 
-To install data you can use the `update` tool in the `pybaseballdatana.data.tools`
+To install data you can use the `update` tool in the `pybbda.data.tools`
 sub-module. 
 
 Example, 
 
 ```bash
-$ python -m pybaseballdatana.data.tools.update -h
+$ python -m pybbda.data.tools.update -h
 usage: update.py [-h] [--data-root DATA_ROOT] --data-source
                  {Lahman,BaseballReference,Fangraphs,retrosheet,all} [--make-dirs]
                  [--overwrite] [--min-year MIN_YEAR] [--max-year MAX_YEAR]
@@ -125,10 +125,10 @@ More [examples are included in the documentation](https://pybbda.readthedocs.io/
 ### Lahman data
 
 ```python
->>> from pybaseballdatana.data import LahmanData
+>>> from pybbda.data import LahmanData
 >>> lahman_data = LahmanData()
 >>> batting_df= lahman_data.batting
-INFO:pybaseballdatana.data.sources.lahman.data:data:searching for file /home/bdilday/.pybbda/data/Lahman/Batting.csv
+INFO:pybbda.data.sources.lahman.data:data:searching for file /home/bdilday/.pybbda/data/Lahman/Batting.csv
 >>> batting_df.head()
     playerID  yearID  stint teamID lgID   G   AB   R   H  2B  3B  HR   RBI   SB   CS  BB   SO  IBB  HBP  SH  SF  GIDP
 0  abercda01    1871      1    TRO  NaN   1    4   0   0   0   0   0   0.0  0.0  0.0   0  0.0  NaN  NaN NaN NaN   0.0
@@ -161,7 +161,7 @@ There is a cli tool for computing run expectancies from
 Markov chains. 
 
 ```bash
-$ python -m pybaseballdatana.analysis.run_expectancy.markov.cli --help
+$ python -m pybbda.analysis.run_expectancy.markov.cli --help
 ```
 
 This Markov chain uses a lineup of 
@@ -186,7 +186,7 @@ environment variable `PYBBDA_MAX_OUTS`.
 **Example**: Use a default set of probabilities for all 9 slots with no taking extra bases
 
 ```bash
-$ python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 --running-probs 0 0 0 0 
+$ python -m pybbda.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 --running-probs 0 0 0 0 
 mean score per 27 outs = 3.5227
 std. score per 27 outs = 2.8009
 ```
@@ -194,7 +194,7 @@ std. score per 27 outs = 2.8009
 **Example**: Use a default set of probabilities for all 9 slots with default probabilities for taking extra bases
 
 ```bash
-$ python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03
+$ python -m pybbda.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03
 mean score per 27 outs = 4.2242
 std. score per 27 outs = 3.0161
 ```
@@ -202,9 +202,9 @@ std. score per 27 outs = 3.0161
 Rickey Henderson 1982 bat leadoff (using 27 outs, instead of 3)
 
 ```bash
-$ PYBBDA_MAX_OUTS=27  python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982
-WARNING:pybaseballdatana:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybaseballdatana/data/assets
-INFO:pybaseballdatana.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybaseballdatana/data/assets/Lahman/Batting.csv
+$ PYBBDA_MAX_OUTS=27  python -m pybbda.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982
+WARNING:pybbda:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybbda/data/assets
+INFO:pybbda.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybbda/data/assets/Lahman/Batting.csv
 mean score per 27 outs = 4.3628
 std. score per 27 outs = 3.0999
 ```
@@ -213,9 +213,9 @@ std. score per 27 outs = 3.0999
 Rickey Henderson 1982 bat leadoff and Babe Ruth 1927 bat clean-up (using 27 outs, instead of 3)
 
 ```bash
-$ PYBBDA_MAX_OUTS=27  python -m pybaseballdatana.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982 -i 4 ruthba01_1927 
-WARNING:pybaseballdatana:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybaseballdatana/data/assets
-INFO:pybaseballdatana.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybaseballdatana/data/assets/Lahman/Batting.csv
+$ PYBBDA_MAX_OUTS=27  python -m pybbda.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982 -i 4 ruthba01_1927 
+WARNING:pybbda:__init__:Environment variable PYBBDA_DATA_ROOT is not set, defaulting to /home/bdilday/github/pybbda/pybbda/data/assets
+INFO:pybbda.data.sources.lahman.data:data:searching for file /home/bdilday/github/pybbda/pybbda/data/assets/Lahman/Batting.csv
 mean score per 27 outs = 5.1420
 std. score per 27 outs = 3.3996
 ```

@@ -2,7 +2,7 @@
 Lahman Data
 ------------
 
-.. automodule:: pybaseballdatana.data.sources.lahman
+.. automodule:: pybbda.data.sources.lahman
     :members:
     :undoc-members:
     :inherited-members:

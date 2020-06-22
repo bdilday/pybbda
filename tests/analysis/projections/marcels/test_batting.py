@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.projections.marcels import MarcelProjectionsBatting
+from pybbda.analysis.projections.marcels import MarcelProjectionsBatting
 from pandas import DataFrame
 import pytest
 

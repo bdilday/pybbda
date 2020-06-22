@@ -7,7 +7,7 @@ Batted Ball DataFrame
 """
 
 
-from pybaseballdatana.analysis.trajectories import BattedBallTrajectory
+from pybbda.analysis.trajectories import BattedBallTrajectory
 
 trajectory_calc = BattedBallTrajectory()
 

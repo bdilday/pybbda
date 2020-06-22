@@ -1,5 +1,5 @@
 import pytest
-from pybaseballdatana.data import BaseballReferenceData
+from pybbda.data import BaseballReferenceData
 
 
 @pytest.fixture

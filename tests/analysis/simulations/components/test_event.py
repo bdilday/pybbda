@@ -1,4 +1,4 @@
-from pybaseballdatana.analysis.simulations.components.event import (
+from pybbda.analysis.simulations.components.event import (
     BattingEvent,
     FirstBaseRunningEvent,
     SecondBaseRunningEvent,

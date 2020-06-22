@@ -79,7 +79,7 @@ sphinx_gallery_conf = {
     "doc_module": "pybbda",
     "show_memory": False,
     "backreferences_dir": os.path.join("modules", "generated"),
-    "reference_url": {"pybbda": None, "pybaseballdatana": None},
+    "reference_url": {"pybbda": None, "pybbda": None},
     "examples_dirs": ["../examples"],
     "gallery_dirs": ["auto_examples"],
     #'subsection_order': SubSectionTitleOrder('../examples'),
@@ -95,7 +95,7 @@ import os
 
 on_rtd = os.environ.get("READTHEDOCS") == "True"
 if on_rtd:
-    from pybaseballdatana.data.tools.update import (
+    from pybbda.data.tools.update import (
         update_source,
         DATA_SOURCE_OPTIONS,
         PYBBDA_DATA_ROOT,

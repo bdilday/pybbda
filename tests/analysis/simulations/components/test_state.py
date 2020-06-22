@@ -1,7 +1,7 @@
 from functools import partial
 import itertools
 
-from pybaseballdatana.analysis.simulations.components.state import (
+from pybbda.analysis.simulations.components.state import (
     BaseState,
     BaseOutState,
     GameState,
