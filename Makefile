@@ -36,6 +36,7 @@ clean:
 	rm -fr pybaseballdatana.egg-info
 	rm -fr build
 	rm -fr dist
+	rm -fr .pytest_cache
 
 dist: clean
 	python setup.py bdist_wheel
