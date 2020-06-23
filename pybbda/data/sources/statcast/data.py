@@ -38,14 +38,17 @@ class StatcastData(DataSource):
         else:
             raise ValueError(f"player_type must be (pitcher, batter) not {player_type}")
         url = STATCAST_PBP_URL_FORMAT.format(
-            {
+            **{
                 "player_id_var": player_id_var,
                 "player_id": "",
+                "player_type": player_type,
+                "season": start_date[0:4],
                 "start_date": start_date,
                 "end_date": end_date,
             }
         )
-        daily_df = pd.DataFrame(url)
+        print(url)
+        daily_df = pd.read_csv(url)
         return self._format_daily_df(daily_df)
 
     def _format_daily_df(self, daily_df):
