@@ -40,6 +40,7 @@ EXAMPLE_URL = (
     "&type=details"
 )
 
+
 STATCAST_PBP_URL_FORMAT = (
     "https://baseballsavant.mlb.com/statcast_search/csv?all=true"
     "&hfPT="
@@ -68,6 +69,7 @@ STATCAST_PBP_URL_FORMAT = (
     "&hfOutfield="
     "&hfRO="
     "&home_road="
+    "&{player_id_var}={player_id}"
     "&hfFlag="
     "&hfPull="
     "&metric_1="

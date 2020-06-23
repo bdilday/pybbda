@@ -21,7 +21,7 @@ class StatcastData(DataSource):
     _SOURCE_TABLES = STATCAST_TABLES
     _SOURCE_URLS = STATCAST_URLS
 
-    def get_statcast_daily(self, player_type, start_date, end_date):
+    def get_statcast_daily(self, player_type, start_date, end_date, player_id=""):
         """
 
         :param player_type:
@@ -40,15 +40,23 @@ class StatcastData(DataSource):
         url = STATCAST_PBP_URL_FORMAT.format(
             **{
                 "player_id_var": player_id_var,
-                "player_id": "",
+                "player_id": player_id,
                 "player_type": player_type,
                 "season": start_date[0:4],
                 "start_date": start_date,
                 "end_date": end_date,
             }
         )
+
         print(url)
         daily_df = pd.read_csv(url)
+        if len(daily_df) == 40000:
+            logger.warning(
+                "Statcast query returned 40000 rows which probably "
+                "means you've exceeded the data limit. "
+                "You should try to break up the query."
+            )
+
         return self._format_daily_df(daily_df)
 
     def _format_daily_df(self, daily_df):
