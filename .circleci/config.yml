@@ -26,6 +26,9 @@ jobs:
           command: python -m pybbda.data.tools.update --min-year 1982 --max-year 1982 --data-source retrosheet
           name: Update Retrosheet Events
       - run:
+          command: python -m pybbda.data.tools.update --min-date 2019-05-01 --max-date 2019-05-15 --data-source statcast --num-threads 4
+          name: Update Statcast daily
+      - run:
           command: make lint
           name: Lint
       - run:
