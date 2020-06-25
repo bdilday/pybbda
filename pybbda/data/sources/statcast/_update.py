@@ -75,11 +75,12 @@ def _pool_do_update(overwrite=False, season_stats=None):
         }
     )
 
+    start_date_cleaned = start_date.replace("-", "_")
     logger.debug("url %s", url)
     _update_file(
         url,
         output_root,
-        f"sc_{player_type}_{start_date}.csv.gz",
+        f"sc_{player_type}_{start_date_cleaned}.csv.gz",
         rows_filter=None,
         overwrite=overwrite,
     )

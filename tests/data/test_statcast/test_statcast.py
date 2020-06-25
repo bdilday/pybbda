@@ -30,3 +30,9 @@ def test_statcast_validate_player_type(statcast_data):
         statcast_data.get_statcast_daily(
             player_type="", start_date="2018-01-01", end_date="2018-01-02"
         )
+
+
+def test_statcast_batter_data(statcast_data):
+    df = statcast_data.sc_batting_2019_05_01
+    mean_ls = df.query('player_name == "Jose Abreu"').loc[:, "launch_speed"].mean()
+    assert mean_ls == pytest.approx(90.8, 0.01)

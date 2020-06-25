@@ -15,6 +15,23 @@ STATCAST_DATA_PATH = PYBBDA_DATA_ROOT / "statcast"
 
 STATCAST_TABLES = {}
 
+for season in range(2016, 2020):
+    min_date_obj = datetime.datetime.strptime(f"{season}-03-15", "%Y-%m-%d")
+    max_date_obj = datetime.datetime.strptime(f"{season}-11-15", "%Y-%m-%d")
+    dt_count = (max_date_obj - min_date_obj).days
+    date_obj_seq = [min_date_obj + datetime.timedelta(dt) for dt in range(dt_count + 1)]
+    game_dates = [
+        datetime.datetime.strftime(d, "%Y-%m-%d").replace("-", "_")
+        for d in date_obj_seq
+    ]
+    for stat_type in ["batting", "pitching"]:
+        STATCAST_TABLES.update(
+            {
+                f"sc_{stat_type}_{game_date}": f"sc_{stat_type}_{game_date}.csv"
+                for game_date in game_dates
+            }
+        )
+
 STATCAST_URLS = {"statcast_daily": STATCAST_PBP_DAILY_URL_FORMAT}
 
 logger = logging.getLogger(__name__)
