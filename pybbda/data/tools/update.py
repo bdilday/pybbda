@@ -8,6 +8,7 @@ from pybbda.data.sources.lahman._update import _update as update_lahman
 from pybbda.data.sources.baseball_reference._update import _update as update_bbref
 from pybbda.data.sources.fangraphs._update import _update as update_fangraphs
 from pybbda.data.sources.retrosheet._update import _update as update_retrosheet
+from pybbda.data.sources.statcast._update import _update as update_statcast
 
 logger = logging.getLogger(__name__)
 logger.setLevel(PYBBDA_LOG_LEVEL)
@@ -94,6 +95,14 @@ def update_source(
             min_year=min_year,
             max_year=max_year,
             create_database=create_database,
+        )
+    elif data_source == "statcast":
+        update_statcast(
+            data_root,
+            min_date=min_year,
+            max_date=max_year,
+            num_threads=num_threads,
+            overwrite=overwrite
         )
     else:
         raise ValueError(data_source)

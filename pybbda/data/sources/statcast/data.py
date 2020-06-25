@@ -85,9 +85,7 @@ class StatcastData(DataSource):
                         data_type_conversion
                     )
                 except TypeError:
-                    print(f"Cannot convert column {column_name}")
-                    print(df.loc[:column_name])
-                    raise TypeError
+                    raise TypeError(f"Cannot convert column {column_name}")
         return df
 
     def _format_daily_df(self, daily_df, data_type_mapping=None):
