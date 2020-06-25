@@ -152,7 +152,6 @@ def create_dir_if_not_exist(data_root):
 def main():
     args = _parse_args()
 
-    print(args)
     if args.make_dirs:
         create_dir_if_not_exist(args.data_root)
 

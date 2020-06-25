@@ -35,7 +35,7 @@ def _save(lines, file_name, output_path):
 def _update_file(
     url, output_root, output_filename=None, rows_filter=None, overwrite=False
 ):
-    output_filename = output_filename or ".".join(os.path.basename(url), "gz")
+    output_filename = output_filename or ".".join((os.path.basename(url), "gz"))
     output_path = os.path.join(output_root, "statcast")
     os.makedirs(output_path, exist_ok=True)
 
@@ -63,12 +63,12 @@ def _validate_path(output_root):
 
 
 def _pool_do_update(overwrite=False, season_stats=None):
-    start_date, player_type, output_root = season_stats
+    start_date, output_root = season_stats
 
     url_formatter = STATCAST_PBP_DAILY_URL_FORMAT
     url = url_formatter.format(
         **{
-            "player_type": player_type,
+            "player_type": "batting",
             "season": start_date[0:4],
             "start_date": start_date,
             "end_date": start_date,
@@ -80,7 +80,7 @@ def _pool_do_update(overwrite=False, season_stats=None):
     _update_file(
         url,
         output_root,
-        f"sc_{player_type}_{start_date_cleaned}.csv.gz",
+        f"sc_{start_date_cleaned}.csv.gz",
         rows_filter=None,
         overwrite=overwrite,
     )
@@ -106,9 +106,8 @@ def _update(
 
     date_obj_seq = [min_date_obj + datetime.timedelta(dt) for dt in range(dt_count + 1)]
     pbp_dates = [datetime.datetime.strftime(d, "%Y-%m-%d") for d in date_obj_seq]
-    stat_names = ["batting", "pitching"]
 
-    season_stats_it = itertools.product(pbp_dates, stat_names, [output_root])
+    season_stats_it = itertools.product(pbp_dates, [output_root])
     func = partial(_pool_do_update, overwrite)
     logger.debug("Starting downloads with %d threads", num_threads)
 

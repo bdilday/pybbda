@@ -43,7 +43,7 @@ def _update_file(
     rows_filter=None,
     overwrite=False,
 ):
-    output_filename = output_filename or ".".join(os.path.basename(url), "gz")
+    output_filename = output_filename or ".".join((os.path.basename(url), "gz"))
     output_path = os.path.join(output_root, "Fangraphs")
     os.makedirs(output_path, exist_ok=True)
 

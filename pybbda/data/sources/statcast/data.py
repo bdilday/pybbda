@@ -24,13 +24,9 @@ for season in range(2016, 2020):
         datetime.datetime.strftime(d, "%Y-%m-%d").replace("-", "_")
         for d in date_obj_seq
     ]
-    for stat_type in ["batting", "pitching"]:
-        STATCAST_TABLES.update(
-            {
-                f"sc_{stat_type}_{game_date}": f"sc_{stat_type}_{game_date}.csv"
-                for game_date in game_dates
-            }
-        )
+    STATCAST_TABLES.update(
+        {f"sc_{game_date}": f"sc_{game_date}.csv" for game_date in game_dates}
+    )
 
 STATCAST_URLS = {"statcast_daily": STATCAST_PBP_DAILY_URL_FORMAT}
 
@@ -74,7 +70,7 @@ class StatcastData(DataSource):
             }
         )
 
-        daily_df = pd.read_csv(url, dtype="f8")
+        daily_df = pd.read_csv(url)
         # TODO: make 40000 a var
         if len(daily_df) == 40000:
             logger.warning(
