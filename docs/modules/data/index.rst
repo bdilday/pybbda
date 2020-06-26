@@ -8,6 +8,7 @@ data
    lahman.rst
    fangraphs.rst
    baseball_reference.rst
+   statcast.rst
 
 .. automodule:: pybbda.data
     :members:
