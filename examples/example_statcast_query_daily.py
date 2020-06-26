@@ -17,4 +17,3 @@ plt.title("All batters - 2019-05-01 to 2019-05-01")
 
 sns.distplot(ana_df.launch_speed)
 plt.show()
-

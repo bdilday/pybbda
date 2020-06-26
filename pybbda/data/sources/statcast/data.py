@@ -7,26 +7,15 @@ from .constants import (
     STATCAST_PBP_DAILY_URL_FORMAT,
     STATCAST_PBP_PLAYER_URL_FORMAT,
     STATCAST_PBP_DAILY_DF_DATA_TYPES,
+    STATCAST_QUERY_DATA_SIZE_LIMIT,
 )
+from .utils import get_statcast_tables
 from pybbda import PYBBDA_DATA_ROOT
 from pybbda.data.sources.data_source.base import DataSource
 
 STATCAST_DATA_PATH = PYBBDA_DATA_ROOT / "statcast"
 
-STATCAST_TABLES = {}
-
-for season in range(2016, 2020):
-    min_date_obj = datetime.datetime.strptime(f"{season}-03-15", "%Y-%m-%d")
-    max_date_obj = datetime.datetime.strptime(f"{season}-11-15", "%Y-%m-%d")
-    dt_count = (max_date_obj - min_date_obj).days
-    date_obj_seq = [min_date_obj + datetime.timedelta(dt) for dt in range(dt_count + 1)]
-    game_dates = [
-        datetime.datetime.strftime(d, "%Y-%m-%d").replace("-", "_")
-        for d in date_obj_seq
-    ]
-    STATCAST_TABLES.update(
-        {f"sc_{game_date}": f"sc_{game_date}.csv" for game_date in game_dates}
-    )
+STATCAST_TABLES = get_statcast_tables(min_year=2016, max_year=2019)
 
 STATCAST_URLS = {"statcast_daily": STATCAST_PBP_DAILY_URL_FORMAT}
 
@@ -40,11 +29,19 @@ class StatcastData(DataSource):
 
     def get_statcast_daily(self, player_type, start_date, end_date, player_id=""):
         """
+        Gets pitch level data from baseball savant query page. player_type can
+        be batter or pitcher. The fetched data are the same but the player that
+        the player_name column refers to is different. start_date and end_date are
+        inclusive, for example to fetch data from 2019-05-01 only, set
+        start_date = end_date = "2018-05-01". If player_id is specified. then
+        only data for pitches involving that player will be returned. The
+        id here is the MLBAM player id which is an integer.
 
-        :param player_type:
-        :param start_date:
-        :param end_date:
-        :return:
+        :param player_type: str. can be batter or pitcher
+        :param start_date: str in %Y-%m-%d format
+        :param end_date: str in %Y-%m-%d format
+        :param player_id: str or int. mlbam player id
+        :return: pandas data frame
         """
         self._validate_dates(start_date, end_date)
 
@@ -71,12 +68,12 @@ class StatcastData(DataSource):
         )
 
         daily_df = pd.read_csv(url)
-        # TODO: make 40000 a var
-        if len(daily_df) == 40000:
+        if len(daily_df) == STATCAST_QUERY_DATA_SIZE_LIMIT:
             logger.warning(
-                "Statcast query returned 40000 rows which probably "
+                "Statcast query returned %d rows which probably "
                 "means you've exceeded the data limit. "
-                "You should try to break up the query."
+                "You should try to break up the query.",
+                STATCAST_QUERY_DATA_SIZE_LIMIT,
             )
 
         if daily_df.shape == (1, 1):

@@ -2,6 +2,8 @@ from pandas import Int32Dtype
 
 nullable_int = Int32Dtype()
 
+STATCAST_QUERY_DATA_SIZE_LIMIT = 40000
+
 STATCAST_PBP_DAILY_URL_FORMAT = (
     "https://baseballsavant.mlb.com/statcast_search/csv?all=true"
     "&hfPT="
