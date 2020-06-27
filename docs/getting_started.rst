@@ -60,10 +60,10 @@ plus ``site-packages/pybbda``.
 
 This can cause a problem with write permissions 
 if you're using a system `Python` instead of a user-controlled
-[virtual environment](https://docs.python.org/3.7/library/venv.html). 
+`virtual environment`_.
 For this reason, and to avoid duplication if the package is 
 installed into multiple virtual environments, it's 
-recommended to use a custom path for `PYBBDA_DATA_ROOT`, for example,
+recommended to use a custom path for ``PYBBDA_DATA_ROOT``, for example,
 
 .. code-block:: bash
 
@@ -72,7 +72,7 @@ recommended to use a custom path for `PYBBDA_DATA_ROOT`, for example,
 
 * ``PYBBDA_LOG_LEVEL``
 
-This sets the [logging level](https://docs.python.org/3.7/library/logging.html) for the package at runtime.
+This sets the `logging level`_ for the package at runtime.
 The default is ``INFO``.
 
 ---------------
@@ -228,3 +228,5 @@ all the supported sources.
 
 
 .. _pychadwick: https://github.com/bdilday/pychadwick
+.. _logging level: https://docs.python.org/3.7/library/logging.html
+.. _virtual environment: https://docs.python.org/3.7/library/venv.html
