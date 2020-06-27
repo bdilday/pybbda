@@ -21,6 +21,10 @@ test-markov: install
 	python -m pybbda.analysis.run_expectancy.markov.cli \
 	-b 0 0.1 0.1 0.1 0.1 0.1 \
 	-i 1 henderi01_1982
+	PYBBDA_MAX_OUTS=27 python -m pybbda.analysis.run_expectancy.markov.cli \
+	-b 0 0.08 0.15 0.05 0.005 0.03 \
+	-i 1 henderi01_1982 \
+	-i 4 ruthba01_1927
 
 test: install-dev
 	python -m pytest tests/
