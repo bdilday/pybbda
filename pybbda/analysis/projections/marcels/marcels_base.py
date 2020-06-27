@@ -61,6 +61,19 @@ class MarcelsProjectionsBase(ABC):
         seasonal_averages,
         num_regression_pt,
     ):
+        """
+        computes playing time projection. `metric_values`, `metric_weights`, and
+        `seasonal_averages` are not used but are included for consistency with
+        `compute_rate_projection`
+
+        :param metric_values:
+        :param pt_values: playing time values
+        :param metric_weights:
+        :param pt_weights: playing time weights
+        :param seasonal_averages:
+        :param num_regression_pt: number of playing-time units to use for regression
+        :return:
+        """
 
         return np.sum(pt_values * pt_weights, 1) + num_regression_pt
 
@@ -73,6 +86,19 @@ class MarcelsProjectionsBase(ABC):
         seasonal_averages,
         num_regression_pt,
     ):
+        """
+        computes rate projection. the length of the `x_values` and `x_weights`
+        have to be the same. `pt_weights` is not used but is included for
+        consistency with `compute_playing_time_projection`
+
+        :param metric_values: float array
+        :param pt_values: float array
+        :param metric_weights: float array
+        :param pt_weights:
+        :param seasonal_averages: float array
+        :param num_regression_pt: float
+        :return:
+        """
         pt_values[pt_values == 0] = sys.float_info.min
         normalized_metric_weights = np.array(metric_weights) / sum(metric_weights)
         unregressed_player_projection = np.sum(
@@ -93,6 +119,15 @@ class MarcelsProjectionsBase(ABC):
         return projection_numerator / projection_denominator
 
     def metric_projection_detail(self, metric_name, projected_season):
+        """
+        returns the projection result for `metric_name`, including the
+        detailed components separately. The use case for the details
+        is primarily debugging
+
+        :param metric_name: str
+        :param projected_season: it
+        :return: data frame
+        """
         season = projected_season - 1
         playing_time_column = self.PLAYING_TIME_COLUMN
 
@@ -211,6 +246,13 @@ class MarcelsProjectionsBase(ABC):
         ).set_index(["playerID", "yearID"])
 
     def metric_projection(self, metric_name, projected_season):
+        """
+        returns the projection for `metric_name`.
+
+        :param metric_name: str
+        :param projected_season: int
+        :return: data frame
+        """
         x_df = self.metric_projection_detail(metric_name, projected_season)
         return (
             x_df.assign(
@@ -224,6 +266,14 @@ class MarcelsProjectionsBase(ABC):
         )
 
     def projections(self, projected_season, computed_metrics=None):
+        """
+        returns projections for all metrics in `computed_metrics`. If
+        `computed_metrics` is None it uses the default set.
+
+        :param projected_season: int
+        :param computed_metrics: list(str)
+        :return: data frame
+        """
         computed_metrics = computed_metrics or self.COMPUTED_METRICS
 
         projections = [
@@ -233,6 +283,14 @@ class MarcelsProjectionsBase(ABC):
         return pd.concat(projections, axis=1)
 
     def seasonal_average(self, stats_df, metric_name, playing_time_column):
+        """
+        seasonal average rate of `metric_name`
+
+        :param stats_df: data frame
+        :param metric_name: str
+        :param playing_time_column: str
+        :return: data frame
+        """
         return (
             stats_df.groupby("yearID")
             .agg({metric_name: sum, playing_time_column: sum})
@@ -242,4 +300,9 @@ class MarcelsProjectionsBase(ABC):
         )
 
     def get_num_regression_pt(self, stats_df):
+        """
+
+        :param stats_df: data frame
+        :return: float
+        """
         return self.NUM_REGRESSION_PLAYING_TIME

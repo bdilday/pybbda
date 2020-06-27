@@ -19,9 +19,7 @@ The data sources it currently supports are:
 
 * Retrosheet event data
 
-The following are planned for a future release:
-
-* Statcast play-by-play data
+* Statcast pitch-by-pitch data
 
 
 ### analysis
@@ -223,4 +221,4 @@ std. score per 27 outs = 3.3996
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[GPLv2](https://choosealicense.com/licenses/gpl-2.0/)

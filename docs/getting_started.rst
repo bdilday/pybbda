@@ -15,7 +15,7 @@ This package is available on PyPI, so you can install it with
    pip install -U pybbda
 
 Or you can install the latest master branch 
-directly from the github repo using
+directly from the `github repo`_  using
 ``pip``,
 
 
@@ -60,10 +60,10 @@ plus ``site-packages/pybbda``.
 
 This can cause a problem with write permissions 
 if you're using a system `Python` instead of a user-controlled
-[virtual environment](https://docs.python.org/3.7/library/venv.html). 
+`virtual environment`_.
 For this reason, and to avoid duplication if the package is 
 installed into multiple virtual environments, it's 
-recommended to use a custom path for `PYBBDA_DATA_ROOT`, for example,
+recommended to use a custom path for ``PYBBDA_DATA_ROOT``, for example,
 
 .. code-block:: bash
 
@@ -72,7 +72,7 @@ recommended to use a custom path for `PYBBDA_DATA_ROOT`, for example,
 
 * ``PYBBDA_LOG_LEVEL``
 
-This sets the [logging level](https://docs.python.org/3.7/library/logging.html) for the package at runtime.
+This sets the `logging level`_ for the package at runtime.
 The default is ``INFO``.
 
 ---------------
@@ -227,4 +227,51 @@ all the supported sources.
     python -m pybbda.data.tools.update --data-source all
 
 
+
+---------------
+CLI tools
+---------------
+
+~~~~~~~~~~~~~~~
+Run expectancy
+~~~~~~~~~~~~~~~
+
+There's a cli tool for computing run expectancies from
+Markov chains.
+
+.. code-block:: bash
+
+    python -m pybbda.analysis.run_expectancy.markov.cli --help
+
+This Markov chain uses a lineup of
+9 batters instead of assuming each batter has the same characteristics.
+You can also assign running probabilities, although they apply to
+all batters equally.
+
+You can assign batting-event probabilities using a sequence of
+probabilities, or by referencing a player-season with the
+format ``{playerID}_{season}``, where playerID is the
+Lahman ID and season is a 4-digit year. For example, to
+refer to Rickey Henderson's 1982 season, use ``henderi01_1982``.
+
+The lineup is assigned by giving the lineup slot followed by either
+5 probabilities, or a player-season id. The lineup-slot 0 is a code
+to assign all nine batters to this value. Any other specific slots
+will be filled in as noted.
+
+The number of outs to model is 3 by default. It can be changed by setting the
+environment variable ``PYBBDA_MAX_OUTS``.
+
+**Example**: Use a default set of probabilities for all 9 slots but let
+Rickey Henderson 1982 bat leadoff and Babe Ruth 1927 bat clean-up (using 27 outs, instead of 3)
+
+.. code-block:: bash
+
+    PYBBDA_MAX_OUTS=27  python -m pybbda.analysis.run_expectancy.markov.cli -b 0 0.08 0.15 0.05 0.005 0.03 -i 1 henderi01_1982 -i 4 ruthba01_1927
+
+
+
 .. _pychadwick: https://github.com/bdilday/pychadwick
+.. _logging level: https://docs.python.org/3.7/library/logging.html
+.. _virtual environment: https://docs.python.org/3.7/library/venv.html
+.. _github repo: https://github.com/bdilday/pybbda

@@ -32,9 +32,22 @@ class MarcelProjectionsBatting(MarcelsProjectionsBase):
         return self.ld.batting
 
     def preprocess_data(self, stats_df):
+        """
+        preprocesses the data.
+        :param stats_df: a data frame like Lahman batting
+        :return: data frame
+        """
         return aggregate_by_season(augment_lahman_batting(stats_df))
 
     def filter_non_representative_data(self, stats_df, primary_pos_df):
+        """
+        filters pitchers-as-batters. primary_pos_df is a data frame
+        containing playerID, yearID, and primaryPos
+
+        :param stats_df: a data frame like Lahman batting
+        :param primary_pos_df: data frame
+        :return:
+        """
         return (
             stats_df.merge(primary_pos_df, on=["playerID", "yearID"], how="left")
             .query(r'primaryPos != "P"')
