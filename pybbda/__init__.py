@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(format="%(levelname)s:%(name)s:%(module)s:%(message)s")
 logger = logging.getLogger("pybbda")
 
-_version = "0.1.8"
+_version = "0.1.9"
 
 PYBBDA_LOG_LEVEL_NAME = os.environ.get("PYBBDA_LOG_LEVEL", "")
 _PYBBDA_LOG_LEVEL_MAP = {
