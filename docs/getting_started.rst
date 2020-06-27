@@ -15,7 +15,7 @@ This package is available on PyPI, so you can install it with
    pip install -U pybbda
 
 Or you can install the latest master branch 
-directly from the github repo using
+directly from the `github repo`_  using
 ``pip``,
 
 
@@ -274,3 +274,4 @@ Rickey Henderson 1982 bat leadoff and Babe Ruth 1927 bat clean-up (using 27 outs
 .. _pychadwick: https://github.com/bdilday/pychadwick
 .. _logging level: https://docs.python.org/3.7/library/logging.html
 .. _virtual environment: https://docs.python.org/3.7/library/venv.html
+.. _github repo: https://github.com/bdilday/pybbda
