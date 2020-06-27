@@ -8,11 +8,18 @@ from pybbda.data.sources.lahman._update import _update as update_lahman
 from pybbda.data.sources.baseball_reference._update import _update as update_bbref
 from pybbda.data.sources.fangraphs._update import _update as update_fangraphs
 from pybbda.data.sources.retrosheet._update import _update as update_retrosheet
+from pybbda.data.sources.statcast._update import _update as update_statcast
 
 logger = logging.getLogger(__name__)
 logger.setLevel(PYBBDA_LOG_LEVEL)
 
-DATA_SOURCE_OPTIONS = ["Lahman", "BaseballReference", "Fangraphs", "retrosheet"]
+DATA_SOURCE_OPTIONS = [
+    "Lahman",
+    "BaseballReference",
+    "Fangraphs",
+    "retrosheet",
+    "statcast",
+]
 NUM_THREADS = 1
 
 
@@ -63,6 +70,20 @@ def _parse_args():
         help="Max year to download",
     )
     parser.add_argument(
+        "--min-date",
+        required=False,
+        type=str,
+        default=None,
+        help="Min date to download",
+    )
+    parser.add_argument(
+        "--max-date",
+        required=False,
+        type=str,
+        default=None,
+        help="Max date to download",
+    )
+    parser.add_argument(
         "--num-threads",
         required=False,
         type=int,
@@ -70,11 +91,27 @@ def _parse_args():
         help="Number of threads to use for downloads",
     )
 
-    return parser.parse_args(sys.argv[1:])
+    return _process_args(parser.parse_args(sys.argv[1:]))
+
+
+def _process_args(args):
+    if args.min_date is None:
+        args.min_date = f"{args.min_year}-03-15"
+    if args.max_date is None:
+        args.max_date = f"{args.max_year}-11-15"
+    return args
 
 
 def update_source(
-    data_root, data_source, min_year, max_year, num_threads, overwrite, create_database
+    data_root,
+    data_source,
+    min_year,
+    max_year,
+    min_date,
+    max_date,
+    num_threads,
+    overwrite,
+    create_database,
 ):
     if data_source == "Lahman":
         update_lahman(data_root)
@@ -94,6 +131,14 @@ def update_source(
             min_year=min_year,
             max_year=max_year,
             create_database=create_database,
+        )
+    elif data_source == "statcast":
+        update_statcast(
+            data_root,
+            min_date=min_date,
+            max_date=max_date,
+            num_threads=num_threads,
+            overwrite=overwrite,
         )
     else:
         raise ValueError(data_source)
@@ -126,6 +171,8 @@ def main():
             data_source,
             args.min_year,
             args.max_year,
+            args.min_date,
+            args.max_date,
             args.num_threads,
             args.overwrite,
             args.create_event_database,

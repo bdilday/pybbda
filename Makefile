@@ -45,6 +45,10 @@ dist: clean
 docs: install-dev
 	cd docs && make html
 
+install-data:
+	PYBBDA_LOG_LEVEL=DEBUG python -m pybbda.data.tools.update --data-source all --min-year 2018 --max-year 2019 \
+	--num-threads 7 --min-date 2019-05-01 --max-date 2019-05-15 --overwrite
+
 install-dev:
 	pip install --quiet -r requirements-dev.txt
 

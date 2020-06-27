@@ -1,3 +1,4 @@
+import datetime
 import os
 import requests
 import pathlib
@@ -7,12 +8,7 @@ import itertools
 from functools import partial
 import multiprocessing
 
-from .constants import (
-    FANGRAPHS_GUTS_CONSTANTS_URL,
-    FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
-    FANGRAPHS_LEADERBOARD_URL_FORMAT,
-)
-from pybbda.utils.html_table import url_to_table_rows
+from .constants import STATCAST_PBP_DAILY_URL_FORMAT
 
 logger = logging.getLogger(__name__)
 
@@ -29,22 +25,17 @@ def _download_csv(url):
 
 def _save(lines, file_name, output_path):
     output_file_path = os.path.join(output_path, file_name)
-    output_payload = "\n".join(",".join(line) for line in lines)
+    output_payload = "\n".join(map(lambda s: str(s, "utf-8"), lines))
     logger.info("saving file to {}".format(output_file_path))
     with gzip.open(output_file_path, "wb") as fh:
         fh.write(bytes(output_payload, encoding="utf-8"))
 
 
 def _update_file(
-    url,
-    output_root,
-    output_filename=None,
-    table_id=None,
-    rows_filter=None,
-    overwrite=False,
+    url, output_root, output_filename=None, rows_filter=None, overwrite=False
 ):
     output_filename = output_filename or ".".join((os.path.basename(url), "gz"))
-    output_path = os.path.join(output_root, "Fangraphs")
+    output_path = os.path.join(output_root, "statcast")
     os.makedirs(output_path, exist_ok=True)
 
     output_file_path = os.path.join(output_path, output_filename)
@@ -55,7 +46,7 @@ def _update_file(
         else:
             logger.warning("file %s exists, but overwriting", output_file_path)
 
-    lines = url_to_table_rows(url, table_id)
+    lines = _download_csv(url)
     if rows_filter is not None:
         lines = rows_filter(lines)
 
@@ -70,54 +61,58 @@ def _validate_path(output_root):
         raise ValueError(f"Path {output_root} must be a directory")
 
 
-stat_columns = {
-    "bat": ",".join([str(i) for i in range(2, 305)]),
-    "pit": ",".join([str(i) for i in range(2, 322)]),
-}
-
-
 def _pool_do_update(overwrite=False, season_stats=None):
-    season, stats, output_root = season_stats
-    config = {
-        **FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
-        "season_start": season,
-        "season_end": season,
-        "stats": stats,
-        "columns": stat_columns[stats],
-    }
-    logger.debug("config %s", config)
-    url = FANGRAPHS_LEADERBOARD_URL_FORMAT.format(**config)
+    start_date, output_root = season_stats
+
+    url_formatter = STATCAST_PBP_DAILY_URL_FORMAT
+    url = url_formatter.format(
+        **{
+            "player_type": "batting",
+            "season": start_date[0:4],
+            "start_date": start_date,
+            "end_date": start_date,
+        }
+    )
+
+    start_date_cleaned = start_date.replace("-", "_")
+    logger.debug("url %s", url)
     _update_file(
         url,
         output_root,
-        f"fg_{stats}_{season}.csv.gz",
-        "LeaderBoard1_dg1_ctl00",
-        rows_filter=lambda r: r[1:2] + r[3:],
+        f"sc_{start_date_cleaned}.csv.gz",
+        rows_filter=None,
         overwrite=overwrite,
     )
 
 
 def _update(
-    output_root=None, min_year=1871, max_year=2019, num_threads=2, overwrite=False
+    output_root=None, min_date=None, max_date=None, num_threads=2, overwrite=False
 ):
+
+    today = datetime.date.today()
+    min_date = min_date or (today - datetime.timedelta(1)).strftime("%Y-%m-%d")
+    max_date = max_date or today.strftime("%Y-%m-%d")
+
     output_root = (
         output_root or pathlib.Path(__file__).absolute().parent.parent / "assets"
     )
     logger.debug("output root is %s", output_root)
     _validate_path(output_root)
-    _update_file(
-        FANGRAPHS_GUTS_CONSTANTS_URL,
-        output_root,
-        "fg_guts_constants.csv.gz",
-        "GutsBoard1_dg1_ctl00",
-    )
 
-    seasons = range(min_year, max_year + 1)
-    stat_names = ["bat", "pit"]
+    min_date_obj = datetime.datetime.strptime(min_date, "%Y-%m-%d")
+    max_date_obj = datetime.datetime.strptime(max_date, "%Y-%m-%d")
+    dt_count = (max_date_obj - min_date_obj).days
 
-    season_stats_it = itertools.product(seasons, stat_names, [output_root])
+    date_obj_seq = [min_date_obj + datetime.timedelta(dt) for dt in range(dt_count + 1)]
+    pbp_dates = [datetime.datetime.strftime(d, "%Y-%m-%d") for d in date_obj_seq]
+
+    season_stats_it = itertools.product(pbp_dates, [output_root])
     func = partial(_pool_do_update, overwrite)
     logger.debug("Starting downloads with %d threads", num_threads)
-    # TODO: consider using a concurrent.futures.ThreadPoolExecutor instead
-    with multiprocessing.Pool(num_threads) as mp:
-        mp.map(func, season_stats_it)
+
+    if num_threads == 1:
+        _ = list(map(func, season_stats_it))
+    else:
+        # TODO: consider using a concurrent.futures.ThreadPoolExecutor instead
+        with multiprocessing.Pool(num_threads) as mp:
+            mp.map(func, season_stats_it)

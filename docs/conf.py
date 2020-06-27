@@ -101,9 +101,11 @@ if on_rtd:
         PYBBDA_DATA_ROOT,
     )
 
+    MIN_DATE = "2019-05-01"
+    MAX_DATE = "2019-05-15"
     MIN_YEAR = 2018
     MAX_YEAR = 2019
-    NUM_THREADS = 2
+    NUM_THREADS = 5
     OVERWRITE = False
     CREATE_EVENT_DATABASE = False
 
@@ -115,6 +117,8 @@ if on_rtd:
             data_source,
             MIN_YEAR,
             MAX_YEAR,
+            MIN_DATE,
+            MAX_DATE,
             NUM_THREADS,
             OVERWRITE,
             CREATE_EVENT_DATABASE,

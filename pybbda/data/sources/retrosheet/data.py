@@ -7,12 +7,29 @@ import glob
 from sqlalchemy import create_engine
 from pychadwick.chadwick import Chadwick
 from pybbda import PYBBDA_DATA_ROOT
+from pybbda.data.sources.data_source.base import DataSource
+
+RETROSHEET_DATA_PATH = PYBBDA_DATA_ROOT / "retrosheet"
+RETROSHEET_TABLES = {"people": "people.csv"}
+RETROSHEET_URLS = {
+    "people": "https://raw.githubusercontent.com/"
+    "chadwickbureau/"
+    "register/"
+    "master/"
+    "data/"
+    "people.csv"
+}
 
 logger = logging.getLogger(__name__)
 
 
-class RetrosheetData:
+class RetrosheetData(DataSource):
+    _SOURCE_DATA_PATH = RETROSHEET_DATA_PATH
+    _SOURCE_TABLES = RETROSHEET_TABLES
+    _SOURCE_URLS = RETROSHEET_URLS
+
     def __init__(self, data_root=None):
+        super().__init__()
         self.data_root = data_root or PYBBDA_DATA_ROOT
         self.db_dir = os.path.join(self.data_root, "retrosheet")
         self.db_path = os.path.join(self.db_dir, "retrosheet.db")
