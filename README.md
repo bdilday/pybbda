@@ -19,9 +19,7 @@ The data sources it currently supports are:
 
 * Retrosheet event data
 
-The following are planned for a future release:
-
-* Statcast play-by-play data
+* Statcast pitch-by-pitch data
 
 
 ### analysis
