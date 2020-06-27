@@ -9,6 +9,8 @@ import multiprocessing
 
 from .constants import (
     FANGRAPHS_GUTS_CONSTANTS_URL,
+    FANGRAPHS_PARK_FACTORS_FORMAT,
+    FANGRAPHS_PARK_FACTORS_HANDEDNESS_FORMAT,
     FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG,
     FANGRAPHS_LEADERBOARD_URL_FORMAT,
 )
@@ -76,6 +78,29 @@ stat_columns = {
 }
 
 
+def _pool_park_factors_update(overwrite=False, season_root=None):
+    season, output_root = season_root
+    config = {"season": season}
+
+    url = FANGRAPHS_PARK_FACTORS_FORMAT.format(**config)
+    _update_file(
+        url,
+        output_root,
+        f"fg_park_factors_{season}.csv.gz",
+        "GutsBoard1_dg1_ctl00",
+        overwrite=overwrite,
+    )
+
+    url = FANGRAPHS_PARK_FACTORS_HANDEDNESS_FORMAT.format(**config)
+    _update_file(
+        url,
+        output_root,
+        f"fg_park_factors_handedness_{season}.csv.gz",
+        "GutsBoard1_dg1_ctl00",
+        overwrite=overwrite,
+    )
+
+
 def _pool_do_update(overwrite=False, season_stats=None):
     season, stats, output_root = season_stats
     config = {
@@ -115,9 +140,15 @@ def _update(
     seasons = range(min_year, max_year + 1)
     stat_names = ["bat", "pit"]
 
+    logger.debug("Starting downloads with %d threads", num_threads)
+
+    season_root_it = itertools.product(seasons, [output_root])
+    func = partial(_pool_park_factors_update, overwrite)
+    with multiprocessing.Pool(num_threads) as mp:
+        mp.map(func, season_root_it)
+
     season_stats_it = itertools.product(seasons, stat_names, [output_root])
     func = partial(_pool_do_update, overwrite)
-    logger.debug("Starting downloads with %d threads", num_threads)
     # TODO: consider using a concurrent.futures.ThreadPoolExecutor instead
     with multiprocessing.Pool(num_threads) as mp:
         mp.map(func, season_stats_it)

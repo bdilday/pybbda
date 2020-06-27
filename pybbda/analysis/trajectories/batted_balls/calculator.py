@@ -21,6 +21,7 @@ class BattedBallTrajectory:
     http://baseball.physics.illinois.edu/trajectory-calculator-new.html
 
     """
+
     x0 = attr.ib(default=0, metadata={"units": "ft"})
     y0 = attr.ib(default=2.0, metadata={"units": "ft"})
     z0 = attr.ib(default=3.0, metadata={"units": "ft"})
@@ -108,7 +109,7 @@ class BattedBallTrajectory:
         spin_angle,
         delta_time=0.01,
     ):
-    # TODO: make the return value a trajectory object
+        # TODO: make the return value a trajectory object
         """
         computes a batted ball trajectory. speed is in miles-per-hour,
         angles in degrees, and spin in revolutions per minute
