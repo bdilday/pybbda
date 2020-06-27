@@ -42,6 +42,9 @@ dist: clean
 	python setup.py bdist_wheel
 	python setup.py sdist
 
+sdist: clean
+	python setup.py sdist
+
 docs: install-dev
 	cd docs && make html
 
