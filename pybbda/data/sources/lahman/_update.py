@@ -26,8 +26,11 @@ def _extract(target, output_root):
     os.makedirs(output_path, exist_ok=True)
     extracted_files = glob.glob(os.path.join(target, "**", "*csv"), recursive=True)
     for extracted_file in extracted_files:
-        shutil.copy(extracted_file, output_path)
-
+        try:
+            shutil.copy(extracted_file, output_path)
+        except shutil.SameFileError:
+            logger.warning("source and destination file (%s) are the same",
+                           os.path.join(output_path, extracted_file))
 
 def _validate_path(output_root):
     output_root = output_root or pathlib.Path(__file__).parent.parent / "assets"
