@@ -10,6 +10,7 @@ class PlayerRegistry(Singleton):
     Class for a registry of players. This class is a Singleton.
 
     """
+
     def __init__(self):
         self.registry = {}
 

@@ -1,5 +1,13 @@
 FANGRAPHS_GUTS_CONSTANTS_URL = r"http://www.fangraphs.com/guts.aspx?type=cn"
 
+FANGRAPHS_PARK_FACTORS_FORMAT = (
+    r"https://www.fangraphs.com/guts.aspx" r"?type=pf" r"&season={season}" r"&teamid=0"
+)
+
+FANGRAPHS_PARK_FACTORS_HANDEDNESS_FORMAT = (
+    r"https://www.fangraphs.com/guts.aspx" r"?type=pfh" r"&season={season}" r"&teamid=0"
+)
+
 FANGRAPHS_LEADERBOARD_DEFAULT_CONFIG = {
     "stats": "bat",
     "league": "all",

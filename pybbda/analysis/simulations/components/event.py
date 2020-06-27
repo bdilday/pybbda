@@ -136,6 +136,7 @@ class GameEvent:
     a `FirstBaseRunningEvent`, a `SecondBaseRunningEvent`, and
     a `ThirdBaseRunningEvent`
     """
+
     batting_event = attr.ib(type=BattingEvent)
     first_base_running_event = attr.ib(
         type=FirstBaseRunningEvent, default=FirstBaseRunningEvent.DEFAULT

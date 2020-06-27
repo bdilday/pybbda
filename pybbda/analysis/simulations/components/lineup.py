@@ -11,6 +11,7 @@ class Lineup:
     """
     Class for a lineup, which comprises 9 Batters
     """
+
     lineup = attr.ib(type=List[Batter], validator=partial(check_len, len_constraint=9))
 
     def set_lineup_slot(self, lineup_slot, batter):
