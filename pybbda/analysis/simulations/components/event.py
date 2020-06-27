@@ -131,6 +131,11 @@ class RunningEventProbability:
 
 @attr.s(frozen=True)
 class GameEvent:
+    """
+    Class for a `GameEvent`. A `GameEvent` is a `BattingEvent`
+    a `FirstBaseRunningEvent`, a `SecondBaseRunningEvent`, and
+    a `ThirdBaseRunningEvent`
+    """
     batting_event = attr.ib(type=BattingEvent)
     first_base_running_event = attr.ib(
         type=FirstBaseRunningEvent, default=FirstBaseRunningEvent.DEFAULT

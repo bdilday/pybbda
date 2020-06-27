@@ -15,6 +15,12 @@ from .parameters import (
 
 @attr.s(kw_only=True)
 class BattedBallTrajectory:
+    """
+    Class for a batted ball trajectory. The algorithm is taken from
+    Alan Nathan's trajectory calculator,
+    http://baseball.physics.illinois.edu/trajectory-calculator-new.html
+
+    """
     x0 = attr.ib(default=0, metadata={"units": "ft"})
     y0 = attr.ib(default=2.0, metadata={"units": "ft"})
     z0 = attr.ib(default=3.0, metadata={"units": "ft"})
@@ -39,14 +45,39 @@ class BattedBallTrajectory:
         )
 
     def omega_fun(self, t, spin):
+        """
+        angular speed.
+
+        :param t: float
+        :param spin: float
+        :return: float
+        """
         return spin * np.pi / 30
 
     def s_fun(self, t, vw, spin):
+        """
+        spin. computed as a function of `t`, the time,
+        `vw` speed with respect to the wind, and `spin`, the initial spin
+
+        :param t: float
+        :param vw: float
+        :param spin: float
+        :return: float
+        """
         omega = self.omega_fun(t, spin)
         romega = self.batted_ball_constants.circumference * omega / (24 * np.pi)
         return (romega / vw) * np.exp(-t * vw / (self.lift_force_coefs.tau * 146.7))
 
     def cl_fun(self, t, vw, spin):
+        """
+        coefficient of lift. computed as a function of `t`, the time,
+        `vw` speed with respect to the wind, and `spin`, the spin
+
+        :param t: float
+        :param vw: float
+        :param spin: float
+        :return: float
+        """
         s = self.s_fun(t, vw, spin)
         return (
             self.lift_force_coefs.cl2
@@ -55,6 +86,15 @@ class BattedBallTrajectory:
         )
 
     def cd_fun(self, t, vw, spin):
+        """
+        coefficient of drag. computed as a function of `t`, the time,
+        `vw`, the speed with respect to the wind, and `spin`, the spin.
+
+        :param t: float
+        :param vw: float
+        :param spin: float
+        :return: float
+        """
         return self.drag_force_coefs.cd0 + self.drag_force_coefs.cdspin * (
             spin * 1e-3
         ) * np.exp(-t * vw / (self.lift_force_coefs.tau * 146.7))
@@ -68,6 +108,19 @@ class BattedBallTrajectory:
         spin_angle,
         delta_time=0.01,
     ):
+    # TODO: make the return value a trajectory object
+        """
+        computes a batted ball trajectory. speed is in miles-per-hour,
+        angles in degrees, and spin in revolutions per minute
+
+        :param initial_speed: float
+        :param launch_angle: float
+        :param launch_direction_angle: float
+        :param initial_spin: float
+        :param spin_angle: float
+        :param delta_time: float
+        :return: pandas data frame
+        """
 
         initial_velocity = (
             initial_speed
@@ -120,6 +173,20 @@ class BattedBallTrajectory:
         launch_angle=0,
         launch_direction_angle=0,
     ):
+        """
+        function for computing the trajectory using the 4th-order Runge-Kutta method.
+        trajectory vars are the 3 positions and 3 velocity components of the ball.
+        returns the derivatives of the input variables, i.e., the 3 velocity components,
+        and the 3 acceleration components.
+
+        :param t: float
+        :param trajectory_vars: tuple(float)
+        :param spin: float
+        :param spin_angle: float
+        :param launch_angle: float
+        :param launch_direction_angle: float
+        :return: numpy array
+        """
         # trajectory_vars = x, y, z, vx, vy, vz
         _, _, _, vx, vy, vz = trajectory_vars
         v = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)

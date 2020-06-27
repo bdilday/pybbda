@@ -6,6 +6,10 @@ from .player import Batter, BattingEventProbability
 
 
 class PlayerRegistry(Singleton):
+    """
+    Class for a registry of players. This class is a Singleton.
+
+    """
     def __init__(self):
         self.registry = {}
 
@@ -13,6 +17,12 @@ class PlayerRegistry(Singleton):
         self.registry[batter.player_id] = batter
 
     def add(self, batters):
+        """
+        Adds batters to the registry
+
+        :param batters: Iterable of `Batter`
+        :return: dict
+        """
         if not isinstance(batters, list):
             batters = [batters]
         for batter in batters:
@@ -56,6 +66,13 @@ class PlayerRegistry(Singleton):
         )
 
     def load_from_lahman(self, pa_limit=180):
+        """
+        Loads a player registry from the Lahman batting table. The set of players
+        are filtered to have at least `pa_limit` PAs
+
+        :param pa_limit: int
+        :return: None
+        """
         lahman_records = self._get_lahman_records(pa_limit=pa_limit)
         for player_id, record in lahman_records.items():
             self.add(
