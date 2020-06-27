@@ -223,4 +223,4 @@ std. score per 27 outs = 3.3996
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[GPLv2](https://choosealicense.com/licenses/gpl-2.0/)
