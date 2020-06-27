@@ -26,7 +26,6 @@ def _download_csv(url):
 def _save(lines, file_name, output_path):
     output_file_path = os.path.join(output_path, file_name)
     output_payload = "\n".join(map(lambda s: str(s, "utf-8"), lines))
-    print(len(output_payload))
     logger.info("saving file to {}".format(output_file_path))
     with gzip.open(output_file_path, "wb") as fh:
         fh.write(bytes(output_payload, encoding="utf-8"))

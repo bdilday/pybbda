@@ -62,27 +62,26 @@ def _parse_args():
         default=2018,
         help="Min year to download",
     )
-
     parser.add_argument(
         "--max-year",
         required=False,
         type=int,
         default=2019,
-        help="Max date to download",
+        help="Max year to download",
     )
     parser.add_argument(
         "--min-date",
         required=False,
         type=str,
         default=None,
-        help="Max date to download",
+        help="Min date to download",
     )
     parser.add_argument(
         "--max-date",
         required=False,
         type=str,
         default=None,
-        help="Min year to download",
+        help="Max date to download",
     )
     parser.add_argument(
         "--num-threads",
