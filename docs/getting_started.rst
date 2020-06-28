@@ -232,7 +232,7 @@ Events from May, 2019.
 
 .. code-block:: bash
 
-    $ python -m pybbda.data.tools.update --data-source statcast --min-date 2019-05-01 --max-date 2019-05-30 --num-threads 7
+    $ python -m pybbda.data.tools.update --data-source statcast --min-date 2019-05-01 --max-date 2019-05-31 --num-threads 7
 
 All event from 2019
 
