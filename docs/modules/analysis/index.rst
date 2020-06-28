@@ -6,6 +6,7 @@ analysis
    :maxdepth: 2
 
    projections.rst
+   run_expectancies.rst
    trajectories.rst
 
 .. automodule:: pybbda.analysis

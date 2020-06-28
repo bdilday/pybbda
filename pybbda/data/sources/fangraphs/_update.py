@@ -91,14 +91,18 @@ def _pool_park_factors_update(overwrite=False, season_root=None):
         overwrite=overwrite,
     )
 
-    url = FANGRAPHS_PARK_FACTORS_HANDEDNESS_FORMAT.format(**config)
-    _update_file(
-        url,
-        output_root,
-        f"fg_park_factors_handedness_{season}.csv.gz",
-        "GutsBoard1_dg1_ctl00",
-        overwrite=overwrite,
-    )
+    if season >= 2002:
+        url = FANGRAPHS_PARK_FACTORS_HANDEDNESS_FORMAT.format(**config)
+        _update_file(
+            url,
+            output_root,
+            f"fg_park_factors_handedness_{season}.csv.gz",
+            "GutsBoard1_dg1_ctl00",
+            overwrite=overwrite,
+        )
+    else:
+        logger.info(f"handedness park factors not available for pre-2002 seasons. "
+                    f"skipping {season}")
 
 
 def _pool_do_update(overwrite=False, season_stats=None):
