@@ -12,7 +12,7 @@ This package is available on PyPI, so you can install it with
 
 .. code-block:: bash
 
-   pip install -U pybbda
+   pip install pybbda
 
 Or you can install the latest master branch 
 directly from the `github repo`_  using
@@ -75,6 +75,12 @@ recommended to use a custom path for ``PYBBDA_DATA_ROOT``, for example,
 This sets the `logging level`_ for the package at runtime.
 The default is ``INFO``.
 
+* ``PYBBDA_MAX_OUTS``
+
+Sets the number of outs for the run expectancy tool. Defaults to 3, i.e
+simulating an inning. Use 27 to simulate a full game.
+
+
 ---------------
 Installing data
 ---------------
@@ -89,27 +95,30 @@ Example,
 .. code-block:: bash
 
    python -m pybbda.data.tools.update -h
-   
-   usage: update.py [-h] [--data-root DATA_ROOT] --data-source
-                 {Lahman,BaseballReference,Fangraphs,retrosheet,all}
-                 [--make-dirs] [--overwrite] [--create-event-database]
-                 [--min-year MIN_YEAR] [--max-year MAX_YEAR]
-                 [--num-threads NUM_THREADS]
 
-   optional arguments:
-      -h, --help            show this help message and exit
-      --data-root DATA_ROOT
-                           Root directory for data storage
-      --data-source {Lahman,BaseballReference,Fangraphs,retrosheet,all}
-                           Update source
-      --make-dirs           Make root dir if does not exist
-      --overwrite           Overwrite files if they exist
-      --create-event-database
-                           Create a sqlite database for retrosheet event files
-      --min-year MIN_YEAR   Min year to download
-      --max-year MAX_YEAR   Max year to download
-      --num-threads NUM_THREADS
-                           Number of threads to use for downloads
+    usage: update.py [-h] [--data-root DATA_ROOT] --data-source
+                     {Lahman,BaseballReference,Fangraphs,retrosheet,statcast,all}
+                     [--make-dirs] [--overwrite] [--create-event-database]
+                     [--min-year MIN_YEAR] [--max-year MAX_YEAR]
+                     [--min-date MIN_DATE] [--max-date MAX_DATE]
+                    [--num-threads NUM_THREADS]
+
+    optional arguments:
+        -h, --help            show this help message and exit
+        --data-root DATA_ROOT
+                              Root directory for data storage
+        --data-source {Lahman,BaseballReference,Fangraphs,retrosheet,statcast,all}
+                              Update source
+        --make-dirs           Make root dir if does not exist
+        --overwrite           Overwrite files if they exist
+        --create-event-database
+                              Create a sqlite database for retrosheet event files
+        --min-year MIN_YEAR   Min year to download
+        --max-year MAX_YEAR   Max year to download
+        --min-date MIN_DATE   Min date to download
+        --max-date MAX_DATE   Max date to download
+        --num-threads NUM_THREADS
+                              Number of threads to use for downloads
 
 
 
@@ -123,7 +132,8 @@ The ``--create-event-database`` will cause a ``sqlite`` database to be created i
 directory ``retrosheet``, under the ``--data-root`` directory.
 
 The ``min-year`` and ``max-year`` arguments refer to Fangraphs leaderboards and to the ``retrosheet`` 
-events database, if enabled.
+events database, if enabled.  The ``min-date`` and ``max-date`` arguments refer to statcast
+pitch-level data.
 
 Following are some examples of specific data sources
 
@@ -148,9 +158,9 @@ Baseball Reference WAR
    python -m pybbda.data.tools.update --data-source BaseballReference
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Fangraphs GUTs and leaderboards
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Fangraphs leaderboards, park factors, and guts constants
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -214,6 +224,21 @@ The ``min-year`` and ``--max-year`` arguments will limit the years to populate t
    CIN198204050|bowal001|2
    sqlite> .q
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Statcast pitch-level events
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Events from May, 2019.
+
+.. code-block:: bash
+
+    $ python -m pybbda.data.tools.update --data-source statcast --min-date 2019-05-01 --max-date 2019-05-31 --num-threads 7
+
+All event from 2019
+
+.. code-block:: bash
+
+    $ python -m pybbda.data.tools.update --data-source statcast --min-year 2019 --max-year 2019 --num-threads 7
 
 ~~~~~~~~~~~~~
 All sources

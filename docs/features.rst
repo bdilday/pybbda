@@ -18,7 +18,8 @@ The following data sources are currently supported
    /modules/data/lahman.rst
    /modules/data/fangraphs.rst
    /modules/data/baseball_reference.rst
-
+   /modules/data/retrosheet.rst
+   /modules/data/statcast.rst
 
 ---------
 analysis
@@ -26,8 +27,10 @@ analysis
 
 The following analysis tools are currently supported
 
-* Batted ball trajectories
+.. toctree::
+   :maxdepth: 2
 
-* Run expectancies based on Markov chains
+   /modules/analysis/projections.rst
+   /modules/analysis/run_expectancies.rst
+   /modules/analysis/trajectories.rst
 
-* Marcel projections

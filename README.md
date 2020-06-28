@@ -15,7 +15,7 @@ The data sources it currently supports are:
 
 * Baseball Reference WAR
 
-* Fangraphs leaderboards
+* Fangraphs leaderboards and park factors
 
 * Retrosheet event data
 
@@ -218,6 +218,10 @@ mean score per 27 outs = 5.1420
 std. score per 27 outs = 3.3996
 ```
 
+## Contributing
+
+Contributions from the community are welcome. 
+See the [contributing guide](CONTRIBUTING.md).
 
 ## License
 
