@@ -1,5 +1,4 @@
 import os
-import psycopg2
 import pandas as pd
 import logging
 import glob
@@ -35,15 +34,6 @@ class RetrosheetData(DataSource):
         self.db_path = os.path.join(self.db_dir, "retrosheet.db")
         self._engine = None
         self.chadwick = Chadwick()
-
-    def _connect_to_postgres(self, database="retrosheet"):
-        conn = psycopg2.connect(
-            database=database,
-            user=os.environ["PSQL_USER"],
-            password=os.environ["PSQL_PASS"],
-            port=os.environ["PSQL_PORT"],
-        )
-        return conn
 
     def create_database(self):
         if not os.path.exists(self.db_dir):
