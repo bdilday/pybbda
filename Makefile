@@ -60,4 +60,4 @@ install-dev:
 	pip install --quiet -r requirements-dev.txt
 
 install: install-dev
-	pip install -e .
+	pip install .

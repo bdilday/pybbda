@@ -101,8 +101,10 @@ def _pool_park_factors_update(overwrite=False, season_root=None):
             overwrite=overwrite,
         )
     else:
-        logger.info(f"handedness park factors not available for pre-2002 seasons. "
-                    f"skipping {season}")
+        logger.info(
+            f"handedness park factors not available for pre-2002 seasons. "
+            f"skipping {season}"
+        )
 
 
 def _pool_do_update(overwrite=False, season_stats=None):

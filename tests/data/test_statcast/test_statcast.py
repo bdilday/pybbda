@@ -34,5 +34,9 @@ def test_statcast_validate_player_type(statcast_data):
 
 def test_statcast_batter_data(statcast_data):
     df = statcast_data.sc_2019_05_01
-    mean_ls = df.query('player_name == "Jose Abreu"').loc[:, "launch_speed"].mean()
-    assert mean_ls == pytest.approx(90.8, 0.01)
+    mean_ls = (
+        df.query('player_name == "Jose Abreu" and description != "foul"')
+        .loc[:, "launch_speed"]
+        .mean()
+    )
+    assert mean_ls == pytest.approx(102.05, 0.01)
