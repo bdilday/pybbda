@@ -11,13 +11,13 @@ lint: install-dev
 	python -m flake8 examples
 
 
-test-analysis: install-dev
+test-analysis: install-dev install-data
 	python -m pytest tests/analysis/
 
-test-data: install-dev
+test-data: install-dev install-data
 	python -m pytest tests/data/
 
-test-markov: install
+test-markov: install install-data
 	python -m pybbda.analysis.run_expectancy.markov.cli \
 	-b 0 0.1 0.1 0.1 0.1 0.1 \
 	-i 1 henderi01_1982
@@ -26,7 +26,7 @@ test-markov: install
 	-i 1 henderi01_1982 \
 	-i 4 ruthba01_1927
 
-test: install-dev
+test: install-dev install-data
 	python -m pytest tests/
 
 clean-docs:
@@ -60,4 +60,4 @@ install-dev:
 	pip install --quiet -r requirements-dev.txt
 
 install: install-dev
-	pip install -e .
+	pip install .
