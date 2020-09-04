@@ -61,4 +61,3 @@ install-dev:
 
 install: install-dev
 	pip install .
-	
