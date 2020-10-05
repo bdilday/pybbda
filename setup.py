@@ -13,7 +13,7 @@ with open("requirements.txt", "r") as fh:
 
 setup(
     name="pybbda",
-    version="0.2.4",
+    version="0.3.0",
     author="Ben Dilday",
     author_email="ben.dilday.phd@gmail.com",
     description="Baseball data and analysis in Python",
