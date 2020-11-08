@@ -8,11 +8,10 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
+      - run:
+          command: pip install --user -r requirements.txt
       - run:
           command: pip install --user -r requirements-dev.txt
-      - python/save-cache
       - run:
           command: python -m pybbda.data.tools.update --data-source Lahman --make-dirs
           name: Update Lahman
