@@ -32,7 +32,7 @@ jobs:
           command: make lint
           name: Lint
       - run:
-          command: make test
+          command: make coverage
           name: Test
       - run:
           command: make test-markov
