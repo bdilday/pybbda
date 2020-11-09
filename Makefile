@@ -26,6 +26,9 @@ test-markov: install
 	-i 1 henderi01_1982 \
 	-i 4 ruthba01_1927
 
+coverage: install-dev
+	python -m pytest --cov=pybbda tests/
+
 test: install-dev
 	python -m pytest tests/
 
