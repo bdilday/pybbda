@@ -38,4 +38,4 @@ def test_from_lahman_records():
 def test_from_lahman():
     player_registry = PlayerRegistry()
     player_registry.load_from_lahman(pa_limit=180)
-    assert player_registry.len == 32646
+    assert player_registry.len == 32803
