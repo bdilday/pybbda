@@ -20,10 +20,30 @@ from plotnine import (
     scale_color_manual,
     element_blank,
 )
+from namedframes import PandasNamedFrame
 
 # from plotnine import *
 
 Point = namedtuple("Point", ("x", "y"))
+
+DEFAULT_EXPAND = 1.5
+FORCE_TEXT = 1.0
+
+
+class StandingsDF(PandasNamedFrame):
+    W: int
+    L: int
+    RS_G: float
+    RA_G: float
+    Team: str
+    lg_div: str
+
+
+class ArcDF(PandasNamedFrame):
+    Team: str
+    lg_div: str
+    x: float
+    y: float
 
 
 def make_arc(start_point: Point, end_point: Point):
@@ -43,7 +63,7 @@ def make_arc(start_point: Point, end_point: Point):
     return vector_norm * np.array(list(zip(np.cos(angles), np.sin(angles))))
 
 
-def make_arc_dataframe(sub_df):
+def make_arc_dataframe(sub_df: StandingsDF) -> ArcDF:
     """
     Makes a dataframe comprising the arc for this row and replicating the team
     and division-id.
@@ -55,25 +75,21 @@ def make_arc_dataframe(sub_df):
         raise ValueError
 
     row = sub_df.iloc[0]
-    arc = make_arc(
-        Point(row.RS_G, row.RA_G), Point(row.x_start, row.y_start)
-    )
+    arc = make_arc(Point(row.RS_G, row.RA_G), Point(row.x_start, row.y_start))
     num_rows = arc.shape[0]
-    return pd.DataFrame(
-        {
-            "Team": [row.Team] * num_rows,
-            "lg_div": [row.lg_div] * num_rows,
-            "x": arc[:, 0],
-            "y": arc[:, 1],
-        }
+    return ArcDF(
+        pd.DataFrame(
+            {
+                "Team": [row.Team] * num_rows,
+                "lg_div": [row.lg_div] * num_rows,
+                "x": arc[:, 0],
+                "y": arc[:, 1],
+            }
+        )
     )
 
 
-DEFAULT_EXPAND = 1.5
-FORCE_TEXT = 1.0
-
-
-def get_winpct_contours(standings, delta_runs):
+def get_winpct_contours(standings: StandingsDF, delta_runs: float):
     mean_runs = 0.5 * (standings.RS_G.mean() + standings.RA_G.mean())
     run_max = mean_runs + delta_runs
     run_min = mean_runs - delta_runs
@@ -107,10 +123,10 @@ force_pts = 1.0
 force_obj = 1.0
 
 adjust_text = {
-    "expand_points": (xpaned, xpaned),
-    "expand_text": (xpaned, xpaned),
-    "expand_objects": (xpaned, xpaned),
-    "force_text": (force_text, force_text),
+    "expand_points": (DEFAULT_EXPAND, DEFAULT_EXPAND),
+    "expand_text": (DEFAULT_EXPAND, DEFAULT_EXPAND),
+    "expand_objects": (DEFAULT_EXPAND, DEFAULT_EXPAND),
+    "force_text": (FORCE_TEXT, FORCE_TEXT),
     "force_points": (force_pts, force_pts),
     "force_objects": (force_obj, force_obj),
     "lim": 100,
@@ -138,7 +154,7 @@ def validate_transform_standings(standings: pd.DataFrame):
         pl_df = pl_df.assign(lg_div=pl_df.lgID + "-" + pl_df.divID)
 
     if "R" in pl_df.columns and "G" in pl_df.columns and "RS_G" not in pl_df.columns:
-        pl_df = pl_df.assign(RS_G = lambda row: row.R / row.G)
+        pl_df = pl_df.assign(RS_G=lambda row: row.R / row.G)
     if "RA" in pl_df.columns and "G" in pl_df.columns and "RA_G" not in pl_df.columns:
         pl_df = pl_df.assign(RA_G=lambda row: row.RA / row.G)
 
@@ -154,7 +170,7 @@ def validate_transform_standings(standings: pd.DataFrame):
         raise ValueError(f"missing columns from {pl_df.columns}")
 
     return pl_df.assign(
-        winpct = lambda row: row.W / (row.W + row.L),
+        winpct=lambda row: row.W / (row.W + row.L),
         wpythag=lambda row: row.RS_G ** 2 / (row.RS_G ** 2 + row.RA_G ** 2),
         x_start=lambda row: row.RS_G * np.sqrt(row.winpct / row.wpythag),
         y_start=lambda row: row.x_start * np.sqrt((1 - row.winpct) / row.winpct),
@@ -162,23 +178,28 @@ def validate_transform_standings(standings: pd.DataFrame):
     )
 
 
-def plot_graphical_standings(standings, delta_runs=None):
+def plot_graphical_standings(standings: StandingsDF, delta_runs=None):
     standings = validate_transform_standings(standings)
 
     mean_runs = 0.5 * (standings.RS_G.mean() + standings.RA_G.mean())
     if delta_runs is None:
-        delta_runs = max(
-            (
-                standings.RS_G.max()-mean_runs, mean_runs-standings.RS_G.min(),
-                standings.RA_G.max()-mean_runs, mean_runs-standings.RA_G.max()
+        delta_runs = (
+            max(
+                (
+                    standings.RS_G.max() - mean_runs,
+                    mean_runs - standings.RS_G.min(),
+                    standings.RA_G.max() - mean_runs,
+                    mean_runs - standings.RA_G.max(),
+                )
             )
-        ) * 1.05
+            * 1.05
+        )
     print(delta_runs)
     panel_min = mean_runs - delta_runs
     panel_max = mean_runs + delta_runs
 
     arcs = standings.groupby("Team").apply(make_arc_dataframe).reset_index(drop=True)
-    winpct_contours, win_labels = get_contours(standings, delta_runs)
+    winpct_contours, win_labels = get_winpct_contours(standings, delta_runs)
 
     graph = (
         ggplot(data=standings)
