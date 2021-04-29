@@ -1,6 +1,7 @@
 import re
 import os
 import logging
+from pathlib import Path
 
 import pandas as pd
 
@@ -21,7 +22,7 @@ class LahmanData(Singleton):
         """
         if data_path is None:
             data_path = LAHMAN_DATA_PATH
-        self.data_path = data_path
+        self.data_path = Path(data_path)
         for file_name in _LAHMAN_TABLES:
             self.__setattr__(self._munge_attr_name(file_name), None)
 
