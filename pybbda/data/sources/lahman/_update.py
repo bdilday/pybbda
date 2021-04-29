@@ -24,7 +24,7 @@ def _download():
 def _extract(target, output_root):
     output_path = os.path.join(output_root, "Lahman")
     os.makedirs(output_path, exist_ok=True)
-    extracted_files = glob.glob(os.path.join(target, "**", "*csv"), recursive=True)
+    extracted_files = glob.glob(os.path.join(target, "baseballdatabank-master", "core", "*csv"), recursive=True)
     for extracted_file in extracted_files:
         try:
             shutil.copy(extracted_file, output_path)
