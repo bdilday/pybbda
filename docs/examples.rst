@@ -7,4 +7,4 @@ Examples
 
    data_examples.rst
    analysis_examples.rst
-
+   graphics_examples.rst
