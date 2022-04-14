@@ -23,7 +23,6 @@ from plotnine import (
 from namedframes import PandasNamedFrame
 
 
-
 # from plotnine import *
 
 Point = namedtuple("Point", ("x", "y"))
@@ -74,7 +73,7 @@ def make_arc(start_point: Point, end_point: Point):
     :param end_point:
     :return: numpy.array
     """
-    vector_norm = np.sqrt(start_point.x ** 2 + start_point.y ** 2)
+    vector_norm = np.sqrt(start_point.x**2 + start_point.y**2)
     initial_angle = np.arctan2(start_point.y, start_point.x)
     final_angle = np.arctan2(end_point.y, end_point.x)
     angle_step = (final_angle - initial_angle) / 100
@@ -141,8 +140,6 @@ def get_winpct_contours(standings: StandingsDF, delta_runs: float):
     return winpct_contours, win_labels
 
 
-
-
 def validate_transform_standings(standings: pd.DataFrame):
     """
     Validates the standings dataframe and transforms it to the
@@ -178,7 +175,7 @@ def validate_transform_standings(standings: pd.DataFrame):
 
     return pl_df.assign(
         winpct=lambda row: row.W / (row.W + row.L),
-        wpythag=lambda row: row.RS_G ** 2 / (row.RS_G ** 2 + row.RA_G ** 2),
+        wpythag=lambda row: row.RS_G**2 / (row.RS_G**2 + row.RA_G**2),
         x_start=lambda row: row.RS_G * np.sqrt(row.winpct / row.wpythag),
         y_start=lambda row: row.x_start * np.sqrt((1 - row.winpct) / row.winpct),
         was_lucky=lambda row: row.winpct > row.wpythag,
