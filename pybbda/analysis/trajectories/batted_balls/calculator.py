@@ -190,7 +190,7 @@ class BattedBallTrajectory:
         """
         # trajectory_vars = x, y, z, vx, vy, vz
         _, _, _, vx, vy, vz = trajectory_vars
-        v = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)
+        v = np.sqrt(vx**2 + vy**2 + vz**2)
 
         sidespin = spin * sin_in_degrees(spin_angle)
         backspin = spin * cos_in_degrees(spin_angle)
