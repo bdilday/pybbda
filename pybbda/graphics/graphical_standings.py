@@ -22,12 +22,31 @@ from plotnine import (
 )
 from namedframes import PandasNamedFrame
 
+
+
 # from plotnine import *
 
 Point = namedtuple("Point", ("x", "y"))
 
 DEFAULT_EXPAND = 1.5
 FORCE_TEXT = 1.0
+
+force_pts = 1.0
+force_obj = 1.0
+
+
+adjust_text = {
+    "expand_points": (DEFAULT_EXPAND, DEFAULT_EXPAND),
+    "expand_text": (DEFAULT_EXPAND, DEFAULT_EXPAND),
+    "expand_objects": (DEFAULT_EXPAND, DEFAULT_EXPAND),
+    "force_text": (FORCE_TEXT, FORCE_TEXT),
+    "force_points": (force_pts, force_pts),
+    "force_objects": (force_obj, force_obj),
+    "lim": 10000,
+    "save_steps": False,
+    #    "avoid_self": False,
+    # "arrowprops": {"arrowstyle": "-", "color": "k", "lw": 0.25},
+}
 
 
 class StandingsDF(PandasNamedFrame):
@@ -59,6 +78,9 @@ def make_arc(start_point: Point, end_point: Point):
     initial_angle = np.arctan2(start_point.y, start_point.x)
     final_angle = np.arctan2(end_point.y, end_point.x)
     angle_step = (final_angle - initial_angle) / 100
+    if angle_step == 0:
+        angle_step = 1e-6
+        final_angle += 1e-6
     angles = np.arange(initial_angle, final_angle + 0.5 * angle_step, angle_step)
     return vector_norm * np.array(list(zip(np.cos(angles), np.sin(angles))))
 
@@ -119,21 +141,6 @@ def get_winpct_contours(standings: StandingsDF, delta_runs: float):
     return winpct_contours, win_labels
 
 
-force_pts = 1.0
-force_obj = 1.0
-
-adjust_text = {
-    "expand_points": (DEFAULT_EXPAND, DEFAULT_EXPAND),
-    "expand_text": (DEFAULT_EXPAND, DEFAULT_EXPAND),
-    "expand_objects": (DEFAULT_EXPAND, DEFAULT_EXPAND),
-    "force_text": (FORCE_TEXT, FORCE_TEXT),
-    "force_points": (force_pts, force_pts),
-    "force_objects": (force_obj, force_obj),
-    "lim": 100,
-    "save_steps": False,
-    #    "avoid_self": False,
-    # "arrowprops": {"arrowstyle": "-", "color": "red"},
-}
 
 
 def validate_transform_standings(standings: pd.DataFrame):
