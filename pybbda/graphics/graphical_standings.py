@@ -27,23 +27,38 @@ from namedframes import PandasNamedFrame
 
 Point = namedtuple("Point", ("x", "y"))
 
-DEFAULT_EXPAND = 1.5
-FORCE_TEXT = 1.0
+ForceMultiplier = namedtuple("ForceMultiplier", ("x", "y"))
+ExpandMultiplier = namedtuple("ExpandMultiplier", ("x", "y"))
 
-force_pts = 1.0
-force_obj = 1.0
+# defaults: (1.05, 1.20)
+k = 0.2
+EXPAND_TEXT = ExpandMultiplier(1.05*k, 1.2*k)
+EXPAND_POINTS = ExpandMultiplier(1.05, 1.2)
+EXPAND_OBJECTS = ExpandMultiplier(1.05, 1.2)
+
+
+# defaults are
+# text: (0.1, 0.25)
+# points: (0.2, 0.5)
+# objects: (0.1, 0.25)
+# see https://adjusttext.readthedocs.io/en/latest/
+FORCE_TEXT = ForceMultiplier(0.1, 0.25)
+FORCE_POINTS = ForceMultiplier(0.2, 0.5)
+FORCE_OBJECTS = ForceMultiplier(0.1, 0.25)
 
 
 adjust_text = {
-    "expand_points": (DEFAULT_EXPAND, DEFAULT_EXPAND),
-    "expand_text": (DEFAULT_EXPAND, DEFAULT_EXPAND),
-    "expand_objects": (DEFAULT_EXPAND, DEFAULT_EXPAND),
-    "force_text": (FORCE_TEXT, FORCE_TEXT),
-    "force_points": (force_pts, force_pts),
-    "force_objects": (force_obj, force_obj),
+    "expand_points": (EXPAND_POINTS.x, EXPAND_POINTS.y),
+    "expand_text": (EXPAND_TEXT.x, EXPAND_TEXT.y),
+    "expand_objects": (EXPAND_OBJECTS.x, EXPAND_OBJECTS.y),
+    "force_text": (FORCE_TEXT.x, FORCE_TEXT.y),
+    "force_points": (FORCE_POINTS.x, FORCE_POINTS.y),
+    "force_objects": (FORCE_OBJECTS.x, FORCE_OBJECTS.y),
     "lim": 10000,
     "save_steps": False,
-    #    "avoid_self": False,
+    "avoid_text": True,
+    "avoid_points": False,
+    "avoid_self": False,
     # "arrowprops": {"arrowstyle": "-", "color": "k", "lw": 0.25},
 }
 
