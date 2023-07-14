@@ -32,7 +32,7 @@ ExpandMultiplier = namedtuple("ExpandMultiplier", ("x", "y"))
 
 # defaults: (1.05, 1.20)
 k = 0.2
-EXPAND_TEXT = ExpandMultiplier(1.05*k, 1.2*k)
+EXPAND_TEXT = ExpandMultiplier(1.05 * k, 1.2 * k)
 EXPAND_POINTS = ExpandMultiplier(1.05, 1.2)
 EXPAND_OBJECTS = ExpandMultiplier(1.05, 1.2)
 

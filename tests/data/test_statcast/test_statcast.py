@@ -13,12 +13,11 @@ def test_statcast_init():
 
 def test_statcast_get_daily(statcast_data):
     statcast_data.get_statcast_daily(
-        player_type="batter", start_date="2018-01-01", end_date="2018-01-02"
+        player_type="batter", start_date="2018-06-01", end_date="2018-06-02"
     )
 
 
 def test_statcast_validate_dates(statcast_data):
-
     with pytest.raises(ValueError):
         statcast_data.get_statcast_daily(
             player_type="batter", start_date="2018-01-01", end_date="2017-12-31"

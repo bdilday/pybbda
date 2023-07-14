@@ -13,7 +13,6 @@ def test_pitching_projections():
     [(2020, 242), (2019, 235), (2018, 229), (2017, 224), (2004, 207)],
 )
 def test_pitching_metric_projections(season, expected):
-
     md = MarcelProjectionsPitching()
     proj = md.metric_projection("SO", season)
     assert round(proj.SO.max()) == expected

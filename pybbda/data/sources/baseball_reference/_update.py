@@ -20,7 +20,6 @@ def _download_csv(url):
 
 
 def _save(lines, file_name, output_path):
-
     output_file_path = os.path.join(output_path, file_name)
     output_payload = "\n".join(str(line, "utf-8") for line in lines)
     logger.info("saving file to {}".format(output_file_path))

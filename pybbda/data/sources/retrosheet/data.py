@@ -10,13 +10,18 @@ from pybbda.data.sources.data_source.base import DataSource
 
 RETROSHEET_DATA_PATH = PYBBDA_DATA_ROOT / "retrosheet"
 RETROSHEET_TABLES = {"people": "people.csv"}
-RETROSHEET_URLS = {
-    "people": "https://raw.githubusercontent.com/"
+
+RETROSHEET_URL_FMT = (
+    "https://raw.githubusercontent.com/"
     "chadwickbureau/"
     "register/"
     "master/"
     "data/"
-    "people.csv"
+    "people-{}.csv"
+)
+
+RETROSHEET_URLS = {
+    f"people{c}": RETROSHEET_URL_FMT.format(c) for c in "0123456789abcdef"
 }
 
 logger = logging.getLogger(__name__)
