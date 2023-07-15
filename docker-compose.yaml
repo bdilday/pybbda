@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  initdata:
+    build: .
+    volumes:
+      - .:/workdir
+    command:
+      - python3.10 
+      - -V
