@@ -47,7 +47,6 @@ def process_df(df):
 
 
 def get_first_to_home_on_double(ana_df):
-
     first_to_third = ana_df.query(
         "event_cd==21 and start_first_base and end_third_base"
     ).event_ct.sum()

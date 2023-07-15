@@ -21,7 +21,7 @@ def _download_csv(url):
     logger.info("downloading file from {}".format(url))
     response = requests.get(url, stream=True)
     if response.status_code != 200:
-        logger.info("there was a download error code={}", response.status_code)
+        logger.info("there was a download error code=", response.status_code)
         raise FileNotFoundError
     it = response.iter_lines()
     return list(it)

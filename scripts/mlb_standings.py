@@ -1,4 +1,3 @@
-
 import requests
 from pybbda.graphics.graphical_standings import plot_graphical_standings
 import pandas as pd
@@ -16,18 +15,22 @@ url = (
 )
 
 
-
 def process_team_record(team_record):
-    return {"Team": team_record["team"]["teamName"],
-            "W": team_record["wins"],
-            "L": team_record["losses"],
-            "RS_G": team_record["runsScored"]/team_record["gamesPlayed"],
-            "RA_G": team_record["runsAllowed"] / team_record["gamesPlayed"]
-            }
+    return {
+        "Team": team_record["team"]["teamName"],
+        "W": team_record["wins"],
+        "L": team_record["losses"],
+        "RS_G": team_record["runsScored"] / team_record["gamesPlayed"],
+        "RA_G": team_record["runsAllowed"] / team_record["gamesPlayed"],
+    }
+
 
 def process_record(record):
     lg_div = record["division"]["abbreviation"]
-    return [{"lg_div": lg_div, **process_team_record(team_record)} for team_record in record["teamRecords"]]
+    return [
+        {"lg_div": lg_div, **process_team_record(team_record)}
+        for team_record in record["teamRecords"]
+    ]
 
 
 payload = requests.get(url).json()

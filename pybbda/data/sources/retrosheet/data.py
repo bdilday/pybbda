@@ -9,7 +9,7 @@ from pybbda import PYBBDA_DATA_ROOT
 from pybbda.data.sources.data_source.base import DataSource
 
 RETROSHEET_DATA_PATH = PYBBDA_DATA_ROOT / "retrosheet"
-RETROSHEET_TABLES = {"people": "people.csv"}
+RETROSHEET_TABLES = {"people": ["people{c}.csv" for c in "0123456789abcdef"]}
 
 RETROSHEET_URL_FMT = (
     "https://raw.githubusercontent.com/"

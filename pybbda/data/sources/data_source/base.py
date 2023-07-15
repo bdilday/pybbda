@@ -30,8 +30,15 @@ class DataSource(Singleton):
             raise FileNotFoundError(f"Cannot find file {full_path}")
 
     def _load(self, name):
-        file_full_path = self._locate_file(name)
-        return pd.read_csv(file_full_path)
+        if isinstance(name, str):
+            file_full_path = self._locate_file(name)
+            return pd.read_csv(file_full_path)
+        elif isinstance(name, list):
+            file_full_paths = [self._locate_file(n) for n in name]
+            dfs = [pd.read_csv(file_full_path) for file_full_path in file_full_paths]
+            return pd.concat(dfs, axis=0)
+        else:
+            raise TypeError
 
     def __getattr__(self, name):
         if name not in self.tables.keys():
