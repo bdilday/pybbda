@@ -1,6 +1,6 @@
 .PHONY: lint \
 test-analysis test-data test-markov test \
-clean \
+clean clean-pyc \
 install-dev install \
 dist
 
@@ -39,11 +39,17 @@ clean-docs:
 clean-data:
 	rm -rf pybbda/data/assets/*
 
-clean:
+clean-pyc:
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*__pycache__' -exec rm -fr {} +
+
+clean: clean-pyc
 	rm -fr pybbda.egg-info
 	rm -fr build
 	rm -fr dist
 	rm -fr .pytest_cache
+
 
 dist: clean
 	python setup.py bdist_wheel
