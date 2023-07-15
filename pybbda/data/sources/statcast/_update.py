@@ -88,7 +88,6 @@ def _pool_do_update(overwrite=False, season_stats=None):
 def _update(
     output_root=None, min_date=None, max_date=None, num_threads=2, overwrite=False
 ):
-
     today = datetime.date.today()
     min_date = min_date or (today - datetime.timedelta(1)).strftime("%Y-%m-%d")
     max_date = max_date or today.strftime("%Y-%m-%d")

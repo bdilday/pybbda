@@ -34,7 +34,6 @@ class BaseState:
         second_base_running_event=SecondBaseRunningEvent.DEFAULT,
         third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
     ):
-
         if batting_event == BattingEvent.OUT:
             base_state = attr.evolve(self)
 
@@ -48,7 +47,6 @@ class BaseState:
             )
 
         elif batting_event == BattingEvent.SINGLE:
-
             running_events = get_running_events_cached(
                 batting_event,
                 first_base_running_event,
@@ -354,7 +352,6 @@ class BaseOutState:
         second_base_running_event=SecondBaseRunningEvent.DEFAULT,
         third_base_running_event=ThirdBaseRunningEvent.DEFAULT,
     ):
-
         outs = self.outs
 
         if outs == self.max_outs:

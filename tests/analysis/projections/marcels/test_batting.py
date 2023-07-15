@@ -12,7 +12,6 @@ def test_batting_projections():
     "season, expected", [(2020, 36), (2019, 38), (2018, 41), (2017, 34), (2004, 42)]
 )
 def test_batting_metric_projections(season, expected):
-
     md = MarcelProjectionsBatting()
     proj = md.metric_projection("HR", season)
     assert round(proj.HR.max()) == expected

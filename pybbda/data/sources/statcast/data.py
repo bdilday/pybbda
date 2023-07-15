@@ -1,5 +1,7 @@
 import logging
 import datetime
+import io
+import requests
 
 import pandas as pd
 
@@ -67,7 +69,8 @@ class StatcastData(DataSource):
             }
         )
 
-        daily_df = pd.read_csv(url)
+        file_handle = io.BytesIO(requests.get(url).content)
+        daily_df = pd.read_csv(file_handle)
         if len(daily_df) == STATCAST_QUERY_DATA_SIZE_LIMIT:
             logger.warning(
                 "Statcast query returned %d rows which probably "
